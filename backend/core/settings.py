@@ -39,7 +39,8 @@ LOCAL_APPS =[
 ]
 
 THIRD_APPS = [ 
-    'rest_framework'
+    'rest_framework',
+    'django_filters'
 ]
 
 INSTALLED_APPS =  BASE_APPS + LOCAL_APPS + THIRD_APPS
@@ -132,3 +133,12 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'usuario.Usuario'
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
+    ],
+}
