@@ -1,20 +1,24 @@
+
+
 import React from "react";
+import "../style/productos.css";
 
-const ProductoCard = ({ producto }) => (
-  <div style={{
-    border: "1px solid #ccc",
-    borderRadius: "8px",
-    padding: "1rem",
-    margin: "1rem",
-    width: "200px",
-    boxShadow: "0 2px 5px rgba(0,0,0,0.1)"
-  }}>
-    <h3>{producto.nombre}</h3>
-    <p>{producto.descripcion}</p>
-    <p>Precio: ${producto.precio}</p>
-    <p>Stock: {producto.stock}</p>
-    <p>Categoria: {producto.categoria_nombre}</p>
-  </div>
-);
+export default function ProductoCard({ producto }) {
+  const imagen =
+    producto.imagenes?.length > 0
+      ? producto.imagenes[0].imagen
+      : "https://via.placeholder.com/300x220?text=Sin+imagen";
 
-export default ProductoCard;
+  return (
+    <div className="producto-card">
+      <img src={imagen} alt={producto.nombre} />
+
+      <div className="producto-info">
+        <h3>{producto.nombre}</h3>
+        <div className="precio">${producto.precio}</div>
+        <div className="categoria">{producto.categoria_nombre}</div>
+        <div className="stock">Stock: {producto.stock}</div>
+      </div>
+    </div>
+  );
+}

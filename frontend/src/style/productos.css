@@ -1,0 +1,51 @@
+.catalogo {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
+  padding: 30px;
+}
+
+.producto-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.producto-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.producto-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.producto-info {
+  padding: 16px;
+  text-align: center;
+}
+
+.producto-info h3 {
+  margin: 8px 0;
+  font-size: 1.1rem;
+}
+
+.precio {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.categoria {
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.stock {
+  margin-top: 8px;
+  font-size: 0.85rem;
+}

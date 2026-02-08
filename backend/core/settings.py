@@ -40,7 +40,8 @@ LOCAL_APPS =[
 
 THIRD_APPS = [ 
     'rest_framework',
-    'django_filters'
+    'django_filters',
+    'corsheaders'
 ]
 
 INSTALLED_APPS =  BASE_APPS + LOCAL_APPS + THIRD_APPS
@@ -53,7 +54,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware'
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = 'core.urls'
 
@@ -142,3 +147,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly'
     ],
 }
+
+import os
+import os
+
+MEDIA_URL = '/media/'  
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
