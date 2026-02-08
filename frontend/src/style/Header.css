@@ -1,0 +1,62 @@
+.header {
+  width: 100%;
+  border-bottom: 1px solid #eee;
+  background: #fff;
+}
+
+.nav {
+  max-width: 1400px;
+  margin: auto;
+  padding: 18px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}
+
+
+.nav-left,
+.nav-right {
+  display: flex;
+  gap: 28px;
+  list-style: none;
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+}
+
+.nav-left li,
+.nav-right li {
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.logo {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: 4px;
+}
+
+.icons {
+  display: flex;
+  gap: 16px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.highlight {
+  color: #5a8f3a;
+  font-weight: 600;
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo img {
+  height: 150px;    
+  width: auto;
+  object-fit: contain;
+}

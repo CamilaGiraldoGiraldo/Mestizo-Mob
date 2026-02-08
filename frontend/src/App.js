@@ -1,12 +1,16 @@
 import React from "react";
+import Header from "./components/header";
 import ProductoList from "./components/ProductoList";
 
 function App() {
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Mestizo Mob - Catálogo de Productos</h1>
-      <ProductoList />
-    </div>
+    <>
+      <Header />
+
+      <main style={{ padding: "2rem" }}>
+        <ProductoList />
+      </main>
+    </>
   );
 }
 
