@@ -1,5 +1,5 @@
 import React from "react";
-import "../style/productos.css";
+import "../productos/productos.css";
 
 export default function ProductoCard({ producto }) {
   const imagenes = producto.imagenes || [];

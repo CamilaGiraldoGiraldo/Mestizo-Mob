@@ -12,6 +12,7 @@ router.register(r'productos', ProductoViewSet, basename='producto')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    path('usuario/', include('apps.usuario.api.urls') ),
 
     # Documentación de la API
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
