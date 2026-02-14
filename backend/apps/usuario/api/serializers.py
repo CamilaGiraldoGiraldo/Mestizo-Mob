@@ -6,3 +6,8 @@ class UsuarioSerializer(serializers.ModelSerializer):
         model = Usuario
         fields = '__all__'
         # exclude
+
+    def create (self, datos):
+        return Usuario.objects.create_user(**datos)
+    
+    

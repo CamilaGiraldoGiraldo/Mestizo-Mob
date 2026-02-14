@@ -4,7 +4,7 @@ from django.db import models
 from django.utils import timezone
 
 class ManageUsuario(BaseUserManager):
-    def create_user(self, identificacion, nombre, primerApellido, segundoApellido, correo, telefono, password, direccion , is_staff = False, is_superuser = False, is_active= True, **krows):
+    def create_user(self, identificacion, nombre, primerApellido, segundoApellido, correo, telefono, password, direccion, **krows):
         usuario = self.model(
             identificacion = identificacion,
             nombre = nombre,
@@ -12,10 +12,10 @@ class ManageUsuario(BaseUserManager):
             segundoApellido = segundoApellido,
             telefono = telefono,
             direccion = direccion,
-            is_staff = is_staff,
-            is_superuser = is_superuser,
-            is_active = is_active,
-            date_joined = datetime.now(),
+            is_staff = False,
+            is_superuser = False,
+            is_active = True,
+            date_joined = timezone.now(),
             **krows
         )
         usuario.set_password(password)
@@ -24,7 +24,7 @@ class ManageUsuario(BaseUserManager):
         return usuario;
 
      
-    def create_superuser(self, identificacion, nombre, primerApellido, segundoApellido, correo, telefono, password, direccion , is_staff = True, is_superuser = True, is_active= True, **krows):
+    def create_superuser(self, identificacion, nombre, primerApellido, segundoApellido, correo, telefono, password, direccion, **krows):
         usuario = self.model(
             identificacion = identificacion,
             nombre = nombre,
@@ -32,9 +32,9 @@ class ManageUsuario(BaseUserManager):
             segundoApellido = segundoApellido,
             telefono = telefono,
             direccion = direccion,
-            is_staff = is_staff,
-            is_superuser = is_superuser,
-            is_active = is_active,
+            is_staff = True,
+            is_superuser = True,
+            is_active = True,
             date_joined = timezone.now(),
             **krows
         )
@@ -49,7 +49,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     nombre = models.CharField(max_length= 50)
     primerApellido = models.CharField( max_length=40)
     segundoApellido= models.CharField(max_length= 40)
-    correo = models.EmailField()
+    correo = models.EmailField( unique= True)
     telefono = models.CharField(max_length= 10)
     direccion = models.TextField()
     is_active= models.BooleanField(default=True)
@@ -58,8 +58,11 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(default= timezone.now)
 
 
-    USERNAME_FIELD = 'identificacion'
-    REQUIRED_FIELDS = ['nombre', 'primerApellido', 'segundoApellido', 'correo', 'telefono', 'direccion']
+    USERNAME_FIELD = 'correo'
+    REQUIRED_FIELDS = ['identificacion','nombre', 'primerApellido', 'segundoApellido', 'telefono', 'direccion']
 
     objects = ManageUsuario()
+
+    def __str__(self):
+        return self.nombre + " "+ self.primerApellido
 
