@@ -8,13 +8,20 @@ class ProductoViewSet(viewsets.ModelViewSet):
 
     queryset = Producto.objects.all().order_by('id')
     serializer_class = ProductoSerializer
-
-    # Permisos: lectura pública, escritura solo para usuarios autenticados
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    # Filtros, búsqueda y ordenamiento
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['categoria']  
-    search_fields = ['nombre', 'descripcion'] 
-    ordering_fields = ['precio', 'nombre', 'stock']  
-    ordering = ['id'] 
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter
+    ]
+
+    filterset_fields = ['categoria']
+    search_fields = ['nombre', 'descripcion']
+    ordering_fields = ['precio', 'nombre', 'stock']
+    ordering = ['id']
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context

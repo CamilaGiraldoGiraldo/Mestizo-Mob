@@ -9,13 +9,25 @@ class Producto(models.Model):
     )
     nombre = models.CharField(max_length=150)
     descripcion = models.TextField()
-    precio = models.DecimalField(max_digits=10, decimal_places=3)
+    precio = models.DecimalField(max_digits=10, decimal_places=0)
     categoria = models.ForeignKey(
         Categoria,
         on_delete=models.CASCADE,
         related_name='productos'
     )
     stock = models.PositiveIntegerField(default=0)
+
+    modelo_glb = models.FileField(
+        upload_to="modelos/",
+        blank=True,
+        null=True
+    )
+
+    modelo_usdz = models.FileField(
+        upload_to="modelos/",
+        blank=True,
+        null=True
+    )
 
     def save(self, *args, **kwargs):
         if not self.codigo:
@@ -24,7 +36,7 @@ class Producto(models.Model):
                 numero = int(ultimo.codigo.split('-')[1]) + 1
             else:
                 numero = 1
-            self.codigo = f"PRD-{numero:06d}"
+            self.codigo = f"MOB-{numero:06d}"
         super().save(*args, **kwargs)
 
     def __str__(self):

@@ -1,0 +1,272 @@
+/* ================= GLOBAL ================= */
+
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  background: #ffffff;
+}
+
+.landing {
+  width: 100%;
+}
+
+/* ================= HERO ================= */
+
+.hero {
+  width: 100%;
+  background: #878787;
+  min-height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 clamp(20px, 6vw, 160px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.hero-left {
+  color: #f2f2f2;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+.hero-left p {
+  margin: 6px 0;
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.hero-right {
+  color: #f2f2f2;
+  max-width: 520px;
+  text-align: left;
+}
+
+.hero-right > p {
+  font-size: 17px;
+  font-weight: 300;
+  margin: 4px 0;
+  line-height: 1.7;
+  opacity: 0.9;
+}
+
+.hero-highlight {
+  margin-top: 32px;
+}
+
+.hero-highlight p {
+  font-size: 17px;
+  font-weight: 300;
+  margin-bottom: 8px;
+}
+
+.hero-highlight h2 {
+  font-size: 36px;
+  font-weight: 400;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* ================= CATEGORÍAS ================= */
+/* ================= CATEGORÍAS ================= */
+
+.categories {
+  width: 100%;
+  background: #ffffff;
+  padding: clamp(60px, 8vw, 120px) 20px;
+  box-sizing: border-box;
+}
+
+.categories h4 {
+  max-width: 1400px;
+  margin: 0 auto 70px auto;
+  text-align: center;
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: 3px;
+  color: #333;
+}
+
+/* GRID ESTABLE Y PROFESIONAL */
+
+.categories-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+/* TARJETAS */
+
+.category-card {
+  width: 100%;
+  height: 360px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
+}
+
+.category-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease;
+}
+
+.category-card:hover img {
+  transform: scale(1.08);
+}
+
+/* 🔥 Tarjetas flexibles */
+
+.category-card {
+  width: 100%;
+  height: 360px;
+  max-width: 400px;   /* evita que se estiren demasiado */
+  margin: 0 auto;     /* centra cada card */
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
+}
+
+.category-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s ease;
+}
+
+.category-card:hover img {
+  transform: scale(1.08);
+}
+
+.overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 30px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8),
+    rgba(0, 0, 0, 0.4),
+    transparent
+  );
+  color: #ffffff;
+}
+
+.overlay h3 {
+  margin: 0;
+  font-weight: 400;
+  font-size: 18px;
+  letter-spacing: 2px;
+}
+
+/* ================= CTA ================= */
+
+.cta {
+  width: 100%;
+  background: #e6e6e6;
+  padding: 80px 20px;
+}
+
+.cta-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+}
+
+.cta-left h2 {
+  font-size: 44px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  color: #8b3f1f;
+  margin: 0;
+}
+
+.cta-right {
+  text-align: right;
+  max-width: 420px;
+}
+
+.cta-right p {
+  font-size: 15px;
+  font-weight: 300;
+  letter-spacing: 3px;
+  margin: 0;
+  color: #1f1f1f;
+}
+
+.cta-right span {
+  display: block;
+  margin-top: 10px;
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: #8b3f1f;
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 1000px) {
+
+  .hero-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-right {
+    text-align: center;
+  }
+
+  .cta-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .cta-right {
+    text-align: center;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .hero-highlight h2 {
+    font-size: 26px;
+  }
+
+  .cta-left h2 {
+    font-size: 28px;
+    letter-spacing: 2px;
+  }
+
+  .hero-left p,
+  .hero-right > p {
+    font-size: 15px;
+  }
+}

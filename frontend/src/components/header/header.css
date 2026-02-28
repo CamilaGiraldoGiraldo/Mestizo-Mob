@@ -1,62 +1,157 @@
+/* ========================= */
+/* HEADER */
 .header {
   width: 100%;
-  border-bottom: 1px solid #eee;
-  background: #fff;
+  background: #f5f5f5;
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  height: 100px; /* altura fija del header */
+  display: flex;
+  justify-content: space-between; /* links a la izquierda, logo a la derecha */
+  align-items: center;
+  overflow: visible; /* permite que el logo sobresalga */
 }
 
-.nav {
+/* NAV CONTAINER */
+.nav-container {
+  width: 100%;
   max-width: 1400px;
   margin: auto;
-  padding: 18px 30px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  position: relative;
-}
-
-
-.nav-left,
-.nav-right {
-  display: flex;
-  gap: 28px;
-  list-style: none;
-  font-size: 0.75rem;
-  letter-spacing: 2px;
-}
-
-.nav-left li,
-.nav-right li {
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.logo {
-  text-align: center;
-  font-size: 1.8rem;
-  font-weight: 600;
-  letter-spacing: 4px;
-}
-
-.icons {
-  display: flex;
-  gap: 16px;
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
-.highlight {
-  color: #5a8f3a;
-  font-weight: 600;
-}
-
-.logo {
-  display: flex;
-  justify-content: center;
   align-items: center;
+  height: 100%;
+  padding: 0 20px;
 }
 
-.logo img {
-  height: 150px;    
+/* LOGO EN LA DERECHA */
+.logo-container {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.logo-container img {
+  max-height: 250px; /* logo mucho más grande */
+  height: auto;
   width: auto;
   object-fit: contain;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.logo-container img:hover {
+  transform: scale(1.05); /* efecto sutil */
+  filter: drop-shadow(0 30px 60px rgba(0,0,0,0.3));
+}
+
+/* LINKS A LA IZQUIERDA */
+.nav-links {
+  display: flex;
+  gap: 35px;
+  align-items: center;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #000;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  font-size: 14px;
+  transition: opacity 0.3s ease;
+}
+
+.nav-links a:hover {
+  opacity: 0.6;
+}
+
+/* RIGHT SECTION */
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+/* CARRITO */
+.cart-container {
+  position: relative;
+  cursor: pointer;
+}
+
+.cart-icon {
+  font-size: 24px;
+  transition: transform 0.3s ease;
+}
+
+.cart-container:hover .cart-icon {
+  transform: scale(1.1);
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background: rgb(175, 92, 53);
+  color: white;
+  font-size: 12px;
+  padding: 3px 6px;
+  border-radius: 50%;
+}
+
+/* HAMBURGUESA */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  gap: 5px;
+}
+
+.hamburger span {
+  width: 25px;
+  height: 2px;
+  background: black;
+  transition: 0.3s;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* ========================= */
+/* RESPONSIVE */
+@media (max-width: 992px) {
+  .logo-container img {
+    max-height: 180px; /* más pequeño en móvil */
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 100px;
+    left: 0;
+    width: 100%;
+    background: white;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 30px 0;
+    display: none;
+    z-index: 400;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .hamburger {
+    display: flex;
+  }
 }

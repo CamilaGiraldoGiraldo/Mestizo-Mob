@@ -1,0 +1,59 @@
+.cart-toast {
+  position: fixed;
+  top: 25px;
+  right: 25px;
+  background: white;
+  padding: 16px 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  transform: translateX(120%);
+  transition: all 0.4s ease;
+  z-index: 3000; /* 🔥 MÁS ALTO QUE EL DRAWER */
+  min-width: 280px;
+}
+
+.cart-toast.show {
+  transform: translateX(0);
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toast-check {
+  background: #E3AD57;
+  color: white;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-weight: bold;
+}
+
+.toast-title {
+  font-weight: 600;
+  margin: 0;
+}
+
+.toast-product {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+
+/* Responsive móvil */
+@media (max-width: 480px) {
+  .cart-toast {
+    right: 50%;
+    transform: translate(50%, -120%);
+    top: 15px;
+  }
+
+  .cart-toast.show {
+    transform: translate(50%, 0);
+  }
+}
