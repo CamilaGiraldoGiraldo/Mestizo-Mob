@@ -1,14 +1,9 @@
-from django.utils.html import mark_safe
-from .models import ImagenProducto
 from django.contrib import admin
+from .models import ImagenProducto
+
 
 class ImagenProductoAdmin(admin.ModelAdmin):
-    list_display = ('producto', 'imagen_tag')
+    list_display = ('color', 'imagen', 'orden')
 
-    def imagen_tag(self, obj):
-        if obj.imagen:
-            return mark_safe(f'<img src="{obj.imagen.url}" width="100" />')
-        return "-"
-    imagen_tag.short_description = 'Imagen'
 
 admin.site.register(ImagenProducto, ImagenProductoAdmin)

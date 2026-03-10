@@ -7,7 +7,7 @@ export default function ProductoCard({ producto }) {
   const { addToCart } = useCart();
   const navigate = useNavigate();
 
-  const imagenes = producto.imagenes || [];
+  const imagenes = producto.colores?.[0]?.imagenes || [];
 
   const img1 = imagenes[0]?.imagen;
   const img2 = imagenes[1]?.imagen;

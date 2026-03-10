@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+import cloudinary
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,7 +12,7 @@ SECRET_KEY = 'django-insecure-=7a#28qi61-@!iunu5erza!isajr7enq7hvrddj_*87x!qc_j+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.2']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.156.17.132']
 
 
 # ==========================
@@ -33,12 +35,16 @@ LOCAL_APPS = [
     'apps.envio',
     'apps.usuario',
     'apps.categorias',
+    'apps.colores',
 ]
 
 THIRD_APPS = [
     'rest_framework',
     'django_filters',
     'corsheaders',
+    'cloudinary',
+    'cloudinary_storage',
+    'nested_admin',
 ]
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
@@ -111,7 +117,18 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+4# ==========================
+# CLOUDINARY CONFIG
+# ==========================
 
+cloudinary.config(
+    cloud_name = "de8ra2czm",
+    api_key = "646127835215687",
+    api_secret = "KjjCNwirgYffba5-EAwAhjOB_GI",
+    secure = True
+)
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # ==========================
 # PASSWORD VALIDATION
@@ -151,7 +168,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
 # ==========================

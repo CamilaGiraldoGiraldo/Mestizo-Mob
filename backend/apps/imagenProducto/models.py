@@ -1,13 +1,19 @@
 from django.db import models
-from apps.productos.models import Producto
+from cloudinary.models import CloudinaryField
+from apps.colores.models import ColorProducto
+
 
 class ImagenProducto(models.Model):
-    producto = models.ForeignKey(
-        Producto,
-        on_delete=models.CASCADE,
-        related_name='imagenes'
+
+    color = models.ForeignKey(
+        ColorProducto,
+        related_name="imagenes",
+        on_delete=models.CASCADE
     )
-    imagen = models.ImageField(upload_to='productos/')
+
+    imagen = CloudinaryField('imagen')
+
+    orden = models.IntegerField(default=1)
 
     def __str__(self):
-        return f"Imagen de {self.producto.nombre}"
+        return f"{self.color.nombre}"

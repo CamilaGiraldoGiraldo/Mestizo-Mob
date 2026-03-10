@@ -1,5 +1,7 @@
 from django.db import models
 from apps.categorias.models import Categoria
+from cloudinary.models import CloudinaryField
+
 
 class Producto(models.Model):
     codigo = models.CharField(
@@ -10,21 +12,26 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=150)
     descripcion = models.TextField()
     precio = models.DecimalField(max_digits=10, decimal_places=0)
+
     categoria = models.ForeignKey(
         Categoria,
         on_delete=models.CASCADE,
         related_name='productos'
     )
+
     stock = models.PositiveIntegerField(default=0)
 
-    modelo_glb = models.FileField(
-        upload_to="modelos/",
+    # 🔥 Ahora usando Cloudinary
+    modelo_glb = CloudinaryField(
+        'modelo_glb',
+        resource_type="raw",
         blank=True,
         null=True
     )
 
-    modelo_usdz = models.FileField(
-        upload_to="modelos/",
+    modelo_usdz = CloudinaryField(
+        'modelo_usdz',
+        resource_type="raw",
         blank=True,
         null=True
     )
