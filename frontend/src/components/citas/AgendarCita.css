@@ -1,0 +1,47 @@
+.cita-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.cita-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.cita-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.cita-form input,
+.cita-form textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.cita-form textarea {
+    resize: none;
+    height: 80px;
+}
+
+.cita-form button {
+    background-color: #000;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.cita-form button:hover {
+    background-color: #333;
+}

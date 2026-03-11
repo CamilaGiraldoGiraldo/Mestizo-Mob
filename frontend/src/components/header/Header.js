@@ -4,7 +4,7 @@ import { FiShoppingCart } from "react-icons/fi";
 import logo from "../../assets/logo.png";
 import { useCart } from "../../context/CartContext";
 import CartDrawer from "../cart/CartDrawer";
-import "./Header.css";
+import "./header.css";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,7 +22,11 @@ export default function Header() {
           {/* IZQUIERDA - LINKS */}
           <div className={`nav-links ${menuOpen ? "open" : ""}`}>
             <Link to="/productos" onClick={() => setMenuOpen(false)}>PRODUCTOS</Link>
-            <Link to="/agenda" onClick={() => setMenuOpen(false)}>AGENDA UNA CITA</Link>
+
+            <Link to="/cita" onClick={() => setMenuOpen(false)}>
+              AGENDA UNA CITA
+            </Link>
+
             <Link to="/personaliza" onClick={() => setMenuOpen(false)}>PERSONALIZA</Link>
             <Link to="/visitanos" onClick={() => setMenuOpen(false)}>VISÍTANOS</Link>
           </div>

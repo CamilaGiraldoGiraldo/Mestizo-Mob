@@ -12,6 +12,7 @@ import ProductoList from "./components/productoList/ProductoList";
 import DetalleProducto from "./components/Detalleproduct/DetalleProducto";
 import Intro from "./components/Intro/Intro";
 import CartToast from "./components/ui/CartToast";
+import AgendarCita from "./components/citas/AgendarCita";
 
 import { CartProvider, useCart } from "./context/CartContext";
 
@@ -36,10 +37,10 @@ function AppContent() {
         {/* Intro sin contenedor */}
         <Route path="/" element={<Intro />} />
 
-        {/* Landing sin padding */}
+        {/* Landing */}
         <Route path="/landing" element={<Landing />} />
 
-        {/* Páginas internas con contenedor */}
+        {/* Productos */}
         <Route
           path="/productos"
           element={
@@ -49,11 +50,22 @@ function AppContent() {
           }
         />
 
+        {/* Detalle producto */}
         <Route
           path="/producto/:id"
           element={
             <main className="main-content">
               <DetalleProducto />
+            </main>
+          }
+        />
+
+        {/* Agendar cita */}
+        <Route
+          path="/cita"
+          element={
+            <main className="main-content">
+              <AgendarCita />
             </main>
           }
         />
