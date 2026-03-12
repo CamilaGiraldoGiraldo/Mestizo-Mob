@@ -13,7 +13,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('usuario/', include('apps.usuario.api.urls') ),
-
+    path('api/citas/', include('apps.citas.urls')),  # enlaza la app citas
     # Documentación de la API
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),

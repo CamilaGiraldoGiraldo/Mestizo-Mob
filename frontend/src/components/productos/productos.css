@@ -1,10 +1,9 @@
-
 .producto-card {
   background: #fff;
   border-radius: 24px;
   overflow: hidden;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(.25,.8,.25,1);
+  transition: all 0.4s cubic-bezier(.25, .8, .25, 1);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
@@ -19,45 +18,38 @@
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12);
 }
 
-/* =========================
-   IMAGEN (HOVER PREMIUM)
-========================= */
-
 .producto-img-container {
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  background: #f4f4f4; /* evita fondo blanco mientras carga */
+  background: #f4f4f4;
 }
 
-/* Ambas imágenes */
 .producto-img-container .img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: 
+  transition:
     opacity 0.5s ease,
-    transform 0.6s cubic-bezier(.25,.8,.25,1);
+    transform 0.6s cubic-bezier(.25, .8, .25, 1);
   will-change: opacity, transform;
 }
 
-/* Imagen principal visible */
 .main-img {
   opacity: 1;
   z-index: 2;
 }
 
-/* Imagen secundaria oculta */
 .hover-img {
   opacity: 0;
   z-index: 1;
-  transform: scale(1.05); /* pequeña diferencia para efecto elegante */
+  transform: scale(1.05);
 }
 
-/* Hover */
+
 .producto-card:hover .main-img {
   opacity: 0;
   transform: scale(1.05);
@@ -81,10 +73,6 @@
   letter-spacing: 2px;
   font-weight: 600;
 }
-
-/* =========================
-   INFO
-========================= */
 
 .producto-info {
   padding: 22px 18px 28px;
@@ -111,10 +99,6 @@
   letter-spacing: 2px;
   margin-bottom: 18px;
 }
-
-/* =========================
-   BOTÓN
-========================= */
 
 .btn-carrito {
   position: absolute;
@@ -143,10 +127,6 @@
   background: #ccc;
   cursor: not-allowed;
 }
-
-/* =========================
-   CONTENEDOR SUPERIOR
-========================= */
 
 .productos-header {
   display: flex;
@@ -177,10 +157,6 @@
   transform: translateY(-2px);
 }
 
-/* ============================= */
-/* TOP SECTION */
-/* ============================= */
-
 .catalogo-top {
   display: flex;
   justify-content: space-between;
@@ -205,10 +181,6 @@
   color: #666;
 }
 
-/* ============================= */
-/* BOTÓN FILTROS */
-/* ============================= */
-
 .filter-btn {
   padding: 10px 20px;
   border: 1px solid #000;
@@ -227,10 +199,6 @@
   color: #fff;
 }
 
-/* ============================= */
-/* PANEL DE FILTROS */
-/* ============================= */
-
 .filters-panel {
   margin-bottom: 40px;
   padding: 25px;
@@ -241,10 +209,6 @@
   flex-wrap: wrap;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
 }
-
-/* ============================= */
-/* GRUPO DE FILTRO */
-/* ============================= */
 
 .filter-group {
   display: flex;
@@ -272,19 +236,11 @@
   border-color: #000;
 }
 
-/* ============================= */
-/* GRID PRODUCTOS */
-/* ============================= */
-
 .productos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 30px;
 }
-
-/* ============================= */
-/* PAGINACIÓN */
-/* ============================= */
 
 .pagination {
   margin-top: 50px;
@@ -308,8 +264,7 @@
   color: #fff;
 }
 
-/* ============================= */
-/* RESPONSIVE */
+
 @media (max-width: 1024px) {
   .productos-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -322,6 +277,7 @@
 }
 
 @media (max-width: 768px) {
+
   /* Grid y top section */
   .productos-grid {
     grid-template-columns: 1fr;
@@ -349,15 +305,14 @@
     gap: 15px;
   }
 
-  /* Botón carrito corregido para móvil */
   .btn-carrito {
-    position: relative; /* relativo */
+    position: relative;
     bottom: auto;
     left: auto;
-    transform: none;   /* sin translate */
-    width: 100%;       /* ancho completo */
+    transform: none;
+    width: 100%;
     margin-top: 12px;
-    opacity: 1;        /* siempre visible */
+    opacity: 1;
     font-size: 14px;
     padding: 14px;
     border-radius: 12px;
@@ -365,10 +320,9 @@
 
   .producto-card:hover .btn-carrito {
     opacity: 1;
-    transform: none;   /* sin hover en móvil */
+    transform: none;
   }
 
-  /* Texto de producto más pequeño */
   .producto-info h3 {
     font-size: 14px;
   }
@@ -388,16 +342,16 @@
     font-size: 10px;
   }
 
- .filters-panel {
-  margin-bottom: 40px;
-  padding: 25px;
-  background: #f8f8f8;
-  border-radius: 12px;
-  display: flex;        /* 👈 IMPORTANTE */
-  gap: 40px;
-  flex-wrap: wrap;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-}
+  .filters-panel {
+    margin-bottom: 40px;
+    padding: 25px;
+    background: #f8f8f8;
+    border-radius: 12px;
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  }
 
   .filter-group {
     min-width: 100%;

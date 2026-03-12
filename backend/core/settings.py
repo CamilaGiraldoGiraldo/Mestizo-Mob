@@ -36,6 +36,7 @@ LOCAL_APPS = [
     'apps.usuario',
     'apps.categorias',
     'apps.colores',
+    'apps.citas',
 ]
 
 THIRD_APPS = [
@@ -110,9 +111,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mestizomob',
+        'NAME': 'mestizo',
         'USER': 'root',
-        'PASSWORD': 'Camila123',
+        'PASSWORD': '1234',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -184,6 +185,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'usuario.Usuario'
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'mariacamilagiralgiraldo1214@gmail.com'
+EMAIL_HOST_PASSWORD = 'onbv arcg gimm vvol'
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 # ==========================
 # DRF CONFIG
@@ -200,4 +210,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly'
     ],
+
+
 }
