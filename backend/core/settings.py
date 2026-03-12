@@ -118,7 +118,7 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-4# ==========================
+# ==========================
 # CLOUDINARY CONFIG
 # ==========================
 
@@ -184,14 +184,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ==========================
 
 AUTH_USER_MODEL = 'usuario.Usuario'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = "smtp-relay.brevo.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 
-EMAIL_HOST_USER = 'mariacamilagiralgiraldo1214@gmail.com'
-EMAIL_HOST_PASSWORD = 'onbv arcg gimm vvol'
+EMAIL_HOST_USER = "a4c224001@smtp-brevo.com"
+EMAIL_HOST_PASSWORD = "sDba4n7vGLpFdCQr"
+
+DEFAULT_FROM_EMAIL = "mariacamilagiralgiraldo1214@gmail.com"
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
@@ -208,8 +211,7 @@ REST_FRAMEWORK = {
         'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
-    ],
-
-
+        'rest_framework.permissions.AllowAny',
+    ]
 }
+

@@ -1,52 +1,111 @@
-# apps/citas/views.py
-from rest_framework import generics, status
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view
+
+from django.db import transaction
+from django.core.mail import send_mail
+from django.conf import settings
+
+from apps.usuario.models import Usuario
 from .models import Cita
 from .serializers import CitaSerializer
-from apps.usuario.models import Usuario  # 🔹 asegúrate de este path
-from django.db import transaction
 
-class CitaCreateView(generics.CreateAPIView):
-    serializer_class = CitaSerializer
 
-    @transaction.atomic  # asegura que todo se haga o nada
-    def post(self, request, *args, **kwargs):
+class CitaCreateView(APIView):
+
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+
         data = request.data
-        # campos del usuario que vienen en el request
-        correo = data.get('correo')
-        identificacion = data.get('identificacion')
-        nombre = data.get('nombre')
-        primerApellido = data.get('primerApellido')
-        segundoApellido = data.get('segundoApellido')
-        telefono = data.get('telefono')
-        direccion = data.get('direccion')
-        password = data.get('password', '1234')  # 🔹 contraseña por defecto si no viene
 
-        # 1️⃣ Crear usuario si no existe
-        usuario, created = Usuario.objects.get_or_create(
-            correo=correo,
-            defaults={
-                'identificacion': identificacion,
-                'nombre': nombre,
-                'primerApellido': primerApellido,
-                'segundoApellido': segundoApellido,
-                'telefono': telefono,
-                'direccion': direccion,
-            }
-        )
-        if created:
-            usuario.set_password(password)
-            usuario.save()
+        try:
 
-        # 2️⃣ Crear la cita
-        cita_data = {
-            'usuario': usuario.pk,  # 🔹 relación con FK
-            'fecha': data.get('fecha'),
-            'hora': data.get('hora'),
-            'asunto': data.get('asunto')
-        }
-        serializer = self.get_serializer(data=cita_data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+            with transaction.atomic():
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+                identificacion = data.get("identificacion")
+
+                usuario = Usuario.objects.filter(
+                    identificacion=identificacion
+                ).first()
+
+                if not usuario:
+
+                    usuario = Usuario.objects.create_user(
+                        identificacion=data.get("identificacion"),
+                        nombre=data.get("nombre"),
+                        primerApellido=data.get("primerApellido"),
+                        segundoApellido=data.get("segundoApellido"),
+                        correo=data.get("correo"),
+                        telefono=data.get("telefono"),
+                        direccion=data.get("direccion"),
+                        password="Temporal123"
+                    )
+
+                cita = Cita.objects.create(
+                    usuario=usuario,
+                    fecha=data.get("fecha"),
+                    hora=data.get("hora"),
+                    descripcion=data.get("descripcion")
+                )
+
+                # ENVIAR CORREO
+                send_mail(
+                    "Confirmación de cita",
+                    f"""
+Hola {usuario.nombre},
+
+Tu cita fue agendada correctamente.
+
+Fecha: {cita.fecha}
+Hora: {cita.hora}
+
+Gracias por utilizar nuestro sistema.
+                    """,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [usuario.correo],
+                    fail_silently=False,
+                )
+
+                serializer = CitaSerializer(cita)
+
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+@api_view(["GET"])
+def buscar_usuario(request):
+
+    identificacion = request.GET.get("identificacion")
+
+    if not identificacion:
+        return Response({})
+
+    usuario = Usuario.objects.filter(
+        identificacion=identificacion
+    ).first()
+
+    if not usuario:
+        return Response({})
+
+    data = {
+
+        "identificacion": usuario.identificacion,
+        "nombre": usuario.nombre,
+        "primerApellido": usuario.primerApellido,
+        "segundoApellido": usuario.segundoApellido,
+        "correo": usuario.correo,
+        "telefono": usuario.telefono,
+        "direccion": usuario.direccion
+
+    }
+
+    return Response(data)
