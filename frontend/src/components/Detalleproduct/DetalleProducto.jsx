@@ -63,20 +63,16 @@ export default function DetalleProducto() {
 
 
   const siguienteImagen = () => {
-
     setImagenIndex((prev) =>
       prev === imagenes.length - 1 ? 0 : prev + 1
     );
-
   };
 
 
   const anteriorImagen = () => {
-
     setImagenIndex((prev) =>
       prev === 0 ? imagenes.length - 1 : prev - 1
     );
-
   };
 
 
@@ -85,10 +81,8 @@ export default function DetalleProducto() {
     setColorSeleccionado(color);
 
     if (color.imagenes && color.imagenes.length > 0) {
-
       setImagenesActuales(color.imagenes);
       setImagenIndex(0);
-
     }
 
   };
@@ -121,10 +115,7 @@ export default function DetalleProducto() {
           <div className="imagen-principal">
 
             {imagenes.length > 1 && (
-              <button
-                className="nav-btn left"
-                onClick={anteriorImagen}
-              >
+              <button className="nav-btn left" onClick={anteriorImagen}>
                 ‹
               </button>
             )}
@@ -136,21 +127,15 @@ export default function DetalleProducto() {
             />
 
             {imagenes.length > 1 && (
-              <button
-                className="nav-btn right"
-                onClick={siguienteImagen}
-              >
+              <button className="nav-btn right" onClick={siguienteImagen}>
                 ›
               </button>
             )}
 
           </div>
 
-
           <div className="miniaturas">
-
             {imagenes.map((img, i) => (
-
               <img
                 key={i}
                 src={img.imagen}
@@ -158,9 +143,7 @@ export default function DetalleProducto() {
                 className={i === imagenIndex ? "activa" : ""}
                 onClick={() => setImagenIndex(i)}
               />
-
             ))}
-
           </div>
 
         </div>
@@ -180,70 +163,38 @@ export default function DetalleProducto() {
             {formatCOP(producto.precio)}
           </p>
 
+          {/* COLORES — debajo del precio */}
+          {producto.colores?.length > 0 && (
+            <div className="colores">
+              {producto.colores.map((color, i) => (
+                <button
+                  key={i}
+                  className={`color-circle ${
+                    colorSeleccionado?.nombre === color.nombre ? "activo" : ""
+                  }`}
+                  style={{ background: color.codigo_hex || "#ccc" }}
+                  title={color.nombre}
+                  onClick={() => seleccionarColor(color)}
+                />
+              ))}
+            </div>
+          )}
+
           <p className="descripcion">
             {producto.descripcion}
           </p>
 
-
-          {/* COLORES */}
-
-          {producto.colores?.length > 0 && (
-
-            <div className="colores-box">
-
-              <span className="label">
-                Colores disponibles
-              </span>
-
-              <div className="colores">
-
-                {producto.colores.map((color, i) => (
-
-                  <button
-                    key={i}
-                    className={`color-circle ${
-                      colorSeleccionado?.nombre === color.nombre
-                        ? "activo"
-                        : ""
-                    }`}
-                    style={{
-                      background: color.codigo_hex || "#ccc"
-                    }}
-                    title={color.nombre}
-                    onClick={() => seleccionarColor(color)}
-                  />
-
-                ))}
-
-              </div>
-
-            </div>
-
-          )}
-
-
           {/* CANTIDAD */}
 
           <div className="cantidad-box">
-
-            <button
-              onClick={() =>
-                setCantidad(Math.max(1, cantidad - 1))
-              }
-            >
+            <button onClick={() => setCantidad(Math.max(1, cantidad - 1))}>
               −
             </button>
-
             <span>{cantidad}</span>
-
-            <button
-              onClick={() => setCantidad(cantidad + 1)}
-            >
+            <button onClick={() => setCantidad(cantidad + 1)}>
               +
             </button>
-
           </div>
-
 
           {/* BOTÓN CARRITO */}
 
@@ -252,30 +203,20 @@ export default function DetalleProducto() {
             onClick={handleAdd}
             disabled={producto.stock === 0}
           >
-            {producto.stock === 0
-              ? "Producto agotado"
-              : "Añadir al carrito"}
+            {producto.stock === 0 ? "Producto agotado" : "Añadir al carrito"}
           </button>
 
-
-          {/* REALIDAD AUMENTADA */}
-
           {producto.modelo_glb && (
-
             <>
               <button
                 className="btn-secondary"
                 onClick={() => setMostrarAR(!mostrarAR)}
               >
-                {mostrarAR
-                  ? "Ocultar modelo 3D"
-                  : "Ver en realidad aumentada"}
+                {mostrarAR ? "Ocultar modelo 3D" : "Ver en realidad aumentada"}
               </button>
 
               {mostrarAR && (
-
                 <div className="visor-ar">
-
                   <model-viewer
                     src={producto.modelo_glb}
                     alt={producto.nombre}
@@ -285,36 +226,21 @@ export default function DetalleProducto() {
                     auto-rotate
                     shadow-intensity="1"
                   />
-
                 </div>
-
               )}
-
             </>
-
           )}
 
         </div>
 
       </div>
 
-
       {/* FULLSCREEN */}
 
       {fullscreen && (
-
-        <div
-          className="fullscreen"
-          onClick={() => setFullscreen(false)}
-        >
-
-          <img
-            src={imagenActiva}
-            alt="fullscreen"
-          />
-
+        <div className="fullscreen" onClick={() => setFullscreen(false)}>
+          <img src={imagenActiva} alt="fullscreen" />
         </div>
-
       )}
 
     </div>
@@ -322,3 +248,202 @@ export default function DetalleProducto() {
   );
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
