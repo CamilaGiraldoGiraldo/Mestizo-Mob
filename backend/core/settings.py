@@ -16,6 +16,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.156.17.132']
 
 AUTH_USER_MODEL = 'usuario.Usuario'
+
 # ==========================
 # APPLICATIONS
 # ==========================
@@ -42,6 +43,7 @@ LOCAL_APPS = [
 
 THIRD_APPS = [
     'rest_framework',
+    'rest_framework.authtoken',   # ← AGREGADO
     'django_filters',
     'corsheaders',
     'cloudinary',
@@ -53,11 +55,11 @@ INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
 
 
 # ==========================
-# MIDDLEWARE (CORS ARRIBA 🔥)
+# MIDDLEWARE (CORS ARRIBA)
 # ==========================
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # 🔥 Debe ir primero
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -73,12 +75,6 @@ MIDDLEWARE = [
 # ==========================
 
 CORS_ALLOW_ALL_ORIGINS = True
-
-# Si luego quieres restringir:
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://192.168.1.2:3000",
-# ]
 
 
 # ==========================
@@ -119,6 +115,7 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
 # ==========================
 # CLOUDINARY CONFIG
 # ==========================
@@ -181,8 +178,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # ==========================
-# AUTH USER
+# EMAIL CONFIG
 # ==========================
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 465
@@ -195,8 +193,10 @@ DEFAULT_FROM_EMAIL = 'Mestizo Mobiliario <mariacamilagiraldogiraldo1214@gmail.co
 EMAIL_SSL_CONTEXT = ssl.create_default_context()
 EMAIL_SSL_CONTEXT.check_hostname = False
 EMAIL_SSL_CONTEXT.verify_mode = ssl.CERT_NONE
+
+
 # ==========================
-# DRF CONFIGc
+# DRF CONFIG
 # ==========================
 
 REST_FRAMEWORK = {
@@ -209,6 +209,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
-    ]
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [   # ← AGREGADO
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 }
-

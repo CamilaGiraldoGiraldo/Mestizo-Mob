@@ -1,66 +1,153 @@
-.cita-container{
-max-width:520px;
-margin:60px auto;
-padding:35px;
-background:#ffffff;
-border-radius:12px;
-box-shadow:0 10px 30px rgba(0,0,0,0.08);
+/* ── Existing styles ──────────────────────────────────────── */
+.cita-container {
+    max-width: 520px;
+    margin: 60px auto;
+    padding: 35px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-.cita-container h2{
-text-align:center;
-margin-bottom:25px;
-font-size:26px;
+.cita-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 26px;
 }
 
-.cita-form{
-display:flex;
-flex-direction:column;
-gap:14px;
+.cita-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
 }
 
 .cita-form input,
-.cita-form textarea{
-
-padding:12px;
-border-radius:6px;
-border:1px solid #dcdcdc;
-font-size:14px;
-transition:all .25s;
-
+.cita-form textarea {
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #dcdcdc;
+    font-size: 14px;
+    transition: all 0.25s;
 }
 
 .cita-form input:focus,
-.cita-form textarea:focus{
-
-outline:none;
-border-color:#000;
-
+.cita-form textarea:focus {
+    outline: none;
+    border-color: #000;
 }
 
-.cita-form textarea{
-
-height:90px;
-resize:none;
-
+.cita-form textarea {
+    height: 90px;
+    resize: none;
 }
 
-.cita-form button{
-
-margin-top:10px;
-padding:14px;
-border:none;
-background:black;
-color:white;
-font-size:15px;
-border-radius:6px;
-cursor:pointer;
-transition:all .3s;
-
+.cita-form button {
+    margin-top: 10px;
+    padding: 14px;
+    border: none;
+    background: black;
+    color: white;
+    font-size: 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-.cita-form button:hover{
+.cita-form button:hover {
+    background: #333;
+}
 
-background:#333;
+/* ── Toast notifications ──────────────────────────────────── */
+.toast-wrapper {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 9999;
+    pointer-events: none;
+}
 
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 280px;
+    max-width: 380px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    pointer-events: all;
+    position: relative;
+    overflow: hidden;
+
+    /* entrada */
+    animation: toast-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.toast--success {
+    background: #1a1a1a;
+}
+
+.toast--error {
+    background: #c0392b;
+}
+
+.toast--info {
+    background: #2c3e50;
+}
+
+.toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.toast-msg {
+    flex: 1;
+    line-height: 1.4;
+}
+
+/* barra de progreso en la parte inferior */
+.toast-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.4);
+    transform-origin: left;
+    animation: toast-bar 4s linear forwards;
+}
+
+@keyframes toast-in {
+    from {
+        opacity: 0;
+        transform: translateX(60px) scale(0.92);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes toast-bar {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
 }

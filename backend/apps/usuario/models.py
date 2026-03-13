@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 
 class ManageUsuario(BaseUserManager):
-    def create_user(self, identificacion, nombre, primerApellido, segundoApellido, correo, telefono, password, direccion, **krows):
+    def create_user(self, identificacion, nombre, primerApellido, segundoApellido, correo, telefono, password, **krows):
         usuario = self.model(
             identificacion=identificacion,
             nombre=nombre,
@@ -21,7 +21,7 @@ class ManageUsuario(BaseUserManager):
         usuario.save(using=self._db)
         return usuario
 
-    def create_superuser(self, identificacion, nombre, primerApellido, segundoApellido, correo, telefono, password, direccion, **krows):
+    def create_superuser(self, identificacion, nombre, primerApellido, segundoApellido, correo, telefono, password, **krows):
         usuario = self.model(
             identificacion=identificacion,
             nombre=nombre,
@@ -39,6 +39,7 @@ class ManageUsuario(BaseUserManager):
         usuario.save(using=self._db)
         return usuario
 
+
 class Usuario(AbstractBaseUser, PermissionsMixin):
     identificacion = models.CharField(primary_key=True, max_length=12, unique=True)
     nombre = models.CharField(max_length=50)
@@ -51,7 +52,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
 
-    # Sobrescribimos los campos de PermissionsMixin con related_name únicos
     groups = models.ManyToManyField(
         Group,
         related_name="usuario_users",
@@ -67,7 +67,8 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     )
 
     USERNAME_FIELD = 'correo'
-    REQUIRED_FIELDS = ['identificacion','nombre', 'primerApellido', 'segundoApellido', 'telefono', 'direccion']
+    REQUIRED_FIELDS = ['identificacion', 'nombre', 'primerApellido', 'segundoApellido', 'telefono']
+    #                   ↑ se eliminó 'direccion' porque no existe como campo en el modelo
 
     objects = ManageUsuario()
 

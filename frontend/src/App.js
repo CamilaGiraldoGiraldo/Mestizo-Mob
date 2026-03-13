@@ -15,6 +15,7 @@ import CartToast from "./components/ui/CartToast";
 import AgendarCita from "./components/citas/AgendarCita";
 
 import { CartProvider, useCart } from "./context/CartContext";
+import { AuthProvider } from "./context/AuthContext";
 
 import "./App.css";
 
@@ -34,13 +35,8 @@ function AppContent() {
       {!hideHeader && <Header />}
 
       <Routes>
-        {/* Intro sin contenedor */}
         <Route path="/" element={<Intro />} />
-
-        {/* Landing */}
         <Route path="/landing" element={<Landing />} />
-
-        {/* Productos */}
         <Route
           path="/productos"
           element={
@@ -49,8 +45,6 @@ function AppContent() {
             </main>
           }
         />
-
-        {/* Detalle producto */}
         <Route
           path="/producto/:id"
           element={
@@ -59,8 +53,6 @@ function AppContent() {
             </main>
           }
         />
-
-        {/* Agendar cita */}
         <Route
           path="/cita"
           element={
@@ -76,11 +68,13 @@ function AppContent() {
 
 function App() {
   return (
-    <CartProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 
