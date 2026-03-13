@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import categorias
+from .models import Categoria  # ← C mayúscula
 
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = categorias
+        model = Categoria  # ← C mayúscula
         fields = '__all__'

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FiShoppingCart, FiUser, FiX, FiLogOut } from "react-icons/fi";
 import logo from "../../assets/logo.png";
 import { useCart } from "../../context/CartContext";
@@ -8,7 +8,7 @@ import CartDrawer from "../cart/CartDrawer";
 import "./Header.css";
 
 // ── Modal de Login ───────────────────────────────────────────
-function LoginModal({ onClose }) {
+function LoginModal({ onClose, onLoginSuccess }) {
   const { login } = useAuth();
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
@@ -21,7 +21,7 @@ function LoginModal({ onClose }) {
     setLoading(true);
     try {
       await login(correo, contrasena);
-      onClose();
+      onLoginSuccess();
     } catch (err) {
       setError(err.message || "Error al iniciar sesión.");
     } finally {
@@ -32,14 +32,10 @@ function LoginModal({ onClose }) {
   return (
     <div className="login-overlay" onClick={onClose}>
       <div className="login-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="login-close" onClick={onClose}>
-          <FiX />
-        </button>
+        <button className="login-close" onClick={onClose}><FiX /></button>
 
         <div className="login-header">
-          <div className="login-avatar-icon">
-            <FiUser />
-          </div>
+          <div className="login-avatar-icon"><FiUser /></div>
           <h2>Iniciar sesión</h2>
           <p>Accede a tu cuenta</p>
         </div>
@@ -56,7 +52,6 @@ function LoginModal({ onClose }) {
               autoFocus
             />
           </div>
-
           <div className="login-field">
             <label>Contraseña</label>
             <input
@@ -82,10 +77,12 @@ function LoginModal({ onClose }) {
 // ── Dropdown usuario logueado ────────────────────────────────
 function UserDropdown({ user, onClose }) {
   const { logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     onClose();
+    navigate("/landing");
   };
 
   return (
@@ -95,6 +92,14 @@ function UserDropdown({ user, onClose }) {
         <span className="user-dropdown-email">{user.correo}</span>
       </div>
       <hr className="user-dropdown-divider" />
+      {(user.is_staff || user.is_superuser) && (
+        <button
+          className="user-dropdown-admin"
+          onClick={() => { navigate("/admin"); onClose(); }}
+        >
+          ⚙ Panel de administración
+        </button>
+      )}
       <button className="user-dropdown-logout" onClick={handleLogout}>
         <FiLogOut /> Cerrar sesión
       </button>
@@ -111,15 +116,24 @@ export default function Header() {
 
   const { cart } = useCart();
   const { user, isLoggedIn } = useAuth();
+  const navigate = useNavigate();
 
   const totalItems = cart.reduce((acc, item) => acc + item.cantidad, 0);
+
+  const handleLoginSuccess = () => {
+    setLoginOpen(false);
+    // Redirige al admin si es staff/superuser
+    const stored = JSON.parse(localStorage.getItem("auth_user") || "{}");
+    if (stored.is_staff || stored.is_superuser) {
+      navigate("/admin");
+    }
+  };
 
   return (
     <>
       <header className="header">
         <nav className="nav-container">
 
-          {/* IZQUIERDA - LINKS */}
           <div className={`nav-links ${menuOpen ? "open" : ""}`}>
             <Link to="/productos" onClick={() => setMenuOpen(false)}>PRODUCTOS</Link>
             <Link to="/cita" onClick={() => setMenuOpen(false)}>AGENDA UNA CITA</Link>
@@ -127,7 +141,6 @@ export default function Header() {
             <Link to="/visitanos" onClick={() => setMenuOpen(false)}>VISÍTANOS</Link>
           </div>
 
-          {/* DERECHA */}
           <div className="right-section">
 
             {/* USUARIO */}
@@ -135,11 +148,8 @@ export default function Header() {
               <button
                 className="user-btn"
                 onClick={() => {
-                  if (isLoggedIn) {
-                    setUserDropOpen((o) => !o);
-                  } else {
-                    setLoginOpen(true);
-                  }
+                  if (isLoggedIn) setUserDropOpen((o) => !o);
+                  else setLoginOpen(true);
                 }}
                 title={isLoggedIn ? user.nombre : "Iniciar sesión"}
               >
@@ -155,9 +165,7 @@ export default function Header() {
             {/* CARRITO */}
             <div className="cart-container" onClick={() => setCartOpen(true)}>
               <FiShoppingCart className="cart-icon" />
-              {totalItems > 0 && (
-                <span className="cart-badge">{totalItems}</span>
-              )}
+              {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
             </div>
 
             {/* HAMBURGUESA */}
@@ -165,9 +173,7 @@ export default function Header() {
               className={`hamburger ${menuOpen ? "active" : ""}`}
               onClick={() => setMenuOpen(!menuOpen)}
             >
-              <span></span>
-              <span></span>
-              <span></span>
+              <span></span><span></span><span></span>
             </div>
 
             {/* LOGO */}
@@ -180,8 +186,12 @@ export default function Header() {
       </header>
 
       <CartDrawer isOpen={cartOpen} close={() => setCartOpen(false)} />
-
-      {loginOpen && <LoginModal onClose={() => setLoginOpen(false)} />}
+      {loginOpen && (
+        <LoginModal
+          onClose={() => setLoginOpen(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      )}
     </>
   );
 }
