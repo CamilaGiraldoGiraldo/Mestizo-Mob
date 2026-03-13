@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+import ssl
 import cloudinary
 from pathlib import Path
 
@@ -14,7 +15,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.156.17.132']
 
-
+AUTH_USER_MODEL = 'usuario.Usuario'
 # ==========================
 # APPLICATIONS
 # ==========================
@@ -118,7 +119,7 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-4# ==========================
+# ==========================
 # CLOUDINARY CONFIG
 # ==========================
 
@@ -182,21 +183,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # ==========================
 # AUTH USER
 # ==========================
-
-AUTH_USER_MODEL = 'usuario.Usuario'
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'mariacamilagiraldogiraldo1214@gmail.com'
+EMAIL_HOST_PASSWORD = 'vzhn qxxs qowd ylhm'
+DEFAULT_FROM_EMAIL = 'Mestizo Mobiliario <mariacamilagiraldogiraldo1214@gmail.com>'
 
-EMAIL_HOST_USER = 'mariacamilagiralgiraldo1214@gmail.com'
-EMAIL_HOST_PASSWORD = 'onbv arcg gimm vvol'
-
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
+EMAIL_SSL_CONTEXT = ssl.create_default_context()
+EMAIL_SSL_CONTEXT.check_hostname = False
+EMAIL_SSL_CONTEXT.verify_mode = ssl.CERT_NONE
 # ==========================
-# DRF CONFIG
+# DRF CONFIGc
 # ==========================
 
 REST_FRAMEWORK = {
@@ -208,8 +208,7 @@ REST_FRAMEWORK = {
         'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
-    ],
-
-
+        'rest_framework.permissions.AllowAny',
+    ]
 }
+

@@ -3,202 +3,210 @@ import "./AgendarCita.css";
 
 const AgendarCita = () => {
 
-const [form, setForm] = useState({
-identificacion:"",
-nombre:"",
-primerApellido:"",
-segundoApellido:"",
-correo:"",
-telefono:"",
-direccion:"",
-fecha:"",
-hora:"",
-descripcion:""
-});
+  const [form, setForm] = useState({
+    identificacion: "",
+    nombre: "",
+    primerApellido: "",
+    segundoApellido: "",
+    correo: "",
+    telefono: "",
+    direccion: "",
+    fecha: "",
+    hora: "",
+    descripcion: ""
+  });
 
-const handleChange = (e) => {
+  const handleChange = (e) => {
 
-setForm({
-...form,
-[e.target.name]: e.target.value
-});
+    const { name, value } = e.target;
 
-};
+    setForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
 
-const buscarUsuario = async (correo) => {
+  };
 
-if(!correo) return;
+  const buscarUsuario = async (id) => {
 
-try{
+    if (!id) return;
 
-const res = await fetch(`http://127.0.0.1:8000/api/citas/buscar-usuario/?correo=${correo}`);
+    try {
 
-if(res.ok){
+      const res = await fetch(`http://127.0.0.1:8000/api/citas/buscar-usuario/?identificacion=${id}`);
 
-const data = await res.json();
+      if (!res.ok) return;
 
-setForm({
-...form,
-...data
-});
+      const data = await res.json();
 
-}
+      if (data && data.nombre) {
 
-}catch(error){
+        setForm(prev => ({
+          ...prev,
+          nombre: data.nombre || "",
+          primerApellido: data.primerApellido || "",
+          segundoApellido: data.segundoApellido || "",
+          correo: data.correo || "",
+          telefono: data.telefono || "",
+          direccion: data.direccion || ""
+        }));
 
-console.log(error);
+      }
 
-}
+    } catch (error) {
 
-};
+      console.error("Error buscando usuario:", error);
 
-const enviarCita = async (e) => {
+    }
 
-e.preventDefault();
+  };
 
-try{
+  const enviarCita = async (e) => {
 
-const response = await fetch("http://127.0.0.1:8000/api/citas/",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify(form)
-});
+    e.preventDefault();
 
-if(response.ok){
+    try {
 
-alert("Cita registrada correctamente");
+      const res = await fetch("http://127.0.0.1:8000/api/citas/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(form)
+      });
 
-setForm({
-identificacion:"",
-nombre:"",
-primerApellido:"",
-segundoApellido:"",
-correo:"",
-telefono:"",
-direccion:"",
-fecha:"",
-hora:"",
-descripcion:""
-});
+      const data = await res.json();
 
-}else{
+      if (!res.ok) {
 
-alert("Error al registrar cita");
+        console.log("Error backend:", data);
+        alert("Error al registrar cita: " + JSON.stringify(data));
+        return;
 
-}
+      }
 
-}catch(error){
+      alert("Cita registrada correctamente");
 
-console.log(error);
+      setForm({
+        identificacion: "",
+        nombre: "",
+        primerApellido: "",
+        segundoApellido: "",
+        correo: "",
+        telefono: "",
+        direccion: "",
+        fecha: "",
+        hora: "",
+        descripcion: ""
+      });
 
-}
+    } catch (error) {
 
-};
+      console.error("Error conexión:", error);
+      alert("No se pudo conectar con el servidor");
 
-return (
+    }
 
-<div className="cita-container">
+  };
 
-<h2>Agendar Cita</h2>
+  return (
 
-<form className="cita-form" onSubmit={enviarCita}>
+    <div className="cita-container">
 
-<input
-type="email"
-name="correo"
-placeholder="Correo"
-value={form.correo}
-onChange={handleChange}
-onBlur={(e)=>buscarUsuario(e.target.value)}
-required
-/>
+      <h2>Agendar cita</h2>
 
-<input
-type="text"
-name="identificacion"
-placeholder="Identificación"
-value={form.identificacion}
-onChange={handleChange}
-required
-/>
+      <form onSubmit={enviarCita} className="cita-form">
 
-<input
-type="text"
-name="nombre"
-placeholder="Nombre"
-value={form.nombre}
-onChange={handleChange}
-required
-/>
+        <input
+          name="identificacion"
+          placeholder="Identificación"
+          value={form.identificacion}
+          onChange={(e) => {
+            handleChange(e);
+            buscarUsuario(e.target.value);
+          }}
+          required
+        />
 
-<input
-type="text"
-name="primerApellido"
-placeholder="Primer apellido"
-value={form.primerApellido}
-onChange={handleChange}
-required
-/>
+        <input
+          name="nombre"
+          placeholder="Nombre"
+          value={form.nombre}
+          onChange={handleChange}
+          required
+        />
 
-<input
-type="text"
-name="segundoApellido"
-placeholder="Segundo apellido"
-value={form.segundoApellido}
-onChange={handleChange}
-/>
+        <input
+          name="primerApellido"
+          placeholder="Primer apellido"
+          value={form.primerApellido}
+          onChange={handleChange}
+          required
+        />
 
-<input
-type="text"
-name="telefono"
-placeholder="Teléfono"
-value={form.telefono}
-onChange={handleChange}
-required
-/>
+        <input
+          name="segundoApellido"
+          placeholder="Segundo apellido"
+          value={form.segundoApellido}
+          onChange={handleChange}
+        />
 
-<input
-type="text"
-name="direccion"
-placeholder="Dirección"
-value={form.direccion}
-onChange={handleChange}
-/>
+        <input
+          name="correo"
+          type="email"
+          placeholder="Correo"
+          value={form.correo}
+          onChange={handleChange}
+          required
+        />
 
-<input
-type="date"
-name="fecha"
-value={form.fecha}
-onChange={handleChange}
-required
-/>
+        <input
+          name="telefono"
+          placeholder="Teléfono"
+          value={form.telefono}
+          onChange={handleChange}
+          required
+        />
 
-<input
-type="time"
-name="hora"
-value={form.hora}
-onChange={handleChange}
-required
-/>
+        <input
+          name="direccion"
+          placeholder="Dirección"
+          value={form.direccion}
+          onChange={handleChange}
+        />
 
-<textarea
-name="descripcion"
-placeholder="Descripción"
-value={form.descripcion}
-onChange={handleChange}
-/>
+        <input
+          name="fecha"
+          type="date"
+          value={form.fecha}
+          onChange={handleChange}
+          required
+        />
 
-<button type="submit">
-Agendar Cita
-</button>
+        <input
+          name="hora"
+          type="time"
+          value={form.hora}
+          onChange={handleChange}
+          required
+        />
 
-</form>
+        <textarea
+          name="descripcion"
+          placeholder="Motivo de la cita"
+          value={form.descripcion}
+          onChange={handleChange}
+        />
 
-</div>
+        <button type="submit">
+          Agendar cita
+        </button>
 
-);
+      </form>
+
+    </div>
+
+  );
 
 };
 
