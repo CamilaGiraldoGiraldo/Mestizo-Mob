@@ -10,7 +10,6 @@ const AgendarCita = () => {
     segundoApellido: "",
     correo: "",
     telefono: "",
-    direccion: "",
     fecha: "",
     hora: "",
     descripcion: ""
@@ -47,8 +46,7 @@ const AgendarCita = () => {
           primerApellido: data.primerApellido || "",
           segundoApellido: data.segundoApellido || "",
           correo: data.correo || "",
-          telefono: data.telefono || "",
-          direccion: data.direccion || ""
+          telefono: data.telefono || ""
         }));
 
       }
@@ -94,7 +92,6 @@ const AgendarCita = () => {
         segundoApellido: "",
         correo: "",
         telefono: "",
-        direccion: "",
         fecha: "",
         hora: "",
         descripcion: ""
@@ -166,13 +163,6 @@ const AgendarCita = () => {
           value={form.telefono}
           onChange={handleChange}
           required
-        />
-
-        <input
-          name="direccion"
-          placeholder="Dirección"
-          value={form.direccion}
-          onChange={handleChange}
         />
 
         <input

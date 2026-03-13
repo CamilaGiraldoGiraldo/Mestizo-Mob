@@ -10,7 +10,6 @@ class ManageUsuario(BaseUserManager):
             primerApellido=primerApellido,
             segundoApellido=segundoApellido,
             telefono=telefono,
-            direccion=direccion,
             is_staff=False,
             is_superuser=False,
             is_active=True,
@@ -29,7 +28,6 @@ class ManageUsuario(BaseUserManager):
             primerApellido=primerApellido,
             segundoApellido=segundoApellido,
             telefono=telefono,
-            direccion=direccion,
             is_staff=True,
             is_superuser=True,
             is_active=True,
@@ -48,7 +46,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     segundoApellido = models.CharField(max_length=40)
     correo = models.EmailField(unique=True)
     telefono = models.CharField(max_length=10)
-    direccion = models.TextField()
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)

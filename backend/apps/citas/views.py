@@ -40,7 +40,6 @@ class CitaCreateView(APIView):
                         segundoApellido=data.get("segundoApellido"),
                         correo=data.get("correo"),
                         telefono=data.get("telefono"),
-                        direccion=data.get("direccion"),
                         password="Temporal123"
                     )
 
@@ -55,7 +54,6 @@ class CitaCreateView(APIView):
                 serializer = CitaSerializer(cita)
                 response_data = serializer.data
 
-            # Correo al cliente — FUERA del transaction
             try:
                 send_mail(
                     "Solicitud recibida – Mestizo Mobiliario",
@@ -99,7 +97,6 @@ Cliente:        {usuario.nombre} {usuario.primerApellido} {usuario.segundoApelli
 Identificación: {usuario.identificacion}
 Correo:         {usuario.correo}
 Teléfono:       {usuario.telefono}
-Dirección:      {usuario.direccion}
 
 Fecha solicitada: {cita.fecha}
 Hora solicitada:  {cita.hora}
@@ -146,7 +143,6 @@ def buscar_usuario(request):
         "segundoApellido": usuario.segundoApellido,
         "correo": usuario.correo,
         "telefono": usuario.telefono,
-        "direccion": usuario.direccion
     }
 
     return Response(data)
