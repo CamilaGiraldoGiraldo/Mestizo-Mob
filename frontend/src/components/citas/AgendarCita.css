@@ -1,47 +1,66 @@
-.cita-container {
-    width: 100%;
-    max-width: 500px;
-    margin: 50px auto;
-    padding: 30px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.cita-container{
+max-width:520px;
+margin:60px auto;
+padding:35px;
+background:#ffffff;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.08);
 }
 
-.cita-container h2 {
-    text-align: center;
-    margin-bottom: 20px;
+.cita-container h2{
+text-align:center;
+margin-bottom:25px;
+font-size:26px;
 }
 
-.cita-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+.cita-form{
+display:flex;
+flex-direction:column;
+gap:14px;
 }
 
 .cita-form input,
-.cita-form textarea {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
+.cita-form textarea{
+
+padding:12px;
+border-radius:6px;
+border:1px solid #dcdcdc;
+font-size:14px;
+transition:all .25s;
+
 }
 
-.cita-form textarea {
-    resize: none;
-    height: 80px;
+.cita-form input:focus,
+.cita-form textarea:focus{
+
+outline:none;
+border-color:#000;
+
 }
 
-.cita-form button {
-    background-color: #000;
-    color: white;
-    border: none;
-    padding: 12px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+.cita-form textarea{
+
+height:90px;
+resize:none;
+
 }
 
-.cita-form button:hover {
-    background-color: #333;
+.cita-form button{
+
+margin-top:10px;
+padding:14px;
+border:none;
+background:black;
+color:white;
+font-size:15px;
+border-radius:6px;
+cursor:pointer;
+transition:all .3s;
+
+}
+
+.cita-form button:hover{
+
+background:#333;
+
 }

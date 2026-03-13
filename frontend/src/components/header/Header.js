@@ -4,7 +4,7 @@ import { FiShoppingCart } from "react-icons/fi";
 import logo from "../../assets/logo.png";
 import { useCart } from "../../context/CartContext";
 import CartDrawer from "../cart/CartDrawer";
-import "./header.css";
+import "./Header.css";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);

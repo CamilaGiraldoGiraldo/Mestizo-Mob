@@ -1,8 +1,9 @@
 from django.db import models
 
 class Cita(models.Model):
-    # Usamos 'usuario.Usuario' — app_label.ModelName
+
     usuario = models.ForeignKey('usuario.Usuario', on_delete=models.CASCADE)
+
     fecha = models.DateField()
     hora = models.TimeField()
     descripcion = models.TextField(blank=True, null=True)
