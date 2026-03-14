@@ -11,9 +11,12 @@ class ImagenProducto(models.Model):
         on_delete=models.CASCADE
     )
 
-    imagen = CloudinaryField('imagen')
+    imagen = CloudinaryField(
+        "imagen",
+        resource_type="image"
+    )
 
     orden = models.IntegerField(default=1)
 
     def __str__(self):
-        return f"{self.color.nombre}"
+        return f"{self.color.nombre} - {self.orden}"
