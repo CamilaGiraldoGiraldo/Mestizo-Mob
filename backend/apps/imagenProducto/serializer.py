@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import ImagenProducto
+from cloudinary.utils import cloudinary_url
 
 
 class ImagenProductoSerializer(serializers.ModelSerializer):
@@ -15,7 +16,3 @@ class ImagenProductoSerializer(serializers.ModelSerializer):
             "orden"
         ]
 
-    def get_imagen(self, obj):
-        if obj.imagen:
-            return obj.imagen.url
-        return None
