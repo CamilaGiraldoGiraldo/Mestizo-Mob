@@ -2,13 +2,16 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 from django.utils import timezone
 
+
 class ManageUsuario(BaseUserManager):
+
     def create_user(self, identificacion, nombre, primerApellido, segundoApellido, correo, telefono, password, **krows):
         usuario = self.model(
             identificacion=identificacion,
             nombre=nombre,
             primerApellido=primerApellido,
             segundoApellido=segundoApellido,
+            correo=self.normalize_email(correo),
             telefono=telefono,
             is_staff=False,
             is_superuser=False,
@@ -17,7 +20,6 @@ class ManageUsuario(BaseUserManager):
             **krows
         )
         usuario.set_password(password)
-        usuario.correo = self.normalize_email(correo)
         usuario.save(using=self._db)
         return usuario
 
@@ -27,6 +29,7 @@ class ManageUsuario(BaseUserManager):
             nombre=nombre,
             primerApellido=primerApellido,
             segundoApellido=segundoApellido,
+            correo=self.normalize_email(correo),
             telefono=telefono,
             is_staff=True,
             is_superuser=True,
@@ -35,7 +38,6 @@ class ManageUsuario(BaseUserManager):
             **krows
         )
         usuario.set_password(password)
-        usuario.correo = self.normalize_email(correo)
         usuario.save(using=self._db)
         return usuario
 
@@ -68,7 +70,6 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'correo'
     REQUIRED_FIELDS = ['identificacion', 'nombre', 'primerApellido', 'segundoApellido', 'telefono']
-    #                   ↑ se eliminó 'direccion' porque no existe como campo en el modelo
 
     objects = ManageUsuario()
 
