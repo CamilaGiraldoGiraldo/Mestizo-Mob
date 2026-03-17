@@ -60,7 +60,7 @@ const Thumb = ({ src, size = 48, radius = 6 }) => {
     return (
       <div style={{
         width: size, height: size, borderRadius: radius,
-        background: "#1a1e25", border: "1px dashed rgba(255,255,255,0.1)",
+        background: "#ede9e0", border: "1px dashed rgba(75,77,82,0.2)",
         display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
       }}>
         <span style={{ fontSize: size * 0.35, opacity: 0.3 }}>🖼</span>
@@ -70,7 +70,7 @@ const Thumb = ({ src, size = 48, radius = 6 }) => {
   return (
     <img src={src} onError={() => setErr(true)} style={{
       width: size, height: size, borderRadius: radius,
-      objectFit: "cover", border: "1px solid rgba(255,255,255,0.08)",
+      objectFit: "cover", border: "1px solid rgba(75,77,82,0.12)",
       flexShrink: 0, display: "block",
     }} />
   );
@@ -78,9 +78,9 @@ const Thumb = ({ src, size = 48, radius = 6 }) => {
 
 /* ─── Badge de estado ────────────────────────────────────── */
 const ESTADO_COLORS = {
-  pendiente: { bg: "rgba(232,197,71,0.15)", border: "rgba(232,197,71,0.4)", color: "#e8c547" },
-  confirmada: { bg: "rgba(76,175,125,0.15)", border: "rgba(76,175,125,0.4)", color: "#4caf7d" },
-  cancelada: { bg: "rgba(224,84,84,0.15)", border: "rgba(224,84,84,0.4)", color: "#e05454" },
+  pendiente: { bg: "rgba(227,173,87,0.15)", border: "rgba(227,173,87,0.4)", color: "#7A744D" },
+  confirmada: { bg: "rgba(90,122,77,0.12)", border: "rgba(90,122,77,0.35)", color: "#5a7a4d" },
+  cancelada: { bg: "rgba(146,70,33,0.12)", border: "rgba(146,70,33,0.35)", color: "#924621" },
 };
 
 const EstadoBadge = ({ estado }) => {
@@ -124,30 +124,30 @@ const LoginScreen = ({ onLogin }) => {
   return (
     <div style={{
       minHeight: "100vh", display: "flex", alignItems: "center",
-      justifyContent: "center", background: "#0d0f12",
+      justifyContent: "center", background: "#f4f2ee",
       fontFamily: "'DM Sans', sans-serif",
     }}>
       <style>{`@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap');`}</style>
       <form onSubmit={handleSubmit} style={{
-        background: "#13161b", border: "1px solid rgba(255,255,255,0.07)",
+        background: "#fff", border: "1px solid rgba(75,77,82,0.12)",
         borderRadius: 12, padding: "40px 36px", width: "100%", maxWidth: 380,
-        margin: "0 16px", boxShadow: "0 12px 40px rgba(0,0,0,0.6)",
+        margin: "0 16px", boxShadow: "0 12px 40px rgba(75,77,82,0.14)",
       }}>
         <div style={{ marginBottom: 32 }}>
           <div style={{
             fontFamily: "'DM Mono', monospace", fontSize: 11,
             letterSpacing: "0.14em", textTransform: "uppercase",
-            color: "#e8c547", marginBottom: 10, display: "flex", alignItems: "center", gap: 8,
+            color: "#924621", marginBottom: 10, display: "flex", alignItems: "center", gap: 8,
           }}>
-            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#e8c547", boxShadow: "0 0 8px #e8c547", display: "inline-block" }} />
+            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#E3AD57", boxShadow: "0 0 8px rgba(227,173,87,0.5)", display: "inline-block" }} />
             Panel de administración
           </div>
-          <h2 style={{ fontSize: 22, fontWeight: 600, color: "#e8eaf0", margin: 0 }}>Iniciar sesión</h2>
+          <h2 style={{ fontSize: 22, fontWeight: 600, color: "#4B4D52", margin: 0 }}>Iniciar sesión</h2>
         </div>
         {error && (
           <div style={{
-            background: "rgba(224,84,84,0.1)", border: "1px solid rgba(224,84,84,0.3)",
-            color: "#e05454", padding: "10px 14px", borderRadius: 8,
+            background: "rgba(146,70,33,0.08)", border: "1px solid rgba(146,70,33,0.3)",
+            color: "#924621", padding: "10px 14px", borderRadius: 8,
             fontSize: 13, marginBottom: 20, lineHeight: 1.5,
           }}>{error}</div>
         )}
@@ -156,19 +156,20 @@ const LoginScreen = ({ onLogin }) => {
           { label: "Contraseña", type: "password", val: contrasena, set: setContrasena, placeholder: "••••••••" },
         ].map(({ label, type, val, set, placeholder }) => (
           <div key={label} style={{ marginBottom: 16 }}>
-            <label style={{ display: "block", fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#4a4f5e", marginBottom: 6 }}>{label}</label>
+            <label style={{ display: "block", fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: "0.08em", textTransform: "uppercase", color: "#878787", marginBottom: 6 }}>{label}</label>
             <input type={type} value={val} onChange={(e) => set(e.target.value)} placeholder={placeholder} required
-              style={{ width: "100%", padding: "11px 14px", background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 8, color: "#e8eaf0", fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
-              onFocus={(e) => e.target.style.borderColor = "rgba(232,197,71,0.4)"}
-              onBlur={(e) => e.target.style.borderColor = "rgba(255,255,255,0.07)"}
+              style={{ width: "100%", padding: "11px 14px", background: "#faf9f7", border: "1px solid rgba(75,77,82,0.15)", borderRadius: 8, color: "#4B4D52", fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none" }}
+              onFocus={(e) => e.target.style.borderColor = "rgba(227,173,87,0.5)"}
+              onBlur={(e) => e.target.style.borderColor = "rgba(75,77,82,0.15)"}
             />
           </div>
         ))}
         <button type="submit" disabled={loading} style={{
           width: "100%", marginTop: 8, padding: "12px 0",
-          background: loading ? "#a08830" : "#e8c547", color: "#0d0f12",
+          background: loading ? "#b5763f" : "#924621", color: "#fff",
           border: "none", borderRadius: 8, fontSize: 14, fontWeight: 600,
           fontFamily: "'DM Sans', sans-serif", cursor: loading ? "not-allowed" : "pointer",
+          transition: "all 0.15s",
         }}>
           {loading ? "Conectando…" : "Entrar al panel"}
         </button>
@@ -179,26 +180,26 @@ const LoginScreen = ({ onLogin }) => {
 
 /* ─── Estilos inline formulario producto ─────────────────── */
 const DJ = {
-  page: { fontFamily: "'DM Sans', sans-serif", fontSize: 13.5, color: "#e8eaf0" },
-  fieldRow: { display: "flex", alignItems: "flex-start", borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "12px 0" },
-  fieldLabel: { width: 180, minWidth: 180, fontFamily: "'DM Mono', monospace", fontSize: 11, fontWeight: 500, color: "#4a4f5e", letterSpacing: "0.07em", textTransform: "uppercase", paddingTop: 8, paddingRight: 16 },
+  page: { fontFamily: "'DM Sans', sans-serif", fontSize: 13.5, color: "#4B4D52" },
+  fieldRow: { display: "flex", alignItems: "flex-start", borderBottom: "1px solid rgba(75,77,82,0.1)", padding: "12px 0" },
+  fieldLabel: { width: 180, minWidth: 180, fontFamily: "'DM Mono', monospace", fontSize: 11, fontWeight: 500, color: "#878787", letterSpacing: "0.07em", textTransform: "uppercase", paddingTop: 8, paddingRight: 16 },
   fieldInput: { flex: 1 },
-  input: { background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", color: "#e8eaf0", padding: "8px 10px", fontSize: 13.5, width: "100%", boxSizing: "border-box", outline: "none", borderRadius: 6, fontFamily: "'DM Sans', sans-serif" },
-  textarea: { background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", color: "#e8eaf0", padding: "8px 10px", fontSize: 13.5, width: "100%", boxSizing: "border-box", minHeight: 120, resize: "vertical", outline: "none", borderRadius: 6, fontFamily: "'DM Sans', sans-serif" },
-  select: { background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", color: "#e8eaf0", padding: "8px 10px", fontSize: 13.5, outline: "none", borderRadius: 6, fontFamily: "'DM Sans', sans-serif" },
-  inlineHeader: { background: "#1a1e25", borderLeft: "3px solid #e8c547", padding: "8px 14px", fontSize: 11, fontWeight: 500, fontFamily: "'DM Mono', monospace", color: "#e8c547", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 20 },
+  input: { background: "#faf9f7", border: "1px solid rgba(75,77,82,0.15)", color: "#4B4D52", padding: "8px 10px", fontSize: 13.5, width: "100%", boxSizing: "border-box", outline: "none", borderRadius: 6, fontFamily: "'DM Sans', sans-serif" },
+  textarea: { background: "#faf9f7", border: "1px solid rgba(75,77,82,0.15)", color: "#4B4D52", padding: "8px 10px", fontSize: 13.5, width: "100%", boxSizing: "border-box", minHeight: 120, resize: "vertical", outline: "none", borderRadius: 6, fontFamily: "'DM Sans', sans-serif" },
+  select: { background: "#faf9f7", border: "1px solid rgba(75,77,82,0.15)", color: "#4B4D52", padding: "8px 10px", fontSize: 13.5, outline: "none", borderRadius: 6, fontFamily: "'DM Sans', sans-serif" },
+  inlineHeader: { background: "#f4f2ee", borderLeft: "3px solid #E3AD57", padding: "8px 14px", fontSize: 11, fontWeight: 500, fontFamily: "'DM Mono', monospace", color: "#7A744D", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 20 },
   inlineTable: { width: "100%", borderCollapse: "collapse" },
-  inlineTh: { background: "#13161b", padding: "8px 10px", fontSize: 11, fontFamily: "'DM Mono', monospace", fontWeight: 500, color: "#4a4f5e", textAlign: "left", letterSpacing: "0.06em", textTransform: "uppercase", borderBottom: "1px solid rgba(255,255,255,0.06)" },
-  inlineTd: { padding: "7px 8px", borderBottom: "1px solid rgba(255,255,255,0.04)", verticalAlign: "middle" },
-  inlineInput: { background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", color: "#e8eaf0", padding: "5px 8px", fontSize: 12.5, width: "100%", boxSizing: "border-box", outline: "none", borderRadius: 4, fontFamily: "'DM Sans', sans-serif" },
-  addLink: { display: "inline-block", marginTop: 8, color: "#5b9cf6", fontSize: 12.5, cursor: "pointer", fontFamily: "'DM Mono', monospace", textDecoration: "underline" },
-  removeBtn: { background: "rgba(224,84,84,0.1)", border: "1px solid rgba(224,84,84,0.3)", color: "#e05454", width: 24, height: 24, borderRadius: "50%", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, flexShrink: 0 },
-  saveBar: { background: "#13161b", padding: "14px 0", display: "flex", gap: 8, flexWrap: "wrap", borderTop: "1px solid rgba(255,255,255,0.06)", marginTop: 24 },
-  btnSave: { background: "#e8c547", color: "#0d0f12", border: "none", padding: "10px 20px", fontSize: 13.5, cursor: "pointer", fontWeight: 600, borderRadius: 8, fontFamily: "'DM Sans', sans-serif" },
-  btnAlt: { background: "transparent", color: "#8a8f9e", border: "1px solid rgba(255,255,255,0.1)", padding: "10px 20px", fontSize: 13.5, cursor: "pointer", borderRadius: 8, fontFamily: "'DM Sans', sans-serif" },
-  btnBack: { background: "transparent", color: "#5b9cf6", border: "none", padding: "6px 0", fontSize: 13.5, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", textDecoration: "underline" },
+  inlineTh: { background: "#faf9f7", padding: "8px 10px", fontSize: 11, fontFamily: "'DM Mono', monospace", fontWeight: 500, color: "#878787", textAlign: "left", letterSpacing: "0.06em", textTransform: "uppercase", borderBottom: "1px solid rgba(75,77,82,0.1)" },
+  inlineTd: { padding: "7px 8px", borderBottom: "1px solid rgba(75,77,82,0.06)", verticalAlign: "middle" },
+  inlineInput: { background: "#faf9f7", border: "1px solid rgba(75,77,82,0.15)", color: "#4B4D52", padding: "5px 8px", fontSize: 12.5, width: "100%", boxSizing: "border-box", outline: "none", borderRadius: 4, fontFamily: "'DM Sans', sans-serif" },
+  addLink: { display: "inline-block", marginTop: 8, color: "#924621", fontSize: 12.5, cursor: "pointer", fontFamily: "'DM Mono', monospace", textDecoration: "underline" },
+  removeBtn: { background: "rgba(146,70,33,0.08)", border: "1px solid rgba(146,70,33,0.25)", color: "#924621", width: 24, height: 24, borderRadius: "50%", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, flexShrink: 0 },
+  saveBar: { background: "#faf9f7", padding: "14px 0", display: "flex", gap: 8, flexWrap: "wrap", borderTop: "1px solid rgba(75,77,82,0.1)", marginTop: 24 },
+  btnSave: { background: "#924621", color: "#fff", border: "none", padding: "10px 20px", fontSize: 13.5, cursor: "pointer", fontWeight: 600, borderRadius: 8, fontFamily: "'DM Sans', sans-serif" },
+  btnAlt: { background: "transparent", color: "#7A744D", border: "1px solid rgba(75,77,82,0.2)", padding: "10px 20px", fontSize: 13.5, cursor: "pointer", borderRadius: 8, fontFamily: "'DM Sans', sans-serif" },
+  btnBack: { background: "transparent", color: "#924621", border: "none", padding: "6px 0", fontSize: 13.5, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", textDecoration: "underline" },
   fkWrap: { display: "flex", alignItems: "center", gap: 6 },
-  fkBtn: { background: "rgba(91,156,246,0.1)", border: "1px solid rgba(91,156,246,0.3)", color: "#5b9cf6", padding: "4px 8px", cursor: "pointer", fontSize: 13, lineHeight: 1, borderRadius: 4 },
+  fkBtn: { background: "rgba(227,173,87,0.12)", border: "1px solid rgba(227,173,87,0.35)", color: "#7A744D", padding: "4px 8px", cursor: "pointer", fontSize: 13, lineHeight: 1, borderRadius: 4 },
 };
 
 /* ─── Helpers ────────────────────────────────────────────── */
@@ -223,11 +224,11 @@ const Toasts = ({ toasts, remove }) => (
       <div key={t.id} onClick={() => remove(t.id)} style={{
         display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
         borderRadius: 10, cursor: "pointer",
-        background: t.type === "success" ? "#1a2e1f" : t.type === "error" ? "#2e1a1a" : "#1a1e25",
-        border: `1px solid ${t.type === "success" ? "rgba(76,175,125,0.3)" : t.type === "error" ? "rgba(224,84,84,0.3)" : "rgba(255,255,255,0.07)"}`,
-        color: t.type === "success" ? "#4caf7d" : t.type === "error" ? "#e05454" : "#e8eaf0",
+        background: t.type === "success" ? "#f0f5ed" : t.type === "error" ? "#fdf0eb" : "#faf9f7",
+        border: `1px solid ${t.type === "success" ? "rgba(90,122,77,0.3)" : t.type === "error" ? "rgba(146,70,33,0.3)" : "rgba(75,77,82,0.15)"}`,
+        color: t.type === "success" ? "#5a7a4d" : t.type === "error" ? "#924621" : "#4B4D52",
         fontSize: 13.5, minWidth: 240, maxWidth: 360,
-        fontFamily: "'DM Sans', sans-serif", boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
+        fontFamily: "'DM Sans', sans-serif", boxShadow: "0 4px 16px rgba(75,77,82,0.12)",
       }}>
         <span>{t.type === "success" ? "✓" : t.type === "error" ? "✕" : "·"}</span>
         <span>{t.message}</span>
@@ -350,7 +351,7 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
       <div style={{ marginBottom: 16 }}>
         <button style={DJ.btnBack} onClick={onBack}>← Volver a Productos</button>
       </div>
-      <h2 style={{ color: "#e8eaf0", fontSize: 17, fontWeight: 600, marginBottom: 24, fontFamily: "'DM Mono', monospace" }}>
+      <h2 style={{ color: "#4B4D52", fontSize: 17, fontWeight: 600, marginBottom: 24, fontFamily: "'DM Mono', monospace" }}>
         {isEdit ? `Editar: ${item.nombre}` : "Añadir producto"}
       </h2>
 
@@ -369,8 +370,8 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
           )
         },
         { label: "Stock", content: <input style={{ ...DJ.input, width: 100 }} type="number" value={form.stock} onChange={(e) => setField("stock", e.target.value)} /> },
-        { label: "Modelo GLB", content: <input type="file" accept=".glb" onChange={(e) => setField("modelo_glb", e.target.files[0])} style={{ color: "#8a8f9e", fontSize: 12.5 }} /> },
-        { label: "Modelo USDZ", content: <input type="file" accept=".usdz" onChange={(e) => setField("modelo_usdz", e.target.files[0])} style={{ color: "#8a8f9e", fontSize: 12.5 }} /> },
+        { label: "Modelo GLB", content: <input type="file" accept=".glb" onChange={(e) => setField("modelo_glb", e.target.files[0])} style={{ color: "#878787", fontSize: 12.5 }} /> },
+        { label: "Modelo USDZ", content: <input type="file" accept=".usdz" onChange={(e) => setField("modelo_usdz", e.target.files[0])} style={{ color: "#878787", fontSize: 12.5 }} /> },
       ].map(({ label, content }, i, arr) => (
         <div key={label} style={{ ...DJ.fieldRow, ...(i === arr.length - 1 ? { borderBottom: "none" } : {}) }}>
           <div style={DJ.fieldLabel}>{label}</div>
@@ -383,7 +384,7 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
       {activeColores.map((color) => {
         const misImagenes = imagenes.filter((i) => !i.DELETE && i._colorUid === color._uid);
         return (
-          <div key={color._uid} style={{ border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, marginBottom: 12, overflow: "hidden" }}>
+          <div key={color._uid} style={{ border: "1px solid rgba(75,77,82,0.1)", borderRadius: 8, marginBottom: 12, overflow: "hidden" }}>
             <table style={DJ.inlineTable}>
               <thead><tr>
                 <th style={{ ...DJ.inlineTh, width: 64 }}>Actual</th>
@@ -401,16 +402,16 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
                 </td>
                 <td style={DJ.inlineTd}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    {color.codigo_hex && <span style={{ width: 14, height: 14, borderRadius: 3, background: color.codigo_hex, border: "1px solid rgba(255,255,255,0.15)", flexShrink: 0 }} />}
+                    {color.codigo_hex && <span style={{ width: 14, height: 14, borderRadius: 3, background: color.codigo_hex, border: "1px solid rgba(75,77,82,0.2)", flexShrink: 0 }} />}
                     <input style={{ ...DJ.inlineInput, width: 90 }} type="text" value={color.codigo_hex} onChange={(e) => setColorField(color._uid, "codigo_hex", e.target.value)} />
                   </div>
                 </td>
                 <td style={DJ.inlineTd}>
-                  <input type="file" accept="image/*" onChange={(e) => setColorField(color._uid, "imagen_file", e.target.files[0])} style={{ color: "#8a8f9e", fontSize: 11 }} />
+                  <input type="file" accept="image/*" onChange={(e) => setColorField(color._uid, "imagen_file", e.target.files[0])} style={{ color: "#878787", fontSize: 11 }} />
                   {color.imagen_file && (
                     <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
                       <Thumb src={URL.createObjectURL(color.imagen_file)} size={36} radius={4} />
-                      <span style={{ color: "#4caf7d", fontSize: 11 }}>✓ {color.imagen_file.name}</span>
+                      <span style={{ color: "#5a7a4d", fontSize: 11 }}>✓ {color.imagen_file.name}</span>
                     </div>
                   )}
                 </td>
@@ -420,7 +421,7 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
               </tr></tbody>
             </table>
 
-            <div style={{ ...DJ.inlineHeader, background: "rgba(76,175,125,0.08)", borderLeft: "3px solid #4caf7d", color: "#4caf7d", marginTop: 0, fontSize: 10 }}>
+            <div style={{ ...DJ.inlineHeader, background: "rgba(90,122,77,0.06)", borderLeft: "3px solid #5a7a4d", color: "#5a7a4d", marginTop: 0, fontSize: 10 }}>
               Imágenes — {color.nombre || "sin nombre"}
             </div>
             <table style={DJ.inlineTable}>
@@ -438,11 +439,11 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
                     </td>
                     <td style={DJ.inlineTd}>
                       {img.url_existente ? (
-                        <a href={img.url_existente} target="_blank" rel="noreferrer" style={{ color: "#5b9cf6", fontSize: 11, fontFamily: "'DM Mono', monospace", wordBreak: "break-all" }}>Ver en Cloudinary ↗</a>
+                        <a href={img.url_existente} target="_blank" rel="noreferrer" style={{ color: "#924621", fontSize: 11, fontFamily: "'DM Mono', monospace", wordBreak: "break-all" }}>Ver en Cloudinary ↗</a>
                       ) : (
                         <>
-                          <input type="file" accept="image/*" onChange={(e) => setImagenField(img._uid, "imagen_file", e.target.files[0])} style={{ color: "#8a8f9e", fontSize: 11 }} />
-                          {img.imagen_file && <span style={{ color: "#4caf7d", fontSize: 11, display: "block", marginTop: 2 }}>✓ {img.imagen_file.name}</span>}
+                          <input type="file" accept="image/*" onChange={(e) => setImagenField(img._uid, "imagen_file", e.target.files[0])} style={{ color: "#878787", fontSize: 11 }} />
+                          {img.imagen_file && <span style={{ color: "#5a7a4d", fontSize: 11, display: "block", marginTop: 2 }}>✓ {img.imagen_file.name}</span>}
                         </>
                       )}
                     </td>
@@ -526,15 +527,15 @@ const Modal = ({ section, item, onClose, onSaved, toast }) => {
                   {item?.[f.imgUrlField || f.name] && (
                     <div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 10 }}>
                       <Thumb src={item[f.imgUrlField || f.name]} size={64} radius={8} />
-                      <span style={{ fontSize: 11, color: "#4a4f5e", fontFamily: "'DM Mono', monospace" }}>Imagen actual</span>
+                      <span style={{ fontSize: 11, color: "#878787", fontFamily: "'DM Mono', monospace" }}>Imagen actual</span>
                     </div>
                   )}
                   <input name={f.name} type="file" accept="image/*" onChange={handleFile}
-                    style={{ color: "#8a8f9e", fontSize: 13, fontFamily: "'DM Sans', sans-serif" }} />
+                    style={{ color: "#878787", fontSize: 13, fontFamily: "'DM Sans', sans-serif" }} />
                   {files[f.name] && (
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
                       <Thumb src={URL.createObjectURL(files[f.name])} size={56} radius={8} />
-                      <span style={{ fontSize: 11, color: "#4caf7d", fontFamily: "'DM Mono', monospace" }}>✓ {files[f.name].name}</span>
+                      <span style={{ fontSize: 11, color: "#5a7a4d", fontFamily: "'DM Mono', monospace" }}>✓ {files[f.name].name}</span>
                     </div>
                   )}
                 </div>
@@ -567,7 +568,7 @@ const Confirm = ({ onConfirm, onCancel }) => (
   </div>
 );
 
-/* ─── CitaSection (tabla especial con WhatsApp + estado) ─── */
+/* ─── CitaSection ────────────────────────────────────────── */
 const CitaSection = ({ section, toast }) => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -624,7 +625,7 @@ const CitaSection = ({ section, toast }) => {
   const filtered = rows.filter((r) => {
     if (!busqueda) return true;
     const q = busqueda.toLowerCase();
-    return ["identificacion", "nombre", "primerApellido", "correo", "fecha"].some(
+    return ["identificacion", "nombre", "primerApellido", "correo", "fecha", "descripcion"].some(
       (col) => String(r[col] ?? "").toLowerCase().includes(q)
     );
   });
@@ -650,6 +651,7 @@ const CitaSection = ({ section, toast }) => {
                 <th>Teléfono</th>
                 <th>Fecha</th>
                 <th>Hora</th>
+                <th>Motivo</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
@@ -670,7 +672,21 @@ const CitaSection = ({ section, toast }) => {
                     <td><span style={{ fontFamily: "'DM Mono', monospace", fontSize: 12 }}>{fechaStr}</span></td>
                     <td><span style={{ fontFamily: "'DM Mono', monospace", fontSize: 12 }}>{horaStr}</span></td>
 
-                    {/* ── Estado con selector ── */}
+                    {/* ── Motivo ── */}
+                    <td>
+                      {row.descripcion ? (
+                        <span style={{
+                          fontSize: 12.5, color: "#7A744D",
+                          display: "block", maxWidth: 200,
+                          overflow: "hidden", textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }} title={row.descripcion}>
+                          {row.descripcion}
+                        </span>
+                      ) : <span className="pa-empty">—</span>}
+                    </td>
+
+                    {/* ── Estado ── */}
                     <td>
                       <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                         <EstadoBadge estado={row.estado || "pendiente"} />
@@ -679,8 +695,8 @@ const CitaSection = ({ section, toast }) => {
                           disabled={updatingEstado === row.id}
                           onChange={(e) => handleEstado(row.id, e.target.value)}
                           style={{
-                            background: "#1a1e25", border: "1px solid rgba(255,255,255,0.1)",
-                            color: "#8a8f9e", fontSize: 11, borderRadius: 4,
+                            background: "#faf9f7", border: "1px solid rgba(75,77,82,0.15)",
+                            color: "#7A744D", fontSize: 11, borderRadius: 4,
                             padding: "3px 6px", cursor: "pointer", outline: "none",
                             fontFamily: "'DM Mono', monospace",
                           }}
@@ -693,19 +709,17 @@ const CitaSection = ({ section, toast }) => {
                     </td>
 
                     {/* ── Acciones ── */}
-                    <td className="pa-td-actions" style={{ gap: 6 }}>
-                      {/* WhatsApp */}
+                    <td className="pa-td-actions">
                       {row.telefono && (
                         <button
                           className="pa-action"
                           title={`WhatsApp a ${row.nombre}`}
                           onClick={() => abrirWhatsApp(row)}
-                          style={{ background: "rgba(37,211,102,0.1)", border: "1px solid rgba(37,211,102,0.3)", color: "#25d366", fontSize: 15 }}
+                          style={{ background: "rgba(37,211,102,0.08)", border: "1px solid rgba(37,211,102,0.25)", color: "#25d366", fontSize: 15 }}
                         >
                           💬
                         </button>
                       )}
-                      {/* Eliminar */}
                       <button className="pa-action pa-action--del" title="Eliminar" onClick={() => setConfirmDelete(row.id)}>🗑</button>
                     </td>
                   </tr>
@@ -904,8 +918,7 @@ const SectionTable = ({ section, toast }) => {
 const SECTIONS = [
   {
     key: "citas", label: "Citas", endpoint: `${BASE}/citas/`,
-    isCita: true, fields: [],
-    columns: [], columnLabels: [],
+    isCita: true, fields: [], columns: [], columnLabels: [],
   },
   {
     key: "categorias", label: "Categorías", endpoint: `${BASE}/categorias/`,
@@ -982,9 +995,9 @@ const PanelAdmin = ({ onLogout }) => {
             ))}
           </nav>
           <button onClick={onLogout}
-            style={{ padding: "14px 20px", background: "transparent", border: "none", borderTop: "1px solid rgba(255,255,255,0.06)", color: "#4a4f5e", fontSize: 12.5, cursor: "pointer", textAlign: "left", fontFamily: "'DM Mono', monospace", letterSpacing: "0.04em" }}
-            onMouseEnter={(e) => e.target.style.color = "#e05454"}
-            onMouseLeave={(e) => e.target.style.color = "#4a4f5e"}
+            style={{ padding: "14px 20px", background: "transparent", border: "none", borderTop: "1px solid rgba(222,219,205,0.15)", color: "rgba(222,219,205,0.45)", fontSize: 12.5, cursor: "pointer", textAlign: "left", fontFamily: "'DM Mono', monospace", letterSpacing: "0.04em", transition: "color 0.15s" }}
+            onMouseEnter={(e) => e.target.style.color = "#924621"}
+            onMouseLeave={(e) => e.target.style.color = "rgba(222,219,205,0.45)"}
           >
             ⎋ Cerrar sesión
           </button>
