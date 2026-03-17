@@ -9,23 +9,28 @@ from apps.productos.views import ProductoViewSet
 from apps.categorias.views import CategoriaViewSet
 from apps.colores.views import ColorProductoViewSet
 from apps.imagenProducto.views import ImagenProductoViewSet
-
+from apps.citas.views import CitaViewSet
+from apps.usuario.api.views import UsuarioViewSet
 router = DefaultRouter()
 router.register(r'productos',      ProductoViewSet,       basename='producto')
 router.register(r'categorias',     CategoriaViewSet,      basename='categoria')
 router.register(r'colores',        ColorProductoViewSet,  basename='color')
 router.register(r'imagenproducto', ImagenProductoViewSet, basename='imagenproducto')
+router.register(r'citas',          CitaViewSet,           basename='cita')
+router.register(r'usuarios',       UsuarioViewSet,        basename='usuario')
 
 urlpatterns = [
     path('admin/',    admin.site.urls),
     path('api/',      include(router.urls)),
     path('usuario/',  include('apps.usuario.api.urls')),
-    path('api/citas/', include('apps.citas.urls')),
+
+    # Endpoint público para crear cita desde el formulario web
+    path('api/citas/crear/', include('apps.citas.urls')),
 
     # Documentación
-    path('api/schema/',         SpectacularAPIView.as_view(),                        name='schema'),
-    path('api/docs/swagger/',   SpectacularSwaggerView.as_view(url_name='schema'),   name='swagger-ui'),
-    path('api/docs/redoc/',     SpectacularRedocView.as_view(url_name='schema'),      name='redoc'),
+    path('api/schema/',       SpectacularAPIView.as_view(),                      name='schema'),
+    path('api/docs/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/docs/redoc/',   SpectacularRedocView.as_view(url_name='schema'),   name='redoc'),
 ]
 
 if settings.DEBUG:

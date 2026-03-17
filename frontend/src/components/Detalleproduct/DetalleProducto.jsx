@@ -19,40 +19,24 @@ export default function DetalleProducto() {
   const [imagenesActuales, setImagenesActuales] = useState([]);
 
   useEffect(() => {
-
     const cargarProducto = async () => {
-
       const data = await getProductos();
       const lista = data?.results || [];
-
-      const encontrado = lista.find(
-        (p) => String(p.id) === String(id)
-      );
-
+      const encontrado = lista.find((p) => String(p.id) === String(id));
       setProducto(encontrado);
-
       if (encontrado?.colores?.length > 0) {
-
         const primerColor = encontrado.colores[0];
-
         setColorSeleccionado(primerColor);
         setImagenesActuales(primerColor.imagenes || []);
-
       }
-
     };
-
     cargarProducto();
-
   }, [id]);
-
 
   if (!producto) return <p className="loading">Cargando producto...</p>;
 
-
   const imagenes = imagenesActuales || [];
   const imagenActiva = imagenes[imagenIndex]?.imagen;
-
 
   const formatCOP = (precio) =>
     new Intl.NumberFormat("es-CO", {
@@ -61,77 +45,49 @@ export default function DetalleProducto() {
       minimumFractionDigits: 0,
     }).format(precio);
 
+  const siguienteImagen = () =>
+    setImagenIndex((prev) => (prev === imagenes.length - 1 ? 0 : prev + 1));
 
-  const siguienteImagen = () => {
-    setImagenIndex((prev) =>
-      prev === imagenes.length - 1 ? 0 : prev + 1
-    );
-  };
-
-
-  const anteriorImagen = () => {
-    setImagenIndex((prev) =>
-      prev === 0 ? imagenes.length - 1 : prev - 1
-    );
-  };
-
+  const anteriorImagen = () =>
+    setImagenIndex((prev) => (prev === 0 ? imagenes.length - 1 : prev - 1));
 
   const seleccionarColor = (color) => {
-
     setColorSeleccionado(color);
-
     if (color.imagenes && color.imagenes.length > 0) {
       setImagenesActuales(color.imagenes);
       setImagenIndex(0);
     }
-
   };
 
-
   const handleAdd = () => {
-
     addToCart({
       id: producto.id,
       nombre: producto.nombre,
       precio: producto.precio,
       imagen: imagenActiva,
       cantidad: cantidad,
-      color: colorSeleccionado?.nombre
+      color: colorSeleccionado?.nombre,
     });
-
   };
 
-
   return (
-
     <div className="detalle-wrapper">
-
       <div className="detalle-container">
 
-        {/* GALERÍA */}
-
+        {/* ── GALERÍA ── */}
         <div className="detalle-galeria">
-
           <div className="imagen-principal">
-
             {imagenes.length > 1 && (
-              <button className="nav-btn left" onClick={anteriorImagen}>
-                ‹
-              </button>
+              <button className="nav-btn left" onClick={anteriorImagen}>‹</button>
             )}
-
             <img
               src={imagenActiva}
               alt={producto.nombre}
               onClick={() => setFullscreen(true)}
             />
-
             {imagenes.length > 1 && (
-              <button className="nav-btn right" onClick={siguienteImagen}>
-                ›
-              </button>
+              <button className="nav-btn right" onClick={siguienteImagen}>›</button>
             )}
-
           </div>
 
           <div className="miniaturas">
@@ -145,59 +101,59 @@ export default function DetalleProducto() {
               />
             ))}
           </div>
-
         </div>
 
-
-        {/* INFORMACIÓN */}
-
+        {/* ── INFORMACIÓN ── */}
         <div className="detalle-info">
 
-          <span className="categoria">
-            {producto.categoria_nombre}
-          </span>
+          <span className="categoria">{producto.categoria_nombre}</span>
 
           <h1>{producto.nombre}</h1>
 
-          <p className="precio">
-            {formatCOP(producto.precio)}
-          </p>
+          <p className="precio">{formatCOP(producto.precio)}</p>
 
-          {/* COLORES — debajo del precio */}
+          {/* ── SELECTOR DE COLORES ── */}
           {producto.colores?.length > 0 && (
             <div className="colores">
               {producto.colores.map((color, i) => (
-                <button
-                  key={i}
-                  className={`color-circle ${
-                    colorSeleccionado?.nombre === color.nombre ? "activo" : ""
-                  }`}
-                  style={{ background: color.codigo_hex || "#ccc" }}
-                  title={color.nombre}
-                  onClick={() => seleccionarColor(color)}
-                />
+                <div key={i} className="color-circle-wrap">
+                  <button
+                    className={`color-circle ${colorSeleccionado?.nombre === color.nombre ? "activo" : ""
+                      }`}
+                    style={!color.imagen_url ? { background: color.codigo_hex || "#ccc" } : {}}
+                    onClick={() => seleccionarColor(color)}
+                  >
+                    {color.imagen_url && (
+                      <img
+                        src={color.imagen_url}
+                        alt={color.nombre}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          display: "block",
+                          borderRadius: "50%",
+                          pointerEvents: "none",
+                        }}
+                      />
+                    )}
+                  </button>
+                  <span className="color-tooltip">{color.nombre}</span>
+                </div>
               ))}
             </div>
           )}
 
-          <p className="descripcion">
-            {producto.descripcion}
-          </p>
+          <p className="descripcion">{producto.descripcion}</p>
 
-          {/* CANTIDAD */}
-
+          {/* ── CANTIDAD ── */}
           <div className="cantidad-box">
-            <button onClick={() => setCantidad(Math.max(1, cantidad - 1))}>
-              −
-            </button>
+            <button onClick={() => setCantidad(Math.max(1, cantidad - 1))}>−</button>
             <span>{cantidad}</span>
-            <button onClick={() => setCantidad(cantidad + 1)}>
-              +
-            </button>
+            <button onClick={() => setCantidad(cantidad + 1)}>+</button>
           </div>
 
-          {/* BOTÓN CARRITO */}
-
+          {/* ── BOTÓN CARRITO ── */}
           <button
             className="btn-primary"
             onClick={handleAdd}
@@ -206,6 +162,7 @@ export default function DetalleProducto() {
             {producto.stock === 0 ? "Producto agotado" : "Añadir al carrito"}
           </button>
 
+          {/* ── MODELO 3D / AR ── */}
           {producto.modelo_glb && (
             <>
               <button
@@ -232,32 +189,17 @@ export default function DetalleProducto() {
           )}
 
         </div>
-
       </div>
 
-      {/* FULLSCREEN */}
-
+      {/* ── FULLSCREEN ── */}
       {fullscreen && (
         <div className="fullscreen" onClick={() => setFullscreen(false)}>
           <img src={imagenActiva} alt="fullscreen" />
         </div>
       )}
-
     </div>
-
   );
-
 }
-
-
-
-
-
-
-
-
-
-
 
 
 

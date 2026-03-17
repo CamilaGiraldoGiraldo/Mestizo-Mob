@@ -1,12 +1,22 @@
 from django.contrib.auth import authenticate
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.authtoken.models import Token
+
 from apps.usuario.models import Usuario
+from apps.usuario.serializers import UsuarioSerializer
 
 
+# ── ViewSet para el panel admin (GET, PUT, DELETE, etc.) ──────
+class UsuarioViewSet(viewsets.ModelViewSet):
+    queryset = Usuario.objects.all().order_by('nombre')
+    serializer_class = UsuarioSerializer
+    permission_classes = [IsAuthenticated]
+
+
+# ── Login público ─────────────────────────────────────────────
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_view(request):

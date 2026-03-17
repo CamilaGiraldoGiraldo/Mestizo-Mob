@@ -53,7 +53,7 @@ const tryLogin = async (correo, contrasena) => {
   }
 };
 
-/* ─── Thumbnail con fallback ─────────────────────────────── */
+/* ─── Thumbnail ──────────────────────────────────────────── */
 const Thumb = ({ src, size = 48, radius = 6 }) => {
   const [err, setErr] = useState(false);
   if (!src || err) {
@@ -73,6 +73,29 @@ const Thumb = ({ src, size = 48, radius = 6 }) => {
       objectFit: "cover", border: "1px solid rgba(255,255,255,0.08)",
       flexShrink: 0, display: "block",
     }} />
+  );
+};
+
+/* ─── Badge de estado ────────────────────────────────────── */
+const ESTADO_COLORS = {
+  pendiente: { bg: "rgba(232,197,71,0.15)", border: "rgba(232,197,71,0.4)", color: "#e8c547" },
+  confirmada: { bg: "rgba(76,175,125,0.15)", border: "rgba(76,175,125,0.4)", color: "#4caf7d" },
+  cancelada: { bg: "rgba(224,84,84,0.15)", border: "rgba(224,84,84,0.4)", color: "#e05454" },
+};
+
+const EstadoBadge = ({ estado }) => {
+  const s = ESTADO_COLORS[estado] || ESTADO_COLORS.pendiente;
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 5,
+      background: s.bg, border: `1px solid ${s.border}`,
+      color: s.color, fontSize: 11, fontFamily: "'DM Mono', monospace",
+      letterSpacing: "0.06em", textTransform: "uppercase",
+      padding: "3px 10px", borderRadius: 20,
+    }}>
+      <span style={{ width: 6, height: 6, borderRadius: "50%", background: s.color, flexShrink: 0 }} />
+      {estado}
+    </span>
   );
 };
 
@@ -121,7 +144,6 @@ const LoginScreen = ({ onLogin }) => {
           </div>
           <h2 style={{ fontSize: 22, fontWeight: 600, color: "#e8eaf0", margin: 0 }}>Iniciar sesión</h2>
         </div>
-
         {error && (
           <div style={{
             background: "rgba(224,84,84,0.1)", border: "1px solid rgba(224,84,84,0.3)",
@@ -129,7 +151,6 @@ const LoginScreen = ({ onLogin }) => {
             fontSize: 13, marginBottom: 20, lineHeight: 1.5,
           }}>{error}</div>
         )}
-
         {[
           { label: "Correo", type: "email", val: correo, set: setCorreo, placeholder: "admin@ejemplo.com" },
           { label: "Contraseña", type: "password", val: contrasena, set: setContrasena, placeholder: "••••••••" },
@@ -143,7 +164,6 @@ const LoginScreen = ({ onLogin }) => {
             />
           </div>
         ))}
-
         <button type="submit" disabled={loading} style={{
           width: "100%", marginTop: 8, padding: "12px 0",
           background: loading ? "#a08830" : "#e8c547", color: "#0d0f12",
@@ -229,10 +249,13 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
 
   const [colores, setColores] = useState(() => {
     if (item?.colores?.length) {
+      const uids = {};
+      item.colores.forEach((c) => { uids[c.id] = Math.random(); });
       return item.colores.map((c) => ({
-        _uid: Math.random(), id: c.id, nombre: c.nombre,
+        _uid: uids[c.id], id: c.id, nombre: c.nombre,
         codigo_hex: c.codigo_hex || "", imagen_file: null,
-        imagen_url_existente: c.imagen_url || null, DELETE: false,
+        imagen_url_existente: c.imagen_url || null,
+        primera_imagen: c.imagenes?.[0]?.imagen || null, DELETE: false,
       }));
     }
     return [emptyColor()];
@@ -248,13 +271,7 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
           imgs.push({ _uid: Math.random(), _colorUid: uids[c.id], id: img.id, imagen_file: null, url_existente: img.imagen, orden: img.orden, DELETE: false });
         });
       });
-      // Sincronizar _uid de colores con los uids generados
-      setColores(item.colores.map((c) => ({
-        _uid: uids[c.id], id: c.id, nombre: c.nombre,
-        codigo_hex: c.codigo_hex || "", imagen_file: null,
-        imagen_url_existente: c.imagen_url || null, DELETE: false,
-      })));
-      return imgs.length ? imgs : [{ _uid: Math.random(), _colorUid: uids[item.colores[0]?.id], imagen_file: null, orden: 1, DELETE: false }];
+      return imgs.length ? imgs : [emptyImagen()];
     }
     return [emptyImagen()];
   });
@@ -377,7 +394,7 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
               </tr></thead>
               <tbody><tr>
                 <td style={{ ...DJ.inlineTd, width: 64 }}>
-                  <Thumb src={color.imagen_url_existente} size={48} />
+                  <Thumb src={color.imagen_url_existente || color.primera_imagen} size={48} />
                 </td>
                 <td style={DJ.inlineTd}>
                   <input style={DJ.inlineInput} type="text" value={color.nombre} onChange={(e) => setColorField(color._uid, "nombre", e.target.value)} />
@@ -417,18 +434,11 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
                 {misImagenes.map((img) => (
                   <tr key={img._uid}>
                     <td style={{ ...DJ.inlineTd, width: 64 }}>
-                      {img.url_existente
-                        ? <Thumb src={img.url_existente} size={48} />
-                        : img.imagen_file
-                          ? <Thumb src={URL.createObjectURL(img.imagen_file)} size={48} />
-                          : <Thumb src={null} size={48} />
-                      }
+                      {img.url_existente ? <Thumb src={img.url_existente} size={48} /> : img.imagen_file ? <Thumb src={URL.createObjectURL(img.imagen_file)} size={48} /> : <Thumb src={null} size={48} />}
                     </td>
                     <td style={DJ.inlineTd}>
                       {img.url_existente ? (
-                        <a href={img.url_existente} target="_blank" rel="noreferrer" style={{ color: "#5b9cf6", fontSize: 11, fontFamily: "'DM Mono', monospace", wordBreak: "break-all" }}>
-                          Ver en Cloudinary ↗
-                        </a>
+                        <a href={img.url_existente} target="_blank" rel="noreferrer" style={{ color: "#5b9cf6", fontSize: 11, fontFamily: "'DM Mono', monospace", wordBreak: "break-all" }}>Ver en Cloudinary ↗</a>
                       ) : (
                         <>
                           <input type="file" accept="image/*" onChange={(e) => setImagenField(img._uid, "imagen_file", e.target.files[0])} style={{ color: "#8a8f9e", fontSize: 11 }} />
@@ -453,9 +463,7 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
         );
       })}
 
-      <span style={{ ...DJ.addLink, display: "inline-block", marginTop: 6 }} onClick={() => setColores((p) => [...p, emptyColor()])}>
-        + Agregar color
-      </span>
+      <span style={{ ...DJ.addLink, display: "inline-block", marginTop: 6 }} onClick={() => setColores((p) => [...p, emptyColor()])}>+ Agregar color</span>
 
       <div style={DJ.saveBar}>
         <button type="button" style={DJ.btnSave} disabled={saving} onClick={() => handleSubmit("save")}>{saving ? "Guardando…" : "Guardar"}</button>
@@ -466,7 +474,7 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
   );
 };
 
-/* ─── Modal genérico (con soporte para imágenes) ─────────── */
+/* ─── Modal genérico ─────────────────────────────────────── */
 const Modal = ({ section, item, onClose, onSaved, toast }) => {
   const isEdit = !!item;
   const empty = Object.fromEntries(section.fields.map((f) => [f.name, ""]));
@@ -482,7 +490,6 @@ const Modal = ({ section, item, onClose, onSaved, toast }) => {
     try {
       const url = isEdit ? `${section.endpoint}${item.id}/` : section.endpoint;
       let body, extraHeaders = {};
-
       if (section.isFileUpload) {
         const fd = new FormData();
         Object.entries(form).forEach(([k, v]) => { if (v !== "" && v !== null && v !== undefined) fd.append(k, v); });
@@ -492,13 +499,9 @@ const Modal = ({ section, item, onClose, onSaved, toast }) => {
         body = JSON.stringify(form);
         extraHeaders = { "Content-Type": "application/json" };
       }
-
       const res = await apiFetch(url, { method: isEdit ? "PATCH" : "POST", headers: extraHeaders, body });
       const data = await res.json();
-      if (!res.ok) {
-        toast(typeof data === "object" ? Object.values(data).flat().join(" · ") : "Error al guardar.", "error");
-        return;
-      }
+      if (!res.ok) { toast(typeof data === "object" ? Object.values(data).flat().join(" · ") : "Error al guardar.", "error"); return; }
       toast(isEdit ? "Registro actualizado." : "Registro creado.", "success");
       onSaved();
     } catch { toast("No se pudo conectar.", "error"); }
@@ -516,12 +519,10 @@ const Modal = ({ section, item, onClose, onSaved, toast }) => {
           {section.fields.map((f) => (
             <label key={f.name} className="pa-field">
               <span>{f.label}{f.required && " *"}</span>
-
               {f.type === "textarea" ? (
                 <textarea name={f.name} value={form[f.name] || ""} onChange={handleChange} required={!!f.required} />
               ) : f.type === "file" ? (
                 <div>
-                  {/* Imagen existente */}
                   {item?.[f.imgUrlField || f.name] && (
                     <div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 10 }}>
                       <Thumb src={item[f.imgUrlField || f.name]} size={64} radius={8} />
@@ -530,7 +531,6 @@ const Modal = ({ section, item, onClose, onSaved, toast }) => {
                   )}
                   <input name={f.name} type="file" accept="image/*" onChange={handleFile}
                     style={{ color: "#8a8f9e", fontSize: 13, fontFamily: "'DM Sans', sans-serif" }} />
-                  {/* Preview del nuevo archivo */}
                   {files[f.name] && (
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
                       <Thumb src={URL.createObjectURL(files[f.name])} size={56} radius={8} />
@@ -566,6 +566,162 @@ const Confirm = ({ onConfirm, onCancel }) => (
     </div>
   </div>
 );
+
+/* ─── CitaSection (tabla especial con WhatsApp + estado) ─── */
+const CitaSection = ({ section, toast }) => {
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [busqueda, setBusqueda] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [updatingEstado, setUpdatingEstado] = useState(null);
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      const res = await apiFetch(section.endpoint);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setRows(Array.isArray(data) ? data : (data.results ?? []));
+    } catch { toast("Error al cargar Citas", "error"); }
+    finally { setLoading(false); }
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      const res = await apiFetch(`${section.endpoint}${id}/`, { method: "DELETE" });
+      if (res.status !== 204 && !res.ok) throw new Error();
+      toast("Cita eliminada.", "success"); load();
+    } catch { toast("No se pudo eliminar.", "error"); }
+    setConfirmDelete(null);
+  };
+
+  const handleEstado = async (id, nuevoEstado) => {
+    setUpdatingEstado(id);
+    try {
+      const res = await apiFetch(`${section.endpoint}${id}/`, {
+        method: "PATCH",
+        body: JSON.stringify({ estado: nuevoEstado }),
+      });
+      if (!res.ok) throw new Error();
+      toast(`Estado actualizado a "${nuevoEstado}".`, "success");
+      setRows((prev) => prev.map((r) => r.id === id ? { ...r, estado: nuevoEstado } : r));
+    } catch { toast("No se pudo actualizar el estado.", "error"); }
+    finally { setUpdatingEstado(null); }
+  };
+
+  const abrirWhatsApp = (row) => {
+    const tel = `57${row.telefono?.replace(/\D/g, "")}`;
+    const fecha = row.fecha ? new Date(row.fecha + "T00:00:00").toLocaleDateString("es-CO", { weekday: "long", year: "numeric", month: "long", day: "numeric" }) : "";
+    const hora = row.hora ? row.hora.slice(0, 5) : "";
+    const msg = encodeURIComponent(
+      `Hola ${row.nombre}, te contactamos de *Mestizo Mobiliario* para confirmar tu cita programada para el *${fecha}* a las *${hora}*. ¿Puedes confirmarnos tu asistencia?`
+    );
+    window.open(`https://wa.me/${tel}?text=${msg}`, "_blank");
+  };
+
+  const filtered = rows.filter((r) => {
+    if (!busqueda) return true;
+    const q = busqueda.toLowerCase();
+    return ["identificacion", "nombre", "primerApellido", "correo", "fecha"].some(
+      (col) => String(r[col] ?? "").toLowerCase().includes(q)
+    );
+  });
+
+  return (
+    <div className="pa-section">
+      <div className="pa-section-bar">
+        <input className="pa-search" placeholder="Buscar citas…" value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
+      </div>
+      {!loading && <p className="pa-count">{filtered.length} registro{filtered.length !== 1 ? "s" : ""}</p>}
+      {loading && <div className="pa-state"><div className="pa-spinner" /><span>Cargando…</span></div>}
+      {!loading && filtered.length === 0 && <div className="pa-state"><span className="pa-state-icon">📭</span><span>Sin citas</span></div>}
+
+      {!loading && filtered.length > 0 && (
+        <div className="pa-table-wrap">
+          <table className="pa-table">
+            <thead>
+              <tr>
+                <th>Identificación</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Correo</th>
+                <th>Teléfono</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((row) => {
+                const [y, m, d] = String(row.fecha || "").split("-");
+                const fechaStr = row.fecha ? `${d}/${m}/${y}` : "—";
+                const horaStr = row.hora ? String(row.hora).slice(0, 5) : "—";
+
+                return (
+                  <tr key={row.id}>
+                    <td><span style={{ fontFamily: "'DM Mono', monospace", fontSize: 12 }}>{row.identificacion || <span className="pa-empty">—</span>}</span></td>
+                    <td>{row.nombre || <span className="pa-empty">—</span>}</td>
+                    <td>{row.primerApellido || <span className="pa-empty">—</span>}</td>
+                    <td><span style={{ fontSize: 12 }}>{row.correo || <span className="pa-empty">—</span>}</span></td>
+                    <td><span style={{ fontFamily: "'DM Mono', monospace", fontSize: 12 }}>{row.telefono || <span className="pa-empty">—</span>}</span></td>
+                    <td><span style={{ fontFamily: "'DM Mono', monospace", fontSize: 12 }}>{fechaStr}</span></td>
+                    <td><span style={{ fontFamily: "'DM Mono', monospace", fontSize: 12 }}>{horaStr}</span></td>
+
+                    {/* ── Estado con selector ── */}
+                    <td>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                        <EstadoBadge estado={row.estado || "pendiente"} />
+                        <select
+                          value={row.estado || "pendiente"}
+                          disabled={updatingEstado === row.id}
+                          onChange={(e) => handleEstado(row.id, e.target.value)}
+                          style={{
+                            background: "#1a1e25", border: "1px solid rgba(255,255,255,0.1)",
+                            color: "#8a8f9e", fontSize: 11, borderRadius: 4,
+                            padding: "3px 6px", cursor: "pointer", outline: "none",
+                            fontFamily: "'DM Mono', monospace",
+                          }}
+                        >
+                          <option value="pendiente">Pendiente</option>
+                          <option value="confirmada">Confirmada</option>
+                          <option value="cancelada">Cancelada</option>
+                        </select>
+                      </div>
+                    </td>
+
+                    {/* ── Acciones ── */}
+                    <td className="pa-td-actions" style={{ gap: 6 }}>
+                      {/* WhatsApp */}
+                      {row.telefono && (
+                        <button
+                          className="pa-action"
+                          title={`WhatsApp a ${row.nombre}`}
+                          onClick={() => abrirWhatsApp(row)}
+                          style={{ background: "rgba(37,211,102,0.1)", border: "1px solid rgba(37,211,102,0.3)", color: "#25d366", fontSize: 15 }}
+                        >
+                          💬
+                        </button>
+                      )}
+                      {/* Eliminar */}
+                      <button className="pa-action pa-action--del" title="Eliminar" onClick={() => setConfirmDelete(row.id)}>🗑</button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {confirmDelete !== null && (
+        <Confirm onConfirm={() => handleDelete(confirmDelete)} onCancel={() => setConfirmDelete(null)} />
+      )}
+    </div>
+  );
+};
 
 /* ─── ProductSection ─────────────────────────────────────── */
 const ProductSection = ({ section, toast }) => {
@@ -632,12 +788,8 @@ const ProductSection = ({ section, toast }) => {
                 const firstImg = row.colores?.[0]?.imagenes?.[0]?.imagen ?? null;
                 return (
                   <tr key={row.id ?? i}>
-                    <td style={{ padding: "8px 12px" }}>
-                      <Thumb src={firstImg} size={44} radius={6} />
-                    </td>
-                    {section.columns.map((col) => (
-                      <td key={col}>{row[col] ?? <span className="pa-empty">—</span>}</td>
-                    ))}
+                    <td style={{ padding: "8px 12px" }}><Thumb src={firstImg} size={44} radius={6} /></td>
+                    {section.columns.map((col) => <td key={col}>{row[col] ?? <span className="pa-empty">—</span>}</td>)}
                     <td className="pa-td-actions">
                       <button className="pa-action pa-action--edit" title="Editar" onClick={() => { setEditItem(row); setView("form"); }}>✏</button>
                       <button className="pa-action pa-action--del" title="Eliminar" onClick={() => setConfirmDelete(row.id)}>🗑</button>
@@ -729,16 +881,8 @@ const SectionTable = ({ section, toast }) => {
             <tbody>
               {filtered.map((row, i) => (
                 <tr key={row.id ?? i}>
-                  {isImageSection && (
-                    <td style={{ padding: "8px 12px" }}>
-                      <Thumb src={row.imagen} size={44} radius={6} />
-                    </td>
-                  )}
-                  {isColorSection && (
-                    <td style={{ padding: "8px 12px" }}>
-                      <Thumb src={row.imagen_url} size={44} radius={6} />
-                    </td>
-                  )}
+                  {isImageSection && <td style={{ padding: "8px 12px" }}><Thumb src={row.imagen} size={44} radius={6} /></td>}
+                  {isColorSection && <td style={{ padding: "8px 12px" }}><Thumb src={row.imagen_url} size={44} radius={6} /></td>}
                   {section.columns.map((col) => <td key={col}>{formatCell(row, col)}</td>)}
                   <td className="pa-td-actions">
                     <button className="pa-action pa-action--edit" onClick={() => setModal(row)} title="Editar">✏</button>
@@ -760,19 +904,8 @@ const SectionTable = ({ section, toast }) => {
 const SECTIONS = [
   {
     key: "citas", label: "Citas", endpoint: `${BASE}/citas/`,
-    fields: [
-      { name: "identificacion", label: "Identificación", type: "text", required: true },
-      { name: "nombre", label: "Nombre", type: "text", required: true },
-      { name: "primerApellido", label: "Primer apellido", type: "text", required: true },
-      { name: "segundoApellido", label: "Segundo apellido", type: "text" },
-      { name: "correo", label: "Correo", type: "email", required: true },
-      { name: "telefono", label: "Teléfono", type: "text", required: true },
-      { name: "fecha", label: "Fecha", type: "date", required: true },
-      { name: "hora", label: "Hora", type: "time", required: true },
-      { name: "descripcion", label: "Motivo", type: "textarea" },
-    ],
-    columns: ["identificacion", "nombre", "primerApellido", "correo", "fecha", "hora"],
-    columnLabels: ["Identificación", "Nombre", "Apellido", "Correo", "Fecha", "Hora"],
+    isCita: true, fields: [],
+    columns: [], columnLabels: [],
   },
   {
     key: "categorias", label: "Categorías", endpoint: `${BASE}/categorias/`,
@@ -859,9 +992,11 @@ const PanelAdmin = ({ onLogout }) => {
 
         <main className="pa-main">
           <div className="pa-main-header"><h1>{current.label}</h1></div>
-          {current.isProducto
-            ? <ProductSection key={active} section={current} toast={add} />
-            : <SectionTable key={active} section={current} toast={add} />
+          {current.isCita
+            ? <CitaSection key={active} section={current} toast={add} />
+            : current.isProducto
+              ? <ProductSection key={active} section={current} toast={add} />
+              : <SectionTable key={active} section={current} toast={add} />
           }
         </main>
       </div>

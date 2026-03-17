@@ -1,5 +1,6 @@
 from django.db import models
 from apps.productos.models import Producto
+from cloudinary.models import CloudinaryField  # ← añadir
 
 
 class ColorProducto(models.Model):
@@ -18,14 +19,14 @@ class ColorProducto(models.Model):
         null=True
     )
 
-    imagen = models.ImageField(
-        upload_to="colores/",
+    imagen = CloudinaryField(            # ← cambiar ImageField por CloudinaryField
+        "imagen",
+        folder="colores/",
         blank=True,
         null=True
     )
 
     def save(self, *args, **kwargs):
-
         colores = {
             "negro": "#000000",
             "blanco": "#FFFFFF",
@@ -37,10 +38,8 @@ class ColorProducto(models.Model):
             "cafe": "#6F4E37",
             "marron": "#8B4513",
         }
-
         if not self.codigo_hex:
             self.codigo_hex = colores.get(self.nombre.lower(), "#cccccc")
-
         super().save(*args, **kwargs)
 
     def __str__(self):

@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework import status, viewsets
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.decorators import api_view
 
 from django.db import transaction
@@ -13,6 +13,14 @@ from .models import Cita
 from .serializers import CitaSerializer
 
 
+# ── ViewSet para el panel admin (GET, PUT, DELETE, etc.) ──────
+class CitaViewSet(viewsets.ModelViewSet):
+    queryset = Cita.objects.all().order_by('-fecha', '-hora')
+    serializer_class = CitaSerializer
+    permission_classes = [IsAuthenticated]
+
+
+# ── Vista pública para crear cita desde el formulario web ─────
 class CitaCreateView(APIView):
 
     permission_classes = [AllowAny]
@@ -32,7 +40,6 @@ class CitaCreateView(APIView):
 
                 # Si el usuario no existe lo crea
                 if not usuario:
-
                     usuario = Usuario.objects.create_user(
                         identificacion=data.get("identificacion"),
                         nombre=data.get("nombre"),
@@ -54,6 +61,7 @@ class CitaCreateView(APIView):
                 serializer = CitaSerializer(cita)
                 response_data = serializer.data
 
+            # Correo al cliente
             try:
                 send_mail(
                     "Solicitud recibida – Mestizo Mobiliario",
@@ -86,7 +94,7 @@ El equipo de Mestizo Mobiliario
             except Exception:
                 pass
 
-            # Correo al admin — FUERA del transaction
+            # Correo al admin
             try:
                 send_mail(
                     f"Nueva solicitud de cita — {usuario.nombre} {usuario.primerApellido}",
@@ -114,7 +122,6 @@ Descripción:
             return Response(response_data, status=status.HTTP_201_CREATED)
 
         except Exception as e:
-
             return Response(
                 {"error": str(e)},
                 status=status.HTTP_400_BAD_REQUEST
