@@ -4,6 +4,7 @@ import "./PanelAdmin.css";
 const BASE = "http://127.0.0.1:8000/api";
 
 /* ─── Auth ───────────────────────────────────────────────── */
+<<<<<<< Updated upstream
 const getAuthHeader = () => {
   const token = localStorage.getItem("auth_token");
   return token ? `Token ${token}` : null;
@@ -24,6 +25,12 @@ const isAdmin = () => {
     return false;
   }
 };
+=======
+const AUTH_KEY = "pa_token";
+const setAuthHeader = (h) => { localStorage.setItem(AUTH_KEY, h); };
+const getAuthHeader = () => localStorage.getItem(AUTH_KEY);
+const clearAuthHeader = () => localStorage.removeItem(AUTH_KEY);
+>>>>>>> Stashed changes
 
 const apiFetch = (url, opts = {}) => {
   const auth = getAuthHeader();
