@@ -11,12 +11,13 @@ from apps.colores.views import ColorProductoViewSet
 from apps.imagenProducto.views import ImagenProductoViewSet
 from apps.citas.views import CitaViewSet
 from apps.usuario.api.views import UsuarioViewSet
+
 router = DefaultRouter()
 router.register(r'productos',      ProductoViewSet,       basename='producto')
 router.register(r'categorias',     CategoriaViewSet,      basename='categoria')
 router.register(r'colores',        ColorProductoViewSet,  basename='color')
 router.register(r'imagenproducto', ImagenProductoViewSet, basename='imagenproducto')
-router.register(r'citas',          CitaViewSet,           basename='cita')
+# ✅ ELIMINADO: router.register de citas (ya no va aquí)
 router.register(r'usuarios',       UsuarioViewSet,        basename='usuario')
 
 urlpatterns = [
@@ -24,8 +25,8 @@ urlpatterns = [
     path('api/',      include(router.urls)),
     path('usuario/',  include('apps.usuario.api.urls')),
 
-    # Endpoint público para crear cita desde el formulario web
-    path('api/citas/crear/', include('apps.citas.urls')),
+    # ✅ CORREGIDO: todas las rutas de citas en un solo lugar
+    path('api/citas/', include('apps.citas.urls')),
 
     # Documentación
     path('api/schema/',       SpectacularAPIView.as_view(),                      name='schema'),

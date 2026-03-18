@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes  # ← CORREGIDO
 
 from django.db import transaction
 from django.core.mail import send_mail
@@ -129,6 +129,7 @@ Descripción:
 
 
 @api_view(["GET"])
+@permission_classes([AllowAny])  # ← CORRECCIÓN: permite acceso sin token
 def buscar_usuario(request):
 
     identificacion = request.GET.get("identificacion")
