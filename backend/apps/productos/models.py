@@ -21,7 +21,6 @@ class Producto(models.Model):
 
     stock = models.PositiveIntegerField(default=0)
 
-    # 🔥 Ahora usando Cloudinary
     modelo_glb = CloudinaryField(
         'modelo_glb',
         resource_type="raw",
@@ -36,6 +35,33 @@ class Producto(models.Model):
         null=True
     )
 
+    # ── Dimensiones ──────────────────────────────
+    alto = models.DecimalField(
+        max_digits=6, decimal_places=1,
+        blank=True, null=True,
+        help_text="Alto en cm"
+    )
+    ancho = models.DecimalField(
+        max_digits=6, decimal_places=1,
+        blank=True, null=True,
+        help_text="Ancho en cm"
+    )
+    profundidad = models.DecimalField(
+        max_digits=6, decimal_places=1,
+        blank=True, null=True,
+        help_text="Profundidad en cm"
+    )
+    peso = models.DecimalField(
+        max_digits=6, decimal_places=1,
+        blank=True, null=True,
+        help_text="Peso en kg"
+    )
+    material = models.CharField(
+        max_length=200,
+        blank=True, null=True,
+        help_text="Ej: Madera de teca, cuero natural"
+    )
+
     def save(self, *args, **kwargs):
         if not self.codigo:
             ultimo = Producto.objects.order_by('-id').first()
@@ -48,3 +74,25 @@ class Producto(models.Model):
 
     def __str__(self):
         return f"{self.codigo} - {self.nombre}"
+
+
+# ── Imágenes de dimensiones (planos técnicos) ──
+class ImagenDimension(models.Model):
+    producto = models.ForeignKey(
+        Producto,
+        on_delete=models.CASCADE,
+        related_name='imagenes_dimensiones'
+    )
+    imagen = CloudinaryField('imagen_dimension')
+    descripcion = models.CharField(
+        max_length=100,
+        blank=True, null=True,
+        help_text="Ej: Vista frontal, Vista superior"
+    )
+    orden = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        ordering = ['orden']
+
+    def __str__(self):
+        return f"Plano {self.orden} — {self.producto.nombre}"

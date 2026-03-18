@@ -6,7 +6,6 @@ import "@google/model-viewer";
 import "./DetalleProducto.css";
 
 export default function DetalleProducto() {
-
   const { id } = useParams();
   const { addToCart } = useCart();
 
@@ -70,15 +69,30 @@ export default function DetalleProducto() {
     });
   };
 
-  return (
-    <div className="detalle-wrapper">
-      <div className="detalle-container">
+  const dimensionesList = [
+    { label: "Alto", valor: producto.alto, unidad: "cm" },
+    { label: "Ancho", valor: producto.ancho, unidad: "cm" },
+    { label: "Profundidad", valor: producto.profundidad, unidad: "cm" },
+    { label: "Peso", valor: producto.peso, unidad: "kg" },
+    { label: "Material", valor: producto.material, unidad: "" },
+  ].filter((d) => d.valor);
 
-        {/* ── GALERÍA ── */}
-        <div className="detalle-galeria">
-          <div className="imagen-principal">
+  const tieneDimensiones =
+    dimensionesList.length > 0 || producto.imagenes_dimensiones?.length > 0;
+
+  const imagenesSecundarias = imagenes.slice(1, 3);
+
+  return (
+    <div className="dp-wrapper">
+
+      {/* ══ HERO ══ */}
+      <div className="dp-hero">
+
+        {/* Galería izquierda */}
+        <div className="dp-galeria">
+          <div className="dp-img-principal">
             {imagenes.length > 1 && (
-              <button className="nav-btn left" onClick={anteriorImagen}>‹</button>
+              <button className="dp-nav left" onClick={anteriorImagen}>‹</button>
             )}
             <img
               src={imagenActiva}
@@ -86,94 +100,80 @@ export default function DetalleProducto() {
               onClick={() => setFullscreen(true)}
             />
             {imagenes.length > 1 && (
-              <button className="nav-btn right" onClick={siguienteImagen}>›</button>
+              <button className="dp-nav right" onClick={siguienteImagen}>›</button>
             )}
           </div>
 
-          <div className="miniaturas">
-            {imagenes.map((img, i) => (
-              <img
-                key={i}
-                src={img.imagen}
-                alt="mini"
-                className={i === imagenIndex ? "activa" : ""}
-                onClick={() => setImagenIndex(i)}
-              />
-            ))}
-          </div>
+          {imagenes.length > 1 && (
+            <div className="dp-miniaturas">
+              {imagenes.map((img, i) => (
+                <button
+                  key={i}
+                  className={`dp-mini ${i === imagenIndex ? "activa" : ""}`}
+                  onClick={() => setImagenIndex(i)}
+                >
+                  <img src={img.imagen} alt={`Vista ${i + 1}`} />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* ── INFORMACIÓN ── */}
-        <div className="detalle-info">
+        {/* Info derecha */}
+        <div className="dp-info">
+          <span className="dp-categoria">{producto.categoria_nombre}</span>
+          <h1 className="dp-nombre">{producto.nombre}</h1>
+          <p className="dp-precio">{formatCOP(producto.precio)}</p>
 
-          <span className="categoria">{producto.categoria_nombre}</span>
-
-          <h1>{producto.nombre}</h1>
-
-          <p className="precio">{formatCOP(producto.precio)}</p>
-
-          {/* ── SELECTOR DE COLORES ── */}
           {producto.colores?.length > 0 && (
-            <div className="colores">
-              {producto.colores.map((color, i) => (
-                <div key={i} className="color-circle-wrap">
+            <div className="dp-colores-wrap">
+              <span className="dp-colores-label">Color</span>
+              <div className="dp-colores">
+                {producto.colores.map((color, i) => (
                   <button
-                    className={`color-circle ${colorSeleccionado?.nombre === color.nombre ? "activo" : ""
-                      }`}
+                    key={i}
+                    className={`dp-color-btn ${colorSeleccionado?.nombre === color.nombre ? "activo" : ""}`}
                     style={!color.imagen_url ? { background: color.codigo_hex || "#ccc" } : {}}
                     onClick={() => seleccionarColor(color)}
+                    title={color.nombre}
                   >
                     {color.imagen_url && (
                       <img
                         src={color.imagen_url}
                         alt={color.nombre}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          display: "block",
-                          borderRadius: "50%",
-                          pointerEvents: "none",
-                        }}
+                        style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%", pointerEvents: "none" }}
                       />
                     )}
                   </button>
-                  <span className="color-tooltip">{color.nombre}</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
 
-          <p className="descripcion">{producto.descripcion}</p>
+          <p className="dp-descripcion">{producto.descripcion}</p>
 
-          {/* ── CANTIDAD ── */}
-          <div className="cantidad-box">
-            <button onClick={() => setCantidad(Math.max(1, cantidad - 1))}>−</button>
-            <span>{cantidad}</span>
-            <button onClick={() => setCantidad(cantidad + 1)}>+</button>
+          <div className="dp-acciones">
+            <div className="dp-cantidad">
+              <button onClick={() => setCantidad(Math.max(1, cantidad - 1))}>−</button>
+              <span>{cantidad}</span>
+              <button onClick={() => setCantidad(cantidad + 1)}>+</button>
+            </div>
+            <button
+              className="dp-btn-add"
+              onClick={handleAdd}
+              disabled={producto.stock === 0}
+            >
+              {producto.stock === 0 ? "Agotado" : "Añadir al carrito"}
+            </button>
           </div>
 
-          {/* ── BOTÓN CARRITO ── */}
-          <button
-            className="btn-primary"
-            onClick={handleAdd}
-            disabled={producto.stock === 0}
-          >
-            {producto.stock === 0 ? "Producto agotado" : "Añadir al carrito"}
-          </button>
-
-          {/* ── MODELO 3D / AR ── */}
           {producto.modelo_glb && (
             <>
-              <button
-                className="btn-secondary"
-                onClick={() => setMostrarAR(!mostrarAR)}
-              >
+              <button className="dp-btn-ar" onClick={() => setMostrarAR(!mostrarAR)}>
                 {mostrarAR ? "Ocultar modelo 3D" : "Ver en realidad aumentada"}
               </button>
-
               {mostrarAR && (
-                <div className="visor-ar">
+                <div className="dp-visor-ar">
                   <model-viewer
                     src={producto.modelo_glb}
                     alt={producto.nombre}
@@ -188,179 +188,67 @@ export default function DetalleProducto() {
             </>
           )}
 
+          {/* Imágenes secundarias en el panel derecho */}
+          {imagenesSecundarias.length > 0 && (
+            <div className="dp-imgs-sec">
+              {imagenesSecundarias.map((img, i) => (
+                <button
+                  key={i}
+                  className={`dp-img-sec-btn ${imagenIndex === i + 1 ? "activa" : ""}`}
+                  onClick={() => setImagenIndex(i + 1)}
+                >
+                  <img src={img.imagen} alt={`Vista ${i + 2}`} />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* ── FULLSCREEN ── */}
+      {/* ══ DIMENSIONES ══ */}
+      {tieneDimensiones && (
+        <div className="dp-dimensiones">
+          <p className="dp-dim-titulo">Dimensiones</p>
+          <div className="dp-dim-body">
+
+            {producto.imagenes_dimensiones?.length > 0 && (
+              <div className="dp-planos">
+                {producto.imagenes_dimensiones.map((img, i) => (
+                  <div key={i} className="dp-plano-card">
+                    <img src={img.imagen} alt={img.descripcion || `Plano ${i + 1}`} />
+                    {img.descripcion && (
+                      <span className="dp-plano-label">{img.descripcion}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {dimensionesList.length > 0 && (
+              <div className="dp-medidas">
+                {dimensionesList.map((d, i) => (
+                  <div key={i} className="dp-medida-row">
+                    <span className="dp-medida-key">{d.label}</span>
+                    <span className="dp-medida-val">
+                      {d.valor}{d.unidad ? ` ${d.unidad}` : ""}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ══ FULLSCREEN ══ */}
       {fullscreen && (
-        <div className="fullscreen" onClick={() => setFullscreen(false)}>
+        <div className="dp-fullscreen" onClick={() => setFullscreen(false)}>
           <img src={imagenActiva} alt="fullscreen" />
         </div>
       )}
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

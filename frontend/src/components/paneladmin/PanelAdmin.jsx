@@ -53,6 +53,13 @@ const buildCloudinaryUrl = (raw) => {
   return `https://res.cloudinary.com/de8ra2czm/${raw}`;
 };
 
+/* ─── Cloudinary URL para raw (GLB/USDZ) ────────────────── */
+const buildCloudinaryRawUrl = (raw) => {
+  if (!raw) return null;
+  if (raw.startsWith("http")) return raw;
+  return `https://res.cloudinary.com/de8ra2czm/${raw}`;
+};
+
 /* ─── Thumbnail ──────────────────────────────────────────── */
 const Thumb = ({ src, size = 48, radius = 6 }) => {
   const [err, setErr] = useState(false);
@@ -63,6 +70,40 @@ const Thumb = ({ src, size = 48, radius = 6 }) => {
     </div>
   );
   return <img src={url} onError={() => setErr(true)} style={{ width: size, height: size, borderRadius: radius, objectFit: "cover", border: "1px solid rgba(255,255,255,0.08)", flexShrink: 0, display: "block" }} alt="" />;
+};
+
+/* ─── Modelo3DStatus — muestra estado del modelo existente ── */
+const Modelo3DStatus = ({ url, label, onClear }) => {
+  if (!url) return null;
+  const fullUrl = buildCloudinaryRawUrl(url);
+  const filename = fullUrl ? fullUrl.split("/").pop().split("?")[0] : "modelo";
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(76,175,125,0.08)", border: "1px solid rgba(76,175,125,0.25)", borderRadius: 6, padding: "8px 12px", marginBottom: 8 }}>
+      <span style={{ fontSize: 20 }}>📦</span>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#4caf7d", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 2 }}>
+          {label} guardado
+        </div>
+        <a
+          href={fullUrl}
+          target="_blank"
+          rel="noreferrer"
+          style={{ color: "#5b9cf6", fontSize: 11, fontFamily: "'DM Mono', monospace", textDecoration: "none", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+          title={fullUrl}
+        >
+          {filename} ↗
+        </a>
+      </div>
+      <button
+        type="button"
+        onClick={onClear}
+        title="Quitar modelo (subir uno nuevo)"
+        style={{ background: "rgba(224,84,84,0.1)", border: "1px solid rgba(224,84,84,0.3)", color: "#e05454", borderRadius: 4, padding: "3px 8px", fontSize: 11, cursor: "pointer", fontFamily: "'DM Mono', monospace", whiteSpace: "nowrap", flexShrink: 0 }}
+      >
+        ✕ quitar
+      </button>
+    </div>
+  );
 };
 
 /* ─── Badge estado citas ─────────────────────────────────── */
@@ -113,6 +154,8 @@ const DJ = {
   textarea: { background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", color: "#e8eaf0", padding: "8px 10px", fontSize: 13.5, width: "100%", boxSizing: "border-box", minHeight: 120, resize: "vertical", outline: "none", borderRadius: 6, fontFamily: "'DM Sans', sans-serif" },
   select: { background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", color: "#e8eaf0", padding: "8px 10px", fontSize: 13.5, outline: "none", borderRadius: 6, fontFamily: "'DM Sans', sans-serif" },
   inlineHeader: { background: "#1a1e25", borderLeft: "3px solid #e8c547", padding: "8px 14px", fontSize: 11, fontWeight: 500, fontFamily: "'DM Mono', monospace", color: "#e8c547", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 20 },
+  inlineHeaderBlue: { background: "#1a1e25", borderLeft: "3px solid #5b9cf6", padding: "8px 14px", fontSize: 11, fontWeight: 500, fontFamily: "'DM Mono', monospace", color: "#5b9cf6", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 20 },
+  inlineHeaderGreen: { background: "#1a1e25", borderLeft: "3px solid #4caf7d", padding: "8px 14px", fontSize: 11, fontWeight: 500, fontFamily: "'DM Mono', monospace", color: "#4caf7d", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 20 },
   inlineTable: { width: "100%", borderCollapse: "collapse" },
   inlineTh: { background: "#13161b", padding: "8px 10px", fontSize: 11, fontFamily: "'DM Mono', monospace", fontWeight: 500, color: "#4a4f5e", textAlign: "left", letterSpacing: "0.06em", textTransform: "uppercase", borderBottom: "1px solid rgba(255,255,255,0.06)" },
   inlineTd: { padding: "7px 8px", borderBottom: "1px solid rgba(255,255,255,0.04)", verticalAlign: "middle" },
@@ -130,6 +173,11 @@ const emptyColor = () => ({ _uid: Math.random(), nombre: "", codigo_hex: "", ima
 const emptyImagen = (colorUid, colorId) => ({
   _uid: Math.random(), _colorUid: colorUid, _colorId: colorId || null,
   imagen_file: null, previewUrl: null, orden: 1, DELETE: false,
+});
+const emptyPlano = () => ({
+  _uid: Math.random(), id: null,
+  imagen_file: null, previewUrl: null,
+  descripcion: "", orden: 1, DELETE: false,
 });
 
 /* ═══════════════════════════════════════════════════════════
@@ -172,7 +220,6 @@ const ImageGallery = ({ imagenes, onDelete }) => {
    ═══════════════════════════════════════════════════════════ */
 const NewImageRow = ({ img, onChange, onRemove }) => {
   const [preview, setPreview] = useState(null);
-
   const handleFile = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -181,17 +228,12 @@ const NewImageRow = ({ img, onChange, onRemove }) => {
     setPreview(url);
     onChange(img._uid, "imagen_file", file);
   };
-
-  useEffect(() => {
-    return () => { if (preview) URL.revokeObjectURL(preview); };
-  }, [preview]);
-
+  useEffect(() => { return () => { if (preview) URL.revokeObjectURL(preview); }; }, [preview]);
   return (
     <tr>
       <td style={{ ...DJ.inlineTd, width: 72 }}>
         {preview ? (
-          <img src={preview} alt="preview"
-            style={{ width: 64, height: 64, objectFit: "cover", borderRadius: 6, border: "1px solid rgba(76,175,125,0.4)", display: "block" }} />
+          <img src={preview} alt="preview" style={{ width: 64, height: 64, objectFit: "cover", borderRadius: 6, border: "1px solid rgba(76,175,125,0.4)", display: "block" }} />
         ) : (
           <div style={{ width: 64, height: 64, borderRadius: 6, background: "#1a1e25", border: "1px dashed rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <span style={{ fontSize: 22, opacity: 0.25 }}>🖼</span>
@@ -208,6 +250,50 @@ const NewImageRow = ({ img, onChange, onRemove }) => {
       </td>
       <td style={{ ...DJ.inlineTd, width: 60, textAlign: "center" }}>
         <button type="button" style={DJ.removeBtn} onClick={() => onRemove(img._uid)}>✕</button>
+      </td>
+    </tr>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════
+   FILA PLANO NUEVO
+   ═══════════════════════════════════════════════════════════ */
+const NewPlanoRow = ({ plano, onChange, onRemove }) => {
+  const [preview, setPreview] = useState(null);
+  const handleFile = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (preview) URL.revokeObjectURL(preview);
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    onChange(plano._uid, "imagen_file", file);
+  };
+  useEffect(() => { return () => { if (preview) URL.revokeObjectURL(preview); }; }, [preview]);
+  return (
+    <tr>
+      <td style={{ ...DJ.inlineTd, width: 72 }}>
+        {preview ? (
+          <img src={preview} alt="preview" style={{ width: 64, height: 64, objectFit: "contain", background: "#fff", borderRadius: 6, border: "1px solid rgba(91,156,246,0.4)", display: "block" }} />
+        ) : (
+          <div style={{ width: 64, height: 64, borderRadius: 6, background: "#1a1e25", border: "1px dashed rgba(255,255,255,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <span style={{ fontSize: 22, opacity: 0.25 }}>📐</span>
+          </div>
+        )}
+      </td>
+      <td style={DJ.inlineTd}>
+        <input type="file" accept="image/*" onChange={handleFile} style={{ color: "#8a8f9e", fontSize: 11 }} />
+        {plano.imagen_file && <span style={{ color: "#4caf7d", fontSize: 11, display: "block", marginTop: 3 }}>✓ {plano.imagen_file.name}</span>}
+      </td>
+      <td style={DJ.inlineTd}>
+        <input style={DJ.inlineInput} type="text" value={plano.descripcion} placeholder="Ej: Vista frontal"
+          onChange={(e) => onChange(plano._uid, "descripcion", e.target.value)} />
+      </td>
+      <td style={{ ...DJ.inlineTd, width: 72 }}>
+        <input style={{ ...DJ.inlineInput, width: 56 }} type="number" value={plano.orden}
+          onChange={(e) => onChange(plano._uid, "orden", e.target.value)} />
+      </td>
+      <td style={{ ...DJ.inlineTd, width: 48, textAlign: "center" }}>
+        <button type="button" style={DJ.removeBtn} onClick={() => onRemove(plano._uid)}>✕</button>
       </td>
     </tr>
   );
@@ -280,9 +366,22 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
     precio: item?.precio || "",
     categoria: item?.categoria || "",
     stock: item?.stock ?? 0,
+    alto: item?.alto || "",
+    ancho: item?.ancho || "",
+    profundidad: item?.profundidad || "",
+    peso: item?.peso || "",
+    material: item?.material || "",
     modelo_glb: null,
     modelo_usdz: null,
   });
+
+  // Guardar URLs existentes de modelos por separado para mostrarlas
+  const [glbExistente, setGlbExistente] = useState(item?.modelo_glb || null);
+  const [usdzExistente, setUsdzExistente] = useState(item?.modelo_usdz || null);
+  // Nombre de archivo seleccionado para feedback visual
+  const [glbNuevo, setGlbNuevo] = useState(null);
+  const [usdzNuevo, setUsdzNuevo] = useState(null);
+
   const [categorias, setCategorias] = useState([]);
   const [saving, setSaving] = useState(false);
 
@@ -298,7 +397,7 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
     return [emptyColor()];
   });
 
-  /* Imágenes */
+  /* Imágenes de producto */
   const [imagenes, setImagenes] = useState(() => {
     if (!item?.colores?.length) return [];
     const resultado = [];
@@ -308,24 +407,33 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
         resultado.push({
           _uid: Math.random(), _colorId: c.id, _colorUid: null,
           id: img.id, imagen_file: null, previewUrl: null,
-          url_existente: img.imagen,
-          orden: img.orden, DELETE: false,
+          url_existente: img.imagen, orden: img.orden, DELETE: false,
         });
       });
     });
     return resultado;
   });
 
-  /* Sincronizar _colorUid */
+  /* Planos técnicos */
+  const [planos, setPlanos] = useState(() => {
+    if (!item?.imagenes_dimensiones?.length) return [];
+    return item.imagenes_dimensiones.map((p) => ({
+      _uid: Math.random(), id: p.id, imagen_file: null,
+      url_existente: p.imagen || null, descripcion: p.descripcion || "",
+      orden: p.orden || 1, DELETE: false,
+    }));
+  });
+
+  const setPlanoField = (uid, k, v) => setPlanos((p) => p.map((pl) => pl._uid === uid ? { ...pl, [k]: v } : pl));
+  const removePlano = (uid) => setPlanos((p) => p.map((pl) => pl._uid === uid ? { ...pl, DELETE: true } : pl));
+
   useEffect(() => {
     if (!isEdit) return;
-    setImagenes((prev) =>
-      prev.map((img) => {
-        if (img._colorUid) return img;
-        const color = colores.find((c) => c.id === img._colorId);
-        return color ? { ...img, _colorUid: color._uid } : img;
-      })
-    );
+    setImagenes((prev) => prev.map((img) => {
+      if (img._colorUid) return img;
+      const color = colores.find((c) => c.id === img._colorId);
+      return color ? { ...img, _colorUid: color._uid } : img;
+    }));
   }, []); // eslint-disable-line
 
   useEffect(() => {
@@ -341,6 +449,22 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
   const setImagenField = (uid, k, v) => setImagenes((p) => p.map((i) => i._uid === uid ? { ...i, [k]: v } : i));
   const removeImagen = (uid) => setImagenes((p) => p.map((i) => i._uid === uid ? { ...i, DELETE: true } : i));
 
+  const handleGlbChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setField("modelo_glb", file);
+    setGlbNuevo(file.name);
+    setGlbExistente(null); // al seleccionar nuevo, ocultamos el existente
+  };
+
+  const handleUsdzChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setField("modelo_usdz", file);
+    setUsdzNuevo(file.name);
+    setUsdzExistente(null);
+  };
+
   const safeJson = async (res) => {
     const text = await res.text();
     try { return JSON.parse(text); } catch { return { _raw: text, status: res.status }; }
@@ -350,13 +474,20 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
     if (!form.nombre || !form.precio) { toast("Nombre y precio son requeridos.", "error"); return; }
     setSaving(true);
     try {
-      /* Producto */
       const fd = new FormData();
-      fd.append("nombre", form.nombre); fd.append("descripcion", form.descripcion);
-      fd.append("precio", form.precio); fd.append("stock", form.stock);
+      fd.append("nombre", form.nombre);
+      fd.append("descripcion", form.descripcion);
+      fd.append("precio", form.precio);
+      fd.append("stock", form.stock);
       if (form.categoria) fd.append("categoria", form.categoria);
-      if (form.modelo_glb) fd.append("modelo_glb", form.modelo_glb);
-      if (form.modelo_usdz) fd.append("modelo_usdz", form.modelo_usdz);
+      // Solo adjuntar modelos si se seleccionó un archivo nuevo
+      if (form.modelo_glb instanceof File) fd.append("modelo_glb", form.modelo_glb);
+      if (form.modelo_usdz instanceof File) fd.append("modelo_usdz", form.modelo_usdz);
+      if (form.alto !== "") fd.append("alto", form.alto);
+      if (form.ancho !== "") fd.append("ancho", form.ancho);
+      if (form.profundidad !== "") fd.append("profundidad", form.profundidad);
+      if (form.peso !== "") fd.append("peso", form.peso);
+      if (form.material !== "") fd.append("material", form.material);
 
       const productoUrl = isEdit ? `${BASE}/productos/${item.id}/` : `${BASE}/productos/`;
       const productoRes = await apiFetch(productoUrl, { method: isEdit ? "PATCH" : "POST", body: fd });
@@ -367,33 +498,29 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
       }
       const productoId = productoData.id;
 
-      /* Eliminar imágenes guardadas marcadas DELETE */
       for (const img of imagenes.filter((i) => i.DELETE && i.id)) {
         await apiFetch(`${BASE}/imagenproducto/${img.id}/`, { method: "DELETE" }).catch(() => { });
       }
+      for (const pl of planos.filter((p) => p.DELETE && p.id)) {
+        await apiFetch(`${BASE}/imagendimension/${pl.id}/`, { method: "DELETE" }).catch(() => { });
+      }
 
-      /* Colores */
       for (const color of colores) {
         if (color.DELETE && color.id) {
           await apiFetch(`${BASE}/colores/${color.id}/`, { method: "DELETE" }).catch(() => { });
           continue;
         }
         if (color.DELETE || !color.nombre) continue;
-
         const cfd = new FormData();
         cfd.append("producto", productoId);
         cfd.append("nombre", color.nombre);
         if (color.codigo_hex) cfd.append("codigo_hex", color.codigo_hex);
-        // ✅ CORRECCIÓN: usar "imagen_file" para que el serializer lo procese
         if (color.imagen_file) cfd.append("imagen_file", color.imagen_file);
-
         const colorUrl = color.id ? `${BASE}/colores/${color.id}/` : `${BASE}/colores/`;
         const colorRes = await apiFetch(colorUrl, { method: color.id ? "PATCH" : "POST", body: cfd });
         const colorData = await safeJson(colorRes);
         if (!colorRes.ok) { console.error("Error color:", colorData); continue; }
         const colorId = colorData.id;
-
-        /* Imágenes nuevas */
         const nuevas = imagenes.filter((i) =>
           !i.DELETE && !i.id && i.imagen_file &&
           (i._colorUid === color._uid || i._colorId === color.id)
@@ -404,26 +531,35 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
           ifd.append("imagen_upload", img.imagen_file);
           ifd.append("orden", img.orden);
           const imgRes = await apiFetch(`${BASE}/imagenproducto/`, { method: "POST", body: ifd });
-          if (!imgRes.ok) {
-            const imgErr = await imgRes.text();
-            console.error("Error imagen:", imgErr);
-            toast("Error al subir una imagen.", "error");
-          }
+          if (!imgRes.ok) { toast("Error al subir una imagen.", "error"); }
         }
+      }
+
+      for (const pl of planos.filter((p) => !p.DELETE && !p.id && p.imagen_file)) {
+        const pfd = new FormData();
+        pfd.append("producto", productoId);
+        pfd.append("imagen_upload", pl.imagen_file);
+        pfd.append("descripcion", pl.descripcion || "");
+        pfd.append("orden", pl.orden);
+        const plRes = await apiFetch(`${BASE}/imagendimension/`, { method: "POST", body: pfd });
+        if (!plRes.ok) { toast("Error al subir un plano.", "error"); }
       }
 
       toast(isEdit ? "Producto actualizado." : "Producto creado.", "success");
       onSaved();
       if (mode === "save") { onBack(); }
       else if (mode === "add") {
-        setForm({ nombre: "", descripcion: "", precio: "", categoria: "", stock: 0, modelo_glb: null, modelo_usdz: null });
-        setColores([emptyColor()]); setImagenes([]);
+        setForm({ nombre: "", descripcion: "", precio: "", categoria: "", stock: 0, alto: "", ancho: "", profundidad: "", peso: "", material: "", modelo_glb: null, modelo_usdz: null });
+        setGlbExistente(null); setUsdzExistente(null); setGlbNuevo(null); setUsdzNuevo(null);
+        setColores([emptyColor()]); setImagenes([]); setPlanos([]);
       }
     } catch (err) { toast("Error inesperado.", "error"); console.error(err); }
     finally { setSaving(false); }
   };
 
   const activeColores = colores.filter((c) => !c.DELETE);
+  const activePlanosGuardados = planos.filter((p) => !p.DELETE && p.id && p.url_existente);
+  const activePlanosNuevos = planos.filter((p) => !p.DELETE && !p.id);
 
   return (
     <div style={DJ.page}>
@@ -434,6 +570,7 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
         {isEdit ? `Editar: ${item.nombre}` : "Añadir producto"}
       </h2>
 
+      {/* ── Campos básicos ── */}
       {[
         { label: "Nombre *", content: <input style={DJ.input} type="text" value={form.nombre} onChange={(e) => setField("nombre", e.target.value)} /> },
         { label: "Descripción", content: <textarea style={DJ.textarea} value={form.descripcion} onChange={(e) => setField("descripcion", e.target.value)} /> },
@@ -447,29 +584,186 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
           )
         },
         { label: "Stock", content: <input style={{ ...DJ.input, width: 100 }} type="number" value={form.stock} onChange={(e) => setField("stock", e.target.value)} /> },
-        { label: "Modelo GLB", content: <input type="file" accept=".glb" onChange={(e) => setField("modelo_glb", e.target.files[0])} style={{ color: "#8a8f9e", fontSize: 12.5 }} /> },
-        { label: "Modelo USDZ", content: <input type="file" accept=".usdz" onChange={(e) => setField("modelo_usdz", e.target.files[0])} style={{ color: "#8a8f9e", fontSize: 12.5 }} /> },
-      ].map(({ label, content }, i, arr) => (
-        <div key={label} style={{ ...DJ.fieldRow, ...(i === arr.length - 1 ? { borderBottom: "none" } : {}) }}>
+      ].map(({ label, content }, i) => (
+        <div key={label} style={DJ.fieldRow}>
           <div style={DJ.fieldLabel}>{label}</div>
           <div style={DJ.fieldInput}>{content}</div>
         </div>
       ))}
 
+      {/* ── Modelos 3D — sección dedicada ── */}
+      <div style={DJ.inlineHeaderGreen}>Modelos 3D / Realidad aumentada</div>
+      <div style={{ border: "1px solid rgba(76,175,125,0.15)", borderRadius: 8, overflow: "hidden", marginBottom: 8 }}>
+        <div style={{ padding: "16px 16px 8px" }}>
+
+          {/* GLB */}
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#4a4f5e", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>
+              Modelo GLB (Android / Web AR)
+            </div>
+            <Modelo3DStatus
+              url={glbExistente}
+              label="GLB"
+              onClear={() => { setGlbExistente(null); setField("modelo_glb", null); }}
+            />
+            {!glbExistente && (
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <label style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  background: "#1a1e25", border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 6, padding: "8px 14px", cursor: "pointer",
+                  fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#8a8f9e",
+                  transition: "border-color 0.2s",
+                }}>
+                  <span>📁</span>
+                  <span>Seleccionar .glb</span>
+                  <input
+                    type="file"
+                    accept=".glb"
+                    style={{ display: "none" }}
+                    onChange={handleGlbChange}
+                  />
+                </label>
+                {glbNuevo && (
+                  <span style={{ color: "#4caf7d", fontSize: 11, fontFamily: "'DM Mono', monospace" }}>
+                    ✓ {glbNuevo}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* USDZ */}
+          <div style={{ marginBottom: 8 }}>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#4a4f5e", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>
+              Modelo USDZ (iOS AR)
+            </div>
+            <Modelo3DStatus
+              url={usdzExistente}
+              label="USDZ"
+              onClear={() => { setUsdzExistente(null); setField("modelo_usdz", null); }}
+            />
+            {!usdzExistente && (
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <label style={{
+                  display: "inline-flex", alignItems: "center", gap: 8,
+                  background: "#1a1e25", border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 6, padding: "8px 14px", cursor: "pointer",
+                  fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#8a8f9e",
+                }}>
+                  <span>📁</span>
+                  <span>Seleccionar .usdz</span>
+                  <input
+                    type="file"
+                    accept=".usdz"
+                    style={{ display: "none" }}
+                    onChange={handleUsdzChange}
+                  />
+                </label>
+                {usdzNuevo && (
+                  <span style={{ color: "#4caf7d", fontSize: 11, fontFamily: "'DM Mono', monospace" }}>
+                    ✓ {usdzNuevo}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── Dimensiones ── */}
+      <div style={DJ.inlineHeader}>Dimensiones del producto</div>
+      <div style={{ border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, overflow: "hidden", marginBottom: 8 }}>
+        <table style={DJ.inlineTable}>
+          <thead>
+            <tr>
+              <th style={DJ.inlineTh}>Alto (cm)</th>
+              <th style={DJ.inlineTh}>Ancho (cm)</th>
+              <th style={DJ.inlineTh}>Profundidad (cm)</th>
+              <th style={DJ.inlineTh}>Peso (kg)</th>
+              <th style={DJ.inlineTh}>Material</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style={DJ.inlineTd}><input style={{ ...DJ.inlineInput, width: 80 }} type="number" step="0.1" value={form.alto} placeholder="—" onChange={(e) => setField("alto", e.target.value)} /></td>
+              <td style={DJ.inlineTd}><input style={{ ...DJ.inlineInput, width: 80 }} type="number" step="0.1" value={form.ancho} placeholder="—" onChange={(e) => setField("ancho", e.target.value)} /></td>
+              <td style={DJ.inlineTd}><input style={{ ...DJ.inlineInput, width: 80 }} type="number" step="0.1" value={form.profundidad} placeholder="—" onChange={(e) => setField("profundidad", e.target.value)} /></td>
+              <td style={DJ.inlineTd}><input style={{ ...DJ.inlineInput, width: 80 }} type="number" step="0.1" value={form.peso} placeholder="—" onChange={(e) => setField("peso", e.target.value)} /></td>
+              <td style={DJ.inlineTd}><input style={DJ.inlineInput} type="text" value={form.material} placeholder="Ej: Madera de teca" onChange={(e) => setField("material", e.target.value)} /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* ── Planos técnicos ── */}
+      <div style={DJ.inlineHeaderBlue}>Planos técnicos / imágenes de dimensiones</div>
+      <div style={{ border: "1px solid rgba(91,156,246,0.15)", borderRadius: 8, overflow: "hidden", marginBottom: 8 }}>
+        {activePlanosGuardados.length > 0 && (
+          <>
+            <div style={{ padding: "8px 12px 4px", fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#4caf7d", letterSpacing: "0.06em", textTransform: "uppercase" }}>
+              Guardados — {activePlanosGuardados.length} plano{activePlanosGuardados.length !== 1 ? "s" : ""}
+            </div>
+            <div style={{ padding: "8px 12px 12px", display: "flex", flexWrap: "wrap", gap: 12 }}>
+              {activePlanosGuardados.map((pl) => (
+                <div key={pl._uid} style={{ position: "relative", flexShrink: 0 }}>
+                  <a href={pl.url_existente} target="_blank" rel="noreferrer"
+                    style={{ display: "block", borderRadius: 8, overflow: "hidden", border: "2px solid rgba(91,156,246,0.3)", background: "#fff" }}>
+                    <img src={pl.url_existente} alt={pl.descripcion || `plano ${pl.orden}`}
+                      style={{ width: 100, height: 100, objectFit: "contain", display: "block", padding: 4 }}
+                      onError={(e) => { e.target.style.display = "none"; }} />
+                  </a>
+                  {pl.descripcion && (
+                    <span style={{ display: "block", textAlign: "center", fontSize: 10, color: "#8a8f9e", fontFamily: "'DM Mono', monospace", marginTop: 4, maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {pl.descripcion}
+                    </span>
+                  )}
+                  <button type="button" onClick={() => removePlano(pl._uid)}
+                    style={{ position: "absolute", top: -7, right: -7, width: 22, height: 22, borderRadius: "50%", background: "#e05454", border: "2px solid #13161b", color: "#fff", fontSize: 9, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", padding: 0, lineHeight: 1 }}>
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        {activePlanosNuevos.length > 0 && (
+          <>
+            <div style={{ padding: "8px 12px 2px", fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#5b9cf6", letterSpacing: "0.06em", textTransform: "uppercase" }}>Nuevos a subir</div>
+            <table style={DJ.inlineTable}>
+              <thead><tr>
+                <th style={{ ...DJ.inlineTh, width: 72 }}>Preview</th>
+                <th style={DJ.inlineTh}>Archivo</th>
+                <th style={DJ.inlineTh}>Descripción</th>
+                <th style={{ ...DJ.inlineTh, width: 72 }}>Orden</th>
+                <th style={{ ...DJ.inlineTh, width: 48 }}>Del.</th>
+              </tr></thead>
+              <tbody>
+                {activePlanosNuevos.map((pl) => (
+                  <NewPlanoRow key={pl._uid} plano={pl} onChange={setPlanoField} onRemove={removePlano} />
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
+        {activePlanosGuardados.length === 0 && activePlanosNuevos.length === 0 && (
+          <div style={{ padding: "12px", color: "#4a4f5e", fontSize: 11, fontFamily: "'DM Mono', monospace" }}>
+            Sin planos técnicos aún.
+          </div>
+        )}
+        <div style={{ padding: "8px 12px" }}>
+          <span style={DJ.addLink} onClick={() => setPlanos((p) => [...p, emptyPlano()])}>+ Agregar plano técnico</span>
+        </div>
+      </div>
+
+      {/* ── Colores ── */}
       <div style={DJ.inlineHeader}>Colores del producto</div>
-
       {activeColores.map((color) => {
-        const imagenesGuardadas = imagenes.filter(
-          (i) => !i.DELETE && i.url_existente && (i._colorId === color.id || i._colorUid === color._uid)
-        );
-        const imagenesNuevas = imagenes.filter(
-          (i) => !i.DELETE && !i.url_existente && (i._colorUid === color._uid || i._colorId === color.id)
-        );
+        const imagenesGuardadas = imagenes.filter((i) => !i.DELETE && i.url_existente && (i._colorId === color.id || i._colorUid === color._uid));
+        const imagenesNuevas = imagenes.filter((i) => !i.DELETE && !i.url_existente && (i._colorUid === color._uid || i._colorId === color.id));
         const total = imagenesGuardadas.length + imagenesNuevas.length;
-
         return (
           <div key={color._uid} style={{ border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, marginBottom: 16, overflow: "hidden" }}>
-            {/* Fila color */}
             <table style={DJ.inlineTable}>
               <thead><tr>
                 <th style={{ ...DJ.inlineTh, width: 64 }}>Actual</th>
@@ -479,12 +773,8 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
                 <th style={{ ...DJ.inlineTh, width: 60 }}>Del.</th>
               </tr></thead>
               <tbody><tr>
-                <td style={{ ...DJ.inlineTd, width: 64 }}>
-                  <Thumb src={color.imagen_url_existente} size={48} />
-                </td>
-                <td style={DJ.inlineTd}>
-                  <input style={DJ.inlineInput} type="text" value={color.nombre} onChange={(e) => setColorField(color._uid, "nombre", e.target.value)} />
-                </td>
+                <td style={{ ...DJ.inlineTd, width: 64 }}><Thumb src={color.imagen_url_existente} size={48} /></td>
+                <td style={DJ.inlineTd}><input style={DJ.inlineInput} type="text" value={color.nombre} onChange={(e) => setColorField(color._uid, "nombre", e.target.value)} /></td>
                 <td style={DJ.inlineTd}>
                   <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                     {color.codigo_hex && <span style={{ width: 14, height: 14, borderRadius: 3, background: color.codigo_hex, border: "1px solid rgba(255,255,255,0.15)", flexShrink: 0 }} />}
@@ -495,8 +785,7 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
                   <input type="file" accept="image/*" onChange={(e) => setColorField(color._uid, "imagen_file", e.target.files[0])} style={{ color: "#8a8f9e", fontSize: 11 }} />
                   {color.imagen_file && (
                     <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
-                      <img src={URL.createObjectURL(color.imagen_file)} alt=""
-                        style={{ width: 36, height: 36, objectFit: "cover", borderRadius: 4, border: "1px solid rgba(255,255,255,0.1)" }} />
+                      <img src={URL.createObjectURL(color.imagen_file)} alt="" style={{ width: 36, height: 36, objectFit: "cover", borderRadius: 4, border: "1px solid rgba(255,255,255,0.1)" }} />
                       <span style={{ color: "#4caf7d", fontSize: 11 }}>✓ {color.imagen_file.name}</span>
                     </div>
                   )}
@@ -507,7 +796,6 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
               </tr></tbody>
             </table>
 
-            {/* Encabezado imágenes con contador */}
             <div style={{ background: "rgba(76,175,125,0.08)", borderLeft: "3px solid #4caf7d", padding: "8px 14px", fontSize: 10, fontFamily: "'DM Mono', monospace", color: "#4caf7d", letterSpacing: "0.1em", textTransform: "uppercase", display: "flex", alignItems: "center", gap: 8 }}>
               <span>Imágenes — {color.nombre || "sin nombre"}</span>
               <span style={{ background: total > 0 ? "rgba(76,175,125,0.2)" : "rgba(74,79,94,0.3)", border: `1px solid ${total > 0 ? "rgba(76,175,125,0.4)" : "rgba(74,79,94,0.3)"}`, color: total > 0 ? "#4caf7d" : "#4a4f5e", borderRadius: 20, padding: "1px 8px", fontSize: 10, fontWeight: 600 }}>
@@ -515,15 +803,11 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
               </span>
             </div>
 
-            {/* Galería imágenes guardadas */}
             <ImageGallery imagenes={imagenesGuardadas} onDelete={removeImagen} />
 
-            {/* Imágenes nuevas con preview */}
             {imagenesNuevas.length > 0 && (
               <>
-                <div style={{ padding: "8px 12px 2px", fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#5b9cf6", letterSpacing: "0.06em", textTransform: "uppercase" }}>
-                  Nuevas a subir
-                </div>
+                <div style={{ padding: "8px 12px 2px", fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#5b9cf6", letterSpacing: "0.06em", textTransform: "uppercase" }}>Nuevas a subir</div>
                 <table style={DJ.inlineTable}>
                   <thead><tr>
                     <th style={{ ...DJ.inlineTh, width: 72 }}>Preview</th>
@@ -539,11 +823,8 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
                 </table>
               </>
             )}
-
             <div style={{ padding: "8px 12px" }}>
-              <span style={DJ.addLink} onClick={() => setImagenes((p) => [...p, emptyImagen(color._uid, color.id)])}>
-                + Agregar imagen
-              </span>
+              <span style={DJ.addLink} onClick={() => setImagenes((p) => [...p, emptyImagen(color._uid, color.id)])}>+ Agregar imagen</span>
             </div>
           </div>
         );
@@ -583,10 +864,7 @@ const Modal = ({ section, item, onClose, onSaved, toast }) => {
       if (section.isFileUpload) {
         const fd = new FormData();
         Object.entries(form).forEach(([k, v]) => { if (v !== "" && v !== null && v !== undefined) fd.append(k, v); });
-        // ✅ CORRECCIÓN: renombrar "imagen" → "imagen_file" para el serializer de colores
-        Object.entries(files).forEach(([k, v]) => {
-          if (v) fd.append(k === "imagen" ? "imagen_file" : k, v);
-        });
+        Object.entries(files).forEach(([k, v]) => { if (v) fd.append(k === "imagen" ? "imagen_file" : k, v); });
         body = fd;
       } else {
         body = JSON.stringify(form); extraHeaders = { "Content-Type": "application/json" };
@@ -728,8 +1006,7 @@ const CitaSection = ({ section, toast }) => {
             <thead><tr>
               <th>Identificación</th><th>Nombre</th><th>Apellido</th>
               <th>Correo</th><th>Teléfono</th><th>Fecha</th><th>Hora</th>
-              <th>Motivo</th>
-              <th>Estado</th><th>Acciones</th>
+              <th>Motivo</th><th>Estado</th><th>Acciones</th>
             </tr></thead>
             <tbody>
               {filtered.map((row) => {
@@ -991,6 +1268,17 @@ const SECTIONS = [
       { name: "orden", label: "Orden", type: "number" },
     ],
     columns: ["id", "color", "imagen", "orden"], columnLabels: ["ID", "Color", "Imagen", "Orden"],
+  },
+  {
+    key: "dimensiones", label: "Planos técnicos", endpoint: `${BASE}/imagendimension/`, isFileUpload: true,
+    fields: [
+      { name: "producto", label: "Producto (ID)", type: "number", required: true },
+      { name: "descripcion", label: "Descripción", type: "text" },
+      { name: "orden", label: "Orden", type: "number" },
+      { name: "imagen", label: "Imagen del plano", type: "file", imgUrlField: "imagen" },
+    ],
+    columns: ["id", "producto", "descripcion", "orden", "imagen"],
+    columnLabels: ["ID", "Producto", "Descripción", "Orden", "Imagen"],
   },
   {
     key: "usuarios", label: "Usuarios", endpoint: `${BASE}/usuarios/`,
