@@ -9,7 +9,7 @@ import "./Landing.css";
 
 const WHATSAPP_NUMBER = "573014172170";
 const WHATSAPP_MSG = encodeURIComponent("Hola, me gustaría obtener más información.");
-const INSTAGRAM_URL = "https://www.instagram.com/mestizomobiliario";
+const INSTAGRAM_URL = "https://www.instagram.com/mestizo.mob?igsh=Y2VxNjFoZXU2d3Zr";
 
 export default function Landing() {
   const navigate = useNavigate();
