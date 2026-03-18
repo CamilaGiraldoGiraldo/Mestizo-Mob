@@ -26,14 +26,14 @@
   padding: 0 20px;
 }
 
-/* LOGO EN LA DERECHA */
-.logo-container {
+/* ── LOGO DESKTOP (dentro de right-section, a la derecha) ── */
+.logo-desktop {
   display: flex;
   align-items: center;
   height: 100%;
 }
 
-.logo-container img {
+.logo-desktop img {
   max-height: 250px;
   height: auto;
   width: auto;
@@ -41,12 +41,26 @@
   transition: transform 0.3s ease, filter 0.3s ease;
 }
 
-.logo-container img:hover {
+.logo-desktop img:hover {
   transform: scale(1.05);
   filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.3));
 }
 
-/* LINKS A LA IZQUIERDA */
+/* ── LOGO MOBILE (a la izquierda, oculto en desktop) ── */
+.logo-mobile {
+  display: none;
+  align-items: center;
+  height: 100%;
+}
+
+.logo-mobile img {
+  max-height: 70px;
+  height: auto;
+  width: auto;
+  object-fit: contain;
+}
+
+/* LINKS A LA IZQUIERDA (desktop) */
 .nav-links {
   display: flex;
   gap: 35px;
@@ -104,7 +118,6 @@
   transform: scale(1.1);
 }
 
-/* Punto verde cuando está logueado */
 .user-dot {
   position: absolute;
   bottom: 4px;
@@ -145,7 +158,6 @@
   }
 }
 
-/* Info usuario */
 .user-dropdown-info {
   padding: 4px 16px 12px;
   display: flex;
@@ -170,7 +182,6 @@
   margin: 0 0 8px;
 }
 
-/* ── Botón Panel de Administración ── */
 .user-dropdown-admin {
   display: flex;
   align-items: center;
@@ -211,7 +222,6 @@
   z-index: 1;
 }
 
-/* Ícono de engranaje con brillo */
 .user-dropdown-admin::after {
   content: '';
   position: absolute;
@@ -229,7 +239,6 @@
   left: 120%;
 }
 
-/* ── Botón cerrar sesión ── */
 .user-dropdown-logout {
   display: flex;
   align-items: center;
@@ -304,7 +313,7 @@
 }
 
 /* ========================= */
-/* MODAL DE LOGIN */
+/* MODAL LOGIN / RECUPERACIÓN */
 .login-overlay {
   position: fixed;
   inset: 0;
@@ -373,7 +382,7 @@
 
 .login-header {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .login-avatar-icon {
@@ -444,7 +453,17 @@
   border: 1px solid #f5c6c6;
   border-radius: 7px;
   padding: 9px 12px;
-  margin: 0;
+  margin: 0 0 4px;
+}
+
+.login-info {
+  font-size: 13px;
+  color: #1a6e34;
+  background: #f0faf4;
+  border: 1px solid #a8dbb8;
+  border-radius: 7px;
+  padding: 9px 12px;
+  margin: 0 0 4px;
 }
 
 .login-submit {
@@ -470,13 +489,29 @@
   cursor: not-allowed;
 }
 
-/* ========================= */
-/* RESPONSIVE */
-@media (max-width: 992px) {
-  .logo-container img {
-    max-height: 180px;
-  }
+.login-forgot {
+  background: none;
+  border: none;
+  color: #AF5C35;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+  text-align: center;
+  transition: opacity 0.2s;
+  text-decoration: underline;
+}
 
+.login-forgot:hover {
+  opacity: 0.7;
+}
+
+/* ========================= */
+/* RESPONSIVE — SOLO MOBILE  */
+/* ========================= */
+@media (max-width: 992px) {
+
+  /* Links: drawer vertical */
   .nav-links {
     position: absolute;
     top: 100px;
@@ -489,13 +524,62 @@
     padding: 30px 0;
     display: none;
     z-index: 400;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   }
 
   .nav-links.open {
     display: flex;
   }
 
+  /* Hamburguesa visible */
   .hamburger {
     display: flex;
+  }
+
+  /* Logo desktop → oculto */
+  .logo-desktop {
+    display: none;
+  }
+
+  /* Logo mobile → visible a la izquierda */
+  .logo-mobile {
+    display: flex;
+  }
+
+  .logo-mobile img {
+    max-height: 160px;
+  }
+
+  /* Iconos a la derecha */
+  .right-section {
+    gap: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    height: 90px;
+    padding: 0 12px;
+  }
+
+  .nav-container {
+    padding: 0 8px;
+  }
+
+  .nav-links {
+    top: 90px;
+  }
+
+  .logo-mobile img {
+    max-height: 130px;
+  }
+
+  .right-section {
+    gap: 14px;
+  }
+
+  .user-icon,
+  .cart-icon {
+    font-size: 20px;
   }
 }

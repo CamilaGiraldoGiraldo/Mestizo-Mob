@@ -67,9 +67,9 @@ const Thumb = ({ src, size = 48, radius = 6 }) => {
 
 /* ─── Badge estado citas ─────────────────────────────────── */
 const ESTADO_COLORS = {
-  pendiente:  { bg: "rgba(232,197,71,0.15)",  border: "rgba(232,197,71,0.4)",  color: "#e8c547" },
-  confirmada: { bg: "rgba(76,175,125,0.15)",  border: "rgba(76,175,125,0.4)",  color: "#4caf7d" },
-  cancelada:  { bg: "rgba(224,84,84,0.15)",   border: "rgba(224,84,84,0.4)",   color: "#e05454" },
+  pendiente: { bg: "rgba(232,197,71,0.15)", border: "rgba(232,197,71,0.4)", color: "#e8c547" },
+  confirmada: { bg: "rgba(76,175,125,0.15)", border: "rgba(76,175,125,0.4)", color: "#4caf7d" },
+  cancelada: { bg: "rgba(224,84,84,0.15)", border: "rgba(224,84,84,0.4)", color: "#e05454" },
 };
 const EstadoBadge = ({ estado }) => {
   const s = ESTADO_COLORS[estado] || ESTADO_COLORS.pendiente;
@@ -105,28 +105,28 @@ const Toasts = ({ toasts, remove }) => (
 
 /* ─── Estilos DJ ─────────────────────────────────────────── */
 const DJ = {
-  page:        { fontFamily: "'DM Sans', sans-serif", fontSize: 13.5, color: "#e8eaf0" },
-  fieldRow:    { display: "flex", alignItems: "flex-start", borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "12px 0" },
-  fieldLabel:  { width: 180, minWidth: 180, fontFamily: "'DM Mono', monospace", fontSize: 11, fontWeight: 500, color: "#4a4f5e", letterSpacing: "0.07em", textTransform: "uppercase", paddingTop: 8, paddingRight: 16 },
-  fieldInput:  { flex: 1 },
-  input:       { background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", color: "#e8eaf0", padding: "8px 10px", fontSize: 13.5, width: "100%", boxSizing: "border-box", outline: "none", borderRadius: 6, fontFamily: "'DM Sans', sans-serif" },
-  textarea:    { background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", color: "#e8eaf0", padding: "8px 10px", fontSize: 13.5, width: "100%", boxSizing: "border-box", minHeight: 120, resize: "vertical", outline: "none", borderRadius: 6, fontFamily: "'DM Sans', sans-serif" },
-  select:      { background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", color: "#e8eaf0", padding: "8px 10px", fontSize: 13.5, outline: "none", borderRadius: 6, fontFamily: "'DM Sans', sans-serif" },
-  inlineHeader:{ background: "#1a1e25", borderLeft: "3px solid #e8c547", padding: "8px 14px", fontSize: 11, fontWeight: 500, fontFamily: "'DM Mono', monospace", color: "#e8c547", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 20 },
+  page: { fontFamily: "'DM Sans', sans-serif", fontSize: 13.5, color: "#e8eaf0" },
+  fieldRow: { display: "flex", alignItems: "flex-start", borderBottom: "1px solid rgba(255,255,255,0.06)", padding: "12px 0" },
+  fieldLabel: { width: 180, minWidth: 180, fontFamily: "'DM Mono', monospace", fontSize: 11, fontWeight: 500, color: "#4a4f5e", letterSpacing: "0.07em", textTransform: "uppercase", paddingTop: 8, paddingRight: 16 },
+  fieldInput: { flex: 1 },
+  input: { background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", color: "#e8eaf0", padding: "8px 10px", fontSize: 13.5, width: "100%", boxSizing: "border-box", outline: "none", borderRadius: 6, fontFamily: "'DM Sans', sans-serif" },
+  textarea: { background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", color: "#e8eaf0", padding: "8px 10px", fontSize: 13.5, width: "100%", boxSizing: "border-box", minHeight: 120, resize: "vertical", outline: "none", borderRadius: 6, fontFamily: "'DM Sans', sans-serif" },
+  select: { background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", color: "#e8eaf0", padding: "8px 10px", fontSize: 13.5, outline: "none", borderRadius: 6, fontFamily: "'DM Sans', sans-serif" },
+  inlineHeader: { background: "#1a1e25", borderLeft: "3px solid #e8c547", padding: "8px 14px", fontSize: 11, fontWeight: 500, fontFamily: "'DM Mono', monospace", color: "#e8c547", letterSpacing: "0.1em", textTransform: "uppercase", marginTop: 20 },
   inlineTable: { width: "100%", borderCollapse: "collapse" },
-  inlineTh:    { background: "#13161b", padding: "8px 10px", fontSize: 11, fontFamily: "'DM Mono', monospace", fontWeight: 500, color: "#4a4f5e", textAlign: "left", letterSpacing: "0.06em", textTransform: "uppercase", borderBottom: "1px solid rgba(255,255,255,0.06)" },
-  inlineTd:    { padding: "7px 8px", borderBottom: "1px solid rgba(255,255,255,0.04)", verticalAlign: "middle" },
+  inlineTh: { background: "#13161b", padding: "8px 10px", fontSize: 11, fontFamily: "'DM Mono', monospace", fontWeight: 500, color: "#4a4f5e", textAlign: "left", letterSpacing: "0.06em", textTransform: "uppercase", borderBottom: "1px solid rgba(255,255,255,0.06)" },
+  inlineTd: { padding: "7px 8px", borderBottom: "1px solid rgba(255,255,255,0.04)", verticalAlign: "middle" },
   inlineInput: { background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", color: "#e8eaf0", padding: "5px 8px", fontSize: 12.5, width: "100%", boxSizing: "border-box", outline: "none", borderRadius: 4, fontFamily: "'DM Sans', sans-serif" },
-  addLink:     { display: "inline-block", marginTop: 8, color: "#5b9cf6", fontSize: 12.5, cursor: "pointer", fontFamily: "'DM Mono', monospace", textDecoration: "underline" },
-  removeBtn:   { background: "rgba(224,84,84,0.1)", border: "1px solid rgba(224,84,84,0.3)", color: "#e05454", width: 24, height: 24, borderRadius: "50%", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, flexShrink: 0 },
-  saveBar:     { background: "#13161b", padding: "14px 0", display: "flex", gap: 8, flexWrap: "wrap", borderTop: "1px solid rgba(255,255,255,0.06)", marginTop: 24 },
-  btnSave:     { background: "#e8c547", color: "#0d0f12", border: "none", padding: "10px 20px", fontSize: 13.5, cursor: "pointer", fontWeight: 600, borderRadius: 8, fontFamily: "'DM Sans', sans-serif" },
-  btnAlt:      { background: "transparent", color: "#8a8f9e", border: "1px solid rgba(255,255,255,0.1)", padding: "10px 20px", fontSize: 13.5, cursor: "pointer", borderRadius: 8, fontFamily: "'DM Sans', sans-serif" },
-  btnBack:     { background: "transparent", color: "#5b9cf6", border: "none", padding: "6px 0", fontSize: 13.5, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", textDecoration: "underline" },
+  addLink: { display: "inline-block", marginTop: 8, color: "#5b9cf6", fontSize: 12.5, cursor: "pointer", fontFamily: "'DM Mono', monospace", textDecoration: "underline" },
+  removeBtn: { background: "rgba(224,84,84,0.1)", border: "1px solid rgba(224,84,84,0.3)", color: "#e05454", width: 24, height: 24, borderRadius: "50%", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, flexShrink: 0 },
+  saveBar: { background: "#13161b", padding: "14px 0", display: "flex", gap: 8, flexWrap: "wrap", borderTop: "1px solid rgba(255,255,255,0.06)", marginTop: 24 },
+  btnSave: { background: "#e8c547", color: "#0d0f12", border: "none", padding: "10px 20px", fontSize: 13.5, cursor: "pointer", fontWeight: 600, borderRadius: 8, fontFamily: "'DM Sans', sans-serif" },
+  btnAlt: { background: "transparent", color: "#8a8f9e", border: "1px solid rgba(255,255,255,0.1)", padding: "10px 20px", fontSize: 13.5, cursor: "pointer", borderRadius: 8, fontFamily: "'DM Sans', sans-serif" },
+  btnBack: { background: "transparent", color: "#5b9cf6", border: "none", padding: "6px 0", fontSize: 13.5, cursor: "pointer", fontFamily: "'DM Sans', sans-serif", textDecoration: "underline" },
 };
 
 /* ─── Helpers ────────────────────────────────────────────── */
-const emptyColor  = () => ({ _uid: Math.random(), nombre: "", codigo_hex: "", imagen_file: null, DELETE: false });
+const emptyColor = () => ({ _uid: Math.random(), nombre: "", codigo_hex: "", imagen_file: null, DELETE: false });
 const emptyImagen = (colorUid, colorId) => ({
   _uid: Math.random(), _colorUid: colorUid, _colorId: colorId || null,
   imagen_file: null, previewUrl: null, orden: 1, DELETE: false,
@@ -217,10 +217,10 @@ const NewImageRow = ({ img, onChange, onRemove }) => {
    LOGIN SCREEN
    ═══════════════════════════════════════════════════════════ */
 const LoginScreen = ({ onLogin }) => {
-  const [correo,     setCorreo]     = useState("");
+  const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
-  const [error,      setError]      = useState("");
-  const [loading,    setLoading]    = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault(); setError(""); setLoading(true);
@@ -248,7 +248,7 @@ const LoginScreen = ({ onLogin }) => {
         </div>
         {error && <div style={{ background: "rgba(224,84,84,0.1)", border: "1px solid rgba(224,84,84,0.3)", color: "#e05454", padding: "10px 14px", borderRadius: 8, fontSize: 13, marginBottom: 20, lineHeight: 1.5 }}>{error}</div>}
         {[
-          { label: "Correo",     type: "email",    val: correo,     set: setCorreo,     placeholder: "admin@ejemplo.com" },
+          { label: "Correo", type: "email", val: correo, set: setCorreo, placeholder: "admin@ejemplo.com" },
           { label: "Contraseña", type: "password", val: contrasena, set: setContrasena, placeholder: "••••••••" },
         ].map(({ label, type, val, set, placeholder }) => (
           <div key={label} style={{ marginBottom: 16 }}>
@@ -256,7 +256,7 @@ const LoginScreen = ({ onLogin }) => {
             <input type={type} value={val} onChange={(e) => set(e.target.value)} placeholder={placeholder} required
               style={{ width: "100%", padding: "11px 14px", background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 8, color: "#e8eaf0", fontSize: 14, fontFamily: "'DM Sans', sans-serif", outline: "none", boxSizing: "border-box" }}
               onFocus={(e) => e.target.style.borderColor = "rgba(232,197,71,0.4)"}
-              onBlur={(e)  => e.target.style.borderColor = "rgba(255,255,255,0.07)"}
+              onBlur={(e) => e.target.style.borderColor = "rgba(255,255,255,0.07)"}
             />
           </div>
         ))}
@@ -275,16 +275,16 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
   const isEdit = !!item;
 
   const [form, setForm] = useState({
-    nombre:      item?.nombre      || "",
+    nombre: item?.nombre || "",
     descripcion: item?.descripcion || "",
-    precio:      item?.precio      || "",
-    categoria:   item?.categoria   || "",
-    stock:       item?.stock       ?? 0,
-    modelo_glb:  null,
+    precio: item?.precio || "",
+    categoria: item?.categoria || "",
+    stock: item?.stock ?? 0,
+    modelo_glb: null,
     modelo_usdz: null,
   });
   const [categorias, setCategorias] = useState([]);
-  const [saving,     setSaving]     = useState(false);
+  const [saving, setSaving] = useState(false);
 
   /* Colores */
   const [colores, setColores] = useState(() => {
@@ -298,17 +298,17 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
     return [emptyColor()];
   });
 
-  /* Imágenes — url_existente = img.imagen (campo real del JSON) */
+  /* Imágenes */
   const [imagenes, setImagenes] = useState(() => {
     if (!item?.colores?.length) return [];
     const resultado = [];
     item.colores.forEach((c) => {
       (c.imagenes || []).forEach((img) => {
-        if (!img.imagen) return; // ignorar sin imagen
+        if (!img.imagen) return;
         resultado.push({
           _uid: Math.random(), _colorId: c.id, _colorUid: null,
           id: img.id, imagen_file: null, previewUrl: null,
-          url_existente: img.imagen, // ← campo real del JSON
+          url_existente: img.imagen,
           orden: img.orden, DELETE: false,
         });
       });
@@ -332,14 +332,14 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
     apiFetch(`${BASE}/categorias/`)
       .then((r) => r.json())
       .then((d) => setCategorias(Array.isArray(d) ? d : (d.results ?? [])))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
-  const setField       = (k, v)      => setForm((p)    => ({ ...p, [k]: v }));
-  const setColorField  = (uid, k, v) => setColores((p) => p.map((c) => c._uid === uid ? { ...c, [k]: v } : c));
-  const removeColor    = (uid)       => setColores((p) => p.map((c) => c._uid === uid ? { ...c, DELETE: true } : c));
+  const setField = (k, v) => setForm((p) => ({ ...p, [k]: v }));
+  const setColorField = (uid, k, v) => setColores((p) => p.map((c) => c._uid === uid ? { ...c, [k]: v } : c));
+  const removeColor = (uid) => setColores((p) => p.map((c) => c._uid === uid ? { ...c, DELETE: true } : c));
   const setImagenField = (uid, k, v) => setImagenes((p) => p.map((i) => i._uid === uid ? { ...i, [k]: v } : i));
-  const removeImagen   = (uid)       => setImagenes((p) => p.map((i) => i._uid === uid ? { ...i, DELETE: true } : i));
+  const removeImagen = (uid) => setImagenes((p) => p.map((i) => i._uid === uid ? { ...i, DELETE: true } : i));
 
   const safeJson = async (res) => {
     const text = await res.text();
@@ -354,8 +354,8 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
       const fd = new FormData();
       fd.append("nombre", form.nombre); fd.append("descripcion", form.descripcion);
       fd.append("precio", form.precio); fd.append("stock", form.stock);
-      if (form.categoria)   fd.append("categoria",   form.categoria);
-      if (form.modelo_glb)  fd.append("modelo_glb",  form.modelo_glb);
+      if (form.categoria) fd.append("categoria", form.categoria);
+      if (form.modelo_glb) fd.append("modelo_glb", form.modelo_glb);
       if (form.modelo_usdz) fd.append("modelo_usdz", form.modelo_usdz);
 
       const productoUrl = isEdit ? `${BASE}/productos/${item.id}/` : `${BASE}/productos/`;
@@ -369,21 +369,23 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
 
       /* Eliminar imágenes guardadas marcadas DELETE */
       for (const img of imagenes.filter((i) => i.DELETE && i.id)) {
-        await apiFetch(`${BASE}/imagenproducto/${img.id}/`, { method: "DELETE" }).catch(() => {});
+        await apiFetch(`${BASE}/imagenproducto/${img.id}/`, { method: "DELETE" }).catch(() => { });
       }
 
       /* Colores */
       for (const color of colores) {
         if (color.DELETE && color.id) {
-          await apiFetch(`${BASE}/colores/${color.id}/`, { method: "DELETE" }).catch(() => {});
+          await apiFetch(`${BASE}/colores/${color.id}/`, { method: "DELETE" }).catch(() => { });
           continue;
         }
         if (color.DELETE || !color.nombre) continue;
 
         const cfd = new FormData();
-        cfd.append("producto", productoId); cfd.append("nombre", color.nombre);
-        if (color.codigo_hex)  cfd.append("codigo_hex", color.codigo_hex);
-        if (color.imagen_file) cfd.append("imagen",     color.imagen_file);
+        cfd.append("producto", productoId);
+        cfd.append("nombre", color.nombre);
+        if (color.codigo_hex) cfd.append("codigo_hex", color.codigo_hex);
+        // ✅ CORRECCIÓN: usar "imagen_file" para que el serializer lo procese
+        if (color.imagen_file) cfd.append("imagen_file", color.imagen_file);
 
         const colorUrl = color.id ? `${BASE}/colores/${color.id}/` : `${BASE}/colores/`;
         const colorRes = await apiFetch(colorUrl, { method: color.id ? "PATCH" : "POST", body: cfd });
@@ -391,16 +393,16 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
         if (!colorRes.ok) { console.error("Error color:", colorData); continue; }
         const colorId = colorData.id;
 
-        /* ── Imágenes nuevas: usa imagen_upload ── */
+        /* Imágenes nuevas */
         const nuevas = imagenes.filter((i) =>
           !i.DELETE && !i.id && i.imagen_file &&
           (i._colorUid === color._uid || i._colorId === color.id)
         );
         for (const img of nuevas) {
           const ifd = new FormData();
-          ifd.append("color",         colorId);
-          ifd.append("imagen_upload", img.imagen_file); // ← campo correcto del serializer
-          ifd.append("orden",         img.orden);
+          ifd.append("color", colorId);
+          ifd.append("imagen_upload", img.imagen_file);
+          ifd.append("orden", img.orden);
           const imgRes = await apiFetch(`${BASE}/imagenproducto/`, { method: "POST", body: ifd });
           if (!imgRes.ok) {
             const imgErr = await imgRes.text();
@@ -433,17 +435,19 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
       </h2>
 
       {[
-        { label: "Nombre *",    content: <input style={DJ.input} type="text" value={form.nombre} onChange={(e) => setField("nombre", e.target.value)} /> },
+        { label: "Nombre *", content: <input style={DJ.input} type="text" value={form.nombre} onChange={(e) => setField("nombre", e.target.value)} /> },
         { label: "Descripción", content: <textarea style={DJ.textarea} value={form.descripcion} onChange={(e) => setField("descripcion", e.target.value)} /> },
-        { label: "Precio *",    content: <input style={{ ...DJ.input, width: 150 }} type="number" step="0.01" value={form.precio} onChange={(e) => setField("precio", e.target.value)} /> },
-        { label: "Categoría",   content: (
-          <select style={DJ.select} value={form.categoria} onChange={(e) => setField("categoria", e.target.value)}>
-            <option value="">----------</option>
-            {categorias.map((c) => <option key={c.id} value={c.id}>{c.nombre}</option>)}
-          </select>
-        )},
-        { label: "Stock",       content: <input style={{ ...DJ.input, width: 100 }} type="number" value={form.stock} onChange={(e) => setField("stock", e.target.value)} /> },
-        { label: "Modelo GLB",  content: <input type="file" accept=".glb"  onChange={(e) => setField("modelo_glb",  e.target.files[0])} style={{ color: "#8a8f9e", fontSize: 12.5 }} /> },
+        { label: "Precio *", content: <input style={{ ...DJ.input, width: 150 }} type="number" step="0.01" value={form.precio} onChange={(e) => setField("precio", e.target.value)} /> },
+        {
+          label: "Categoría", content: (
+            <select style={DJ.select} value={form.categoria} onChange={(e) => setField("categoria", e.target.value)}>
+              <option value="">----------</option>
+              {categorias.map((c) => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+            </select>
+          )
+        },
+        { label: "Stock", content: <input style={{ ...DJ.input, width: 100 }} type="number" value={form.stock} onChange={(e) => setField("stock", e.target.value)} /> },
+        { label: "Modelo GLB", content: <input type="file" accept=".glb" onChange={(e) => setField("modelo_glb", e.target.files[0])} style={{ color: "#8a8f9e", fontSize: 12.5 }} /> },
         { label: "Modelo USDZ", content: <input type="file" accept=".usdz" onChange={(e) => setField("modelo_usdz", e.target.files[0])} style={{ color: "#8a8f9e", fontSize: 12.5 }} /> },
       ].map(({ label, content }, i, arr) => (
         <div key={label} style={{ ...DJ.fieldRow, ...(i === arr.length - 1 ? { borderBottom: "none" } : {}) }}>
@@ -551,8 +555,8 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
 
       <div style={DJ.saveBar}>
         <button type="button" style={DJ.btnSave} disabled={saving} onClick={() => handleSubmit("save")}>{saving ? "Guardando…" : "Guardar"}</button>
-        <button type="button" style={DJ.btnAlt}  disabled={saving} onClick={() => handleSubmit("add")}>Guardar y añadir otro</button>
-        <button type="button" style={DJ.btnAlt}  disabled={saving} onClick={() => handleSubmit("edit")}>Guardar y continuar</button>
+        <button type="button" style={DJ.btnAlt} disabled={saving} onClick={() => handleSubmit("add")}>Guardar y añadir otro</button>
+        <button type="button" style={DJ.btnAlt} disabled={saving} onClick={() => handleSubmit("edit")}>Guardar y continuar</button>
       </div>
     </div>
   );
@@ -563,13 +567,13 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
    ═══════════════════════════════════════════════════════════ */
 const Modal = ({ section, item, onClose, onSaved, toast }) => {
   const isEdit = !!item;
-  const empty  = Object.fromEntries(section.fields.map((f) => [f.name, ""]));
-  const [form,   setForm]  = useState(isEdit ? { ...item } : empty);
-  const [files,  setFiles] = useState({});
+  const empty = Object.fromEntries(section.fields.map((f) => [f.name, ""]));
+  const [form, setForm] = useState(isEdit ? { ...item } : empty);
+  const [files, setFiles] = useState({});
   const [saving, setSaving] = useState(false);
 
   const handleChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
-  const handleFile   = (e) => setFiles((p) => ({ ...p, [e.target.name]: e.target.files[0] }));
+  const handleFile = (e) => setFiles((p) => ({ ...p, [e.target.name]: e.target.files[0] }));
 
   const handleSubmit = async (e) => {
     e.preventDefault(); setSaving(true);
@@ -579,12 +583,15 @@ const Modal = ({ section, item, onClose, onSaved, toast }) => {
       if (section.isFileUpload) {
         const fd = new FormData();
         Object.entries(form).forEach(([k, v]) => { if (v !== "" && v !== null && v !== undefined) fd.append(k, v); });
-        Object.entries(files).forEach(([k, v]) => { if (v) fd.append(k, v); });
+        // ✅ CORRECCIÓN: renombrar "imagen" → "imagen_file" para el serializer de colores
+        Object.entries(files).forEach(([k, v]) => {
+          if (v) fd.append(k === "imagen" ? "imagen_file" : k, v);
+        });
         body = fd;
       } else {
         body = JSON.stringify(form); extraHeaders = { "Content-Type": "application/json" };
       }
-      const res  = await apiFetch(url, { method: isEdit ? "PATCH" : "POST", headers: extraHeaders, body });
+      const res = await apiFetch(url, { method: isEdit ? "PATCH" : "POST", headers: extraHeaders, body });
       const data = await res.json();
       if (!res.ok) { toast(typeof data === "object" ? Object.values(data).flat().join(" · ") : "Error al guardar.", "error"); return; }
       toast(isEdit ? "Registro actualizado." : "Registro creado.", "success");
@@ -655,16 +662,16 @@ const Confirm = ({ onConfirm, onCancel }) => (
    CITA SECTION
    ═══════════════════════════════════════════════════════════ */
 const CitaSection = ({ section, toast }) => {
-  const [rows,           setRows]           = useState([]);
-  const [loading,        setLoading]        = useState(true);
-  const [busqueda,       setBusqueda]       = useState("");
-  const [confirmDelete,  setConfirmDelete]  = useState(null);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [busqueda, setBusqueda] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState(null);
   const [updatingEstado, setUpdatingEstado] = useState(null);
 
   const load = async () => {
     setLoading(true);
     try {
-      const res  = await apiFetch(section.endpoint);
+      const res = await apiFetch(section.endpoint);
       if (!res.ok) throw new Error();
       const data = await res.json();
       setRows(Array.isArray(data) ? data : (data.results ?? []));
@@ -694,10 +701,10 @@ const CitaSection = ({ section, toast }) => {
   };
 
   const abrirWhatsApp = (row) => {
-    const tel   = `57${row.telefono?.replace(/\D/g, "")}`;
+    const tel = `57${row.telefono?.replace(/\D/g, "")}`;
     const fecha = row.fecha ? new Date(row.fecha + "T00:00:00").toLocaleDateString("es-CO", { weekday: "long", year: "numeric", month: "long", day: "numeric" }) : "";
-    const hora  = row.hora ? row.hora.slice(0, 5) : "";
-    const msg   = encodeURIComponent(`Hola ${row.nombre}, te contactamos de *Mestizo Mobiliario* para confirmar tu cita programada para el *${fecha}* a las *${hora}*. ¿Puedes confirmarnos tu asistencia?`);
+    const hora = row.hora ? row.hora.slice(0, 5) : "";
+    const msg = encodeURIComponent(`Hola ${row.nombre}, te contactamos de *Mestizo Mobiliario* para confirmar tu cita programada para el *${fecha}* a las *${hora}*. ¿Puedes confirmarnos tu asistencia?`);
     window.open(`https://wa.me/${tel}?text=${msg}`, "_blank");
   };
 
@@ -713,7 +720,7 @@ const CitaSection = ({ section, toast }) => {
         <input className="pa-search" placeholder="Buscar citas…" value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
       </div>
       {!loading && <p className="pa-count">{filtered.length} registro{filtered.length !== 1 ? "s" : ""}</p>}
-      {loading  && <div className="pa-state"><div className="pa-spinner" /><span>Cargando…</span></div>}
+      {loading && <div className="pa-state"><div className="pa-spinner" /><span>Cargando…</span></div>}
       {!loading && filtered.length === 0 && <div className="pa-state"><span className="pa-state-icon">📭</span><span>Sin citas</span></div>}
       {!loading && filtered.length > 0 && (
         <div className="pa-table-wrap">
@@ -721,6 +728,7 @@ const CitaSection = ({ section, toast }) => {
             <thead><tr>
               <th>Identificación</th><th>Nombre</th><th>Apellido</th>
               <th>Correo</th><th>Teléfono</th><th>Fecha</th><th>Hora</th>
+              <th>Motivo</th>
               <th>Estado</th><th>Acciones</th>
             </tr></thead>
             <tbody>
@@ -729,12 +737,17 @@ const CitaSection = ({ section, toast }) => {
                 return (
                   <tr key={row.id}>
                     <td><span style={{ fontFamily: "'DM Mono', monospace", fontSize: 12 }}>{row.identificacion || <span className="pa-empty">—</span>}</span></td>
-                    <td>{row.nombre         || <span className="pa-empty">—</span>}</td>
+                    <td>{row.nombre || <span className="pa-empty">—</span>}</td>
                     <td>{row.primerApellido || <span className="pa-empty">—</span>}</td>
-                    <td><span style={{ fontSize: 12 }}>{row.correo   || <span className="pa-empty">—</span>}</span></td>
+                    <td><span style={{ fontSize: 12 }}>{row.correo || <span className="pa-empty">—</span>}</span></td>
                     <td><span style={{ fontFamily: "'DM Mono', monospace", fontSize: 12 }}>{row.telefono || <span className="pa-empty">—</span>}</span></td>
                     <td><span style={{ fontFamily: "'DM Mono', monospace", fontSize: 12 }}>{row.fecha ? `${d}/${m}/${y}` : "—"}</span></td>
                     <td><span style={{ fontFamily: "'DM Mono', monospace", fontSize: 12 }}>{row.hora ? String(row.hora).slice(0, 5) : "—"}</span></td>
+                    <td>
+                      <span style={{ fontSize: 12.5, color: "#c8cacc", maxWidth: 200, display: "block", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={row.descripcion || ""}>
+                        {row.descripcion || <span className="pa-empty">—</span>}
+                      </span>
+                    </td>
                     <td>
                       <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                         <EstadoBadge estado={row.estado || "pendiente"} />
@@ -770,17 +783,17 @@ const CitaSection = ({ section, toast }) => {
    PRODUCT SECTION
    ═══════════════════════════════════════════════════════════ */
 const ProductSection = ({ section, toast }) => {
-  const [view,          setView]          = useState("list");
-  const [editItem,      setEditItem]      = useState(null);
-  const [rows,          setRows]          = useState([]);
-  const [loading,       setLoading]       = useState(true);
-  const [busqueda,      setBusqueda]      = useState("");
+  const [view, setView] = useState("list");
+  const [editItem, setEditItem] = useState(null);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [busqueda, setBusqueda] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(null);
 
   const load = async () => {
     setLoading(true);
     try {
-      const res  = await apiFetch(section.endpoint);
+      const res = await apiFetch(section.endpoint);
       if (!res.ok) throw new Error();
       const data = await res.json();
       setRows(Array.isArray(data) ? data : (data.results ?? []));
@@ -815,7 +828,7 @@ const ProductSection = ({ section, toast }) => {
         <button className="pa-btn pa-btn--primary" onClick={() => { setEditItem(null); setView("form"); }}>+ Añadir Producto</button>
       </div>
       {!loading && <p className="pa-count">{filtered.length} registro{filtered.length !== 1 ? "s" : ""}</p>}
-      {loading  && <div className="pa-state"><div className="pa-spinner" /><span>Cargando…</span></div>}
+      {loading && <div className="pa-state"><div className="pa-spinner" /><span>Cargando…</span></div>}
       {!loading && filtered.length === 0 && <div className="pa-state"><span className="pa-state-icon">📭</span><span>Sin registros</span></div>}
       {!loading && filtered.length > 0 && (
         <div className="pa-table-wrap">
@@ -833,8 +846,8 @@ const ProductSection = ({ section, toast }) => {
                     <td style={{ padding: "8px 12px" }}><Thumb src={firstImg} size={44} radius={6} /></td>
                     {section.columns.map((col) => <td key={col}>{row[col] ?? <span className="pa-empty">—</span>}</td>)}
                     <td className="pa-td-actions">
-                      <button className="pa-action pa-action--edit" title="Editar"   onClick={() => { setEditItem(row); setView("form"); }}>✏</button>
-                      <button className="pa-action pa-action--del"  title="Eliminar" onClick={() => setConfirmDelete(row.id)}>🗑</button>
+                      <button className="pa-action pa-action--edit" title="Editar" onClick={() => { setEditItem(row); setView("form"); }}>✏</button>
+                      <button className="pa-action pa-action--del" title="Eliminar" onClick={() => setConfirmDelete(row.id)}>🗑</button>
                     </td>
                   </tr>
                 );
@@ -852,16 +865,16 @@ const ProductSection = ({ section, toast }) => {
    SECTION TABLE GENÉRICA
    ═══════════════════════════════════════════════════════════ */
 const SectionTable = ({ section, toast }) => {
-  const [rows,          setRows]          = useState([]);
-  const [loading,       setLoading]       = useState(true);
-  const [busqueda,      setBusqueda]      = useState("");
-  const [modal,         setModal]         = useState(null);
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [busqueda, setBusqueda] = useState("");
+  const [modal, setModal] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
 
   const load = async () => {
     setLoading(true);
     try {
-      const res  = await apiFetch(section.endpoint);
+      const res = await apiFetch(section.endpoint);
       if (!res.ok) throw new Error();
       const data = await res.json();
       setRows(Array.isArray(data) ? data : (data.results ?? []));
@@ -889,7 +902,7 @@ const SectionTable = ({ section, toast }) => {
     const val = row[col];
     if (val === null || val === undefined || val === "") return <span className="pa-empty">—</span>;
     if (col === "fecha") { const [y, m, d] = String(val).split("-"); return `${d}/${m}/${y}`; }
-    if (col === "hora")  return String(val).slice(0, 5);
+    if (col === "hora") return String(val).slice(0, 5);
     if (col === "imagen") return (
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <Thumb src={buildCloudinaryUrl(val)} size={44} radius={6} />
@@ -911,7 +924,7 @@ const SectionTable = ({ section, toast }) => {
         <button className="pa-btn pa-btn--primary" onClick={() => setModal("create")}>+ Añadir {section.label}</button>
       </div>
       {!loading && <p className="pa-count">{filtered.length} registro{filtered.length !== 1 ? "s" : ""}</p>}
-      {loading  && <div className="pa-state"><div className="pa-spinner" /><span>Cargando…</span></div>}
+      {loading && <div className="pa-state"><div className="pa-spinner" /><span>Cargando…</span></div>}
       {!loading && filtered.length === 0 && <div className="pa-state"><span className="pa-state-icon">📭</span><span>Sin registros</span></div>}
       {!loading && filtered.length > 0 && (
         <div className="pa-table-wrap">
@@ -929,8 +942,8 @@ const SectionTable = ({ section, toast }) => {
                   )}
                   {section.columns.map((col) => <td key={col}>{formatCell(row, col)}</td>)}
                   <td className="pa-td-actions">
-                    <button className="pa-action pa-action--edit" onClick={() => setModal(row)}            title="Editar">✏</button>
-                    <button className="pa-action pa-action--del"  onClick={() => setConfirmDelete(row.id)} title="Eliminar">🗑</button>
+                    <button className="pa-action pa-action--edit" onClick={() => setModal(row)} title="Editar">✏</button>
+                    <button className="pa-action pa-action--del" onClick={() => setConfirmDelete(row.id)} title="Eliminar">🗑</button>
                   </td>
                 </tr>
               ))}
@@ -938,7 +951,7 @@ const SectionTable = ({ section, toast }) => {
           </table>
         </div>
       )}
-      {modal          && <Modal section={section} item={modal === "create" ? null : modal} onClose={() => setModal(null)} onSaved={() => { setModal(null); load(); }} toast={toast} />}
+      {modal && <Modal section={section} item={modal === "create" ? null : modal} onClose={() => setModal(null)} onSaved={() => { setModal(null); load(); }} toast={toast} />}
       {confirmDelete !== null && <Confirm onConfirm={() => handleDelete(confirmDelete)} onCancel={() => setConfirmDelete(null)} />}
     </div>
   );
@@ -952,7 +965,7 @@ const SECTIONS = [
   {
     key: "categorias", label: "Categorías", endpoint: `${BASE}/categorias/`,
     fields: [
-      { name: "nombre",      label: "Nombre",      type: "text",     required: true },
+      { name: "nombre", label: "Nombre", type: "text", required: true },
       { name: "descripcion", label: "Descripción", type: "textarea" },
     ],
     columns: ["nombre", "descripcion"], columnLabels: ["Nombre", "Descripción"],
@@ -960,9 +973,9 @@ const SECTIONS = [
   {
     key: "colores", label: "Color productos", endpoint: `${BASE}/colores/`, isFileUpload: true,
     fields: [
-      { name: "nombre",     label: "Nombre del color", type: "text", required: true },
-      { name: "codigo_hex", label: "Código hex",        type: "text" },
-      { name: "imagen",     label: "Imagen del color",  type: "file", imgUrlField: "imagen_url" },
+      { name: "nombre", label: "Nombre del color", type: "text", required: true },
+      { name: "codigo_hex", label: "Código hex", type: "text" },
+      { name: "imagen", label: "Imagen del color", type: "file", imgUrlField: "imagen_url" },
     ],
     columns: ["nombre", "codigo_hex"], columnLabels: ["Nombre", "Código hex"],
   },
@@ -975,19 +988,19 @@ const SECTIONS = [
     key: "imagenes", label: "Imagen productos", endpoint: `${BASE}/imagenproducto/`,
     fields: [
       { name: "color", label: "Color (ID)", type: "number", required: true },
-      { name: "orden", label: "Orden",      type: "number" },
+      { name: "orden", label: "Orden", type: "number" },
     ],
     columns: ["id", "color", "imagen", "orden"], columnLabels: ["ID", "Color", "Imagen", "Orden"],
   },
   {
     key: "usuarios", label: "Usuarios", endpoint: `${BASE}/usuarios/`,
     fields: [
-      { name: "identificacion",  label: "Identificación",  type: "text",  required: true },
-      { name: "nombre",          label: "Nombre",          type: "text",  required: true },
-      { name: "primerApellido",  label: "Primer apellido", type: "text",  required: true },
-      { name: "segundoApellido", label: "Segundo apellido",type: "text"  },
-      { name: "correo",          label: "Correo",          type: "email", required: true },
-      { name: "telefono",        label: "Teléfono",        type: "text"  },
+      { name: "identificacion", label: "Identificación", type: "text", required: true },
+      { name: "nombre", label: "Nombre", type: "text", required: true },
+      { name: "primerApellido", label: "Primer apellido", type: "text", required: true },
+      { name: "segundoApellido", label: "Segundo apellido", type: "text" },
+      { name: "correo", label: "Correo", type: "email", required: true },
+      { name: "telefono", label: "Teléfono", type: "text" },
     ],
     columns: ["identificacion", "nombre", "primerApellido", "correo", "telefono"],
     columnLabels: ["Identificación", "Nombre", "Apellido", "Correo", "Teléfono"],
@@ -998,7 +1011,7 @@ const SECTIONS = [
    PANEL ADMIN
    ═══════════════════════════════════════════════════════════ */
 const PanelAdmin = ({ onLogout }) => {
-  const [active,      setActive]      = useState(SECTIONS[0].key);
+  const [active, setActive] = useState(SECTIONS[0].key);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { toasts, add, remove } = useToast();
   const current = SECTIONS.find((s) => s.key === active);
@@ -1032,10 +1045,10 @@ const PanelAdmin = ({ onLogout }) => {
         <main className="pa-main">
           <div className="pa-main-header"><h1>{current.label}</h1></div>
           {current.isCita
-            ? <CitaSection    key={active} section={current} toast={add} />
+            ? <CitaSection key={active} section={current} toast={add} />
             : current.isProducto
               ? <ProductSection key={active} section={current} toast={add} />
-              : <SectionTable   key={active} section={current} toast={add} />
+              : <SectionTable key={active} section={current} toast={add} />
           }
         </main>
       </div>
@@ -1053,7 +1066,7 @@ const App = () => {
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
   }, []);
-  const handleLogin  = () => setAuthed(true);
+  const handleLogin = () => setAuthed(true);
   const handleLogout = () => { clearAuthHeader(); setAuthed(false); };
   if (!authed) return <LoginScreen onLogin={handleLogin} />;
   return <PanelAdmin onLogout={handleLogout} />;

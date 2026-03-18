@@ -108,18 +108,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mestizomob',
+        'NAME': 'mestizo',
         'USER': 'root',
-        'PASSWORD': 'Camila123',
+        'PASSWORD': '1234',
         'HOST': 'localhost',
         'PORT': '3306',
     }
 }
-
-# ==========================
-# CLOUDINARY CONFIG
-# ==========================
-
+#Cloudinary Config
 cloudinary.config(
     cloud_name = "de8ra2czm",
     api_key = "646127835215687",
@@ -129,10 +125,7 @@ cloudinary.config(
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# ==========================
-# PASSWORD VALIDATION
-# ==========================
-
+# Validar contraseña. 
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',

@@ -7,26 +7,85 @@ import { useAuth } from "../../context/AuthContext";
 import CartDrawer from "../cart/CartDrawer";
 import "./Header.css";
 
-// ── Modal de Login ───────────────────────────────────────────
+const BASE = "http://127.0.0.1:8000/usuario";
+
+// ── Modal Login / Recuperación ───────────────────────────────
 function LoginModal({ onClose, onLoginSuccess }) {
   const { login } = useAuth();
+
+  const [paso, setPaso] = useState("login");
+
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
+  const [codigo, setCodigo] = useState("");
+  const [nuevaContrasena, setNuevaContrasena] = useState("");
+  const [confirmar, setConfirmar] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  const reset = () => {
+    setError(""); setInfo("");
+    setCodigo(""); setNuevaContrasena(""); setConfirmar("");
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault(); setError(""); setLoading(true);
     try {
       await login(correo, contrasena);
       onLoginSuccess();
     } catch (err) {
       setError(err.message || "Error al iniciar sesión.");
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
+  };
+
+  const handleEnviarCodigo = async (e) => {
+    e.preventDefault(); setError(""); setLoading(true);
+    try {
+      const res = await fetch(`${BASE}/auth/enviar-codigo/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ correo }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || "Error al enviar el código."); return; }
+      setInfo("Si el correo está registrado, recibirás un código en tu bandeja.");
+      setPaso("codigo");
+    } catch { setError("No se pudo conectar con el servidor."); }
+    finally { setLoading(false); }
+  };
+
+  const handleVerificarCodigo = (e) => {
+    e.preventDefault(); setError("");
+    if (codigo.length !== 6) { setError("El código debe tener 6 dígitos."); return; }
+    setInfo(""); setPaso("nueva");
+  };
+
+  const handleNuevaContrasena = async (e) => {
+    e.preventDefault(); setError("");
+    if (nuevaContrasena.length < 8) { setError("La contraseña debe tener al menos 8 caracteres."); return; }
+    if (nuevaContrasena !== confirmar) { setError("Las contraseñas no coinciden."); return; }
+    setLoading(true);
+    try {
+      const res = await fetch(`${BASE}/auth/resetear-contrasena/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ correo, codigo, nueva_contrasena: nuevaContrasena }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || "Error al cambiar la contraseña."); return; }
+      setInfo("¡Contraseña actualizada! Ya puedes iniciar sesión.");
+      reset(); setPaso("login");
+    } catch { setError("No se pudo conectar con el servidor."); }
+    finally { setLoading(false); }
+  };
+
+  const titulos = {
+    login: { h2: "Iniciar sesión", sub: "Accede a tu cuenta" },
+    enviar: { h2: "Recuperar contraseña", sub: "Te enviaremos un código a tu correo" },
+    codigo: { h2: "Ingresa el código", sub: `Código enviado a ${correo}` },
+    nueva: { h2: "Nueva contraseña", sub: "Elige una contraseña segura" },
   };
 
   return (
@@ -36,39 +95,89 @@ function LoginModal({ onClose, onLoginSuccess }) {
 
         <div className="login-header">
           <div className="login-avatar-icon"><FiUser /></div>
-          <h2>Iniciar sesión</h2>
-          <p>Accede a tu cuenta</p>
+          <h2>{titulos[paso].h2}</h2>
+          <p>{titulos[paso].sub}</p>
         </div>
 
-        <form className="login-form" onSubmit={handleSubmit}>
-          <div className="login-field">
-            <label>Correo electrónico</label>
-            <input
-              type="email"
-              placeholder="tucorreo@ejemplo.com"
-              value={correo}
-              onChange={(e) => setCorreo(e.target.value)}
-              required
-              autoFocus
-            />
-          </div>
-          <div className="login-field">
-            <label>Contraseña</label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={contrasena}
-              onChange={(e) => setContrasena(e.target.value)}
-              required
-            />
-          </div>
+        {error && <p className="login-error">{error}</p>}
+        {info && <p className="login-info">{info}</p>}
 
-          {error && <p className="login-error">{error}</p>}
+        {paso === "login" && (
+          <form className="login-form" onSubmit={handleLogin}>
+            <div className="login-field">
+              <label>Correo electrónico</label>
+              <input type="email" placeholder="tucorreo@ejemplo.com"
+                value={correo} onChange={(e) => setCorreo(e.target.value)} required autoFocus />
+            </div>
+            <div className="login-field">
+              <label>Contraseña</label>
+              <input type="password" placeholder="••••••••"
+                value={contrasena} onChange={(e) => setContrasena(e.target.value)} required />
+            </div>
+            <button type="submit" className="login-submit" disabled={loading}>
+              {loading ? "Entrando…" : "Iniciar sesión"}
+            </button>
+            <button type="button" className="login-forgot"
+              onClick={() => { reset(); setPaso("enviar"); }}>
+              ¿Olvidaste tu contraseña?
+            </button>
+          </form>
+        )}
 
-          <button type="submit" className="login-submit" disabled={loading}>
-            {loading ? "Entrando…" : "Iniciar sesión"}
-          </button>
-        </form>
+        {paso === "enviar" && (
+          <form className="login-form" onSubmit={handleEnviarCodigo}>
+            <div className="login-field">
+              <label>Correo electrónico</label>
+              <input type="email" placeholder="tucorreo@ejemplo.com"
+                value={correo} onChange={(e) => setCorreo(e.target.value)} required autoFocus />
+            </div>
+            <button type="submit" className="login-submit" disabled={loading}>
+              {loading ? "Enviando…" : "Enviar código"}
+            </button>
+            <button type="button" className="login-forgot"
+              onClick={() => { reset(); setPaso("login"); }}>
+              ← Volver al inicio de sesión
+            </button>
+          </form>
+        )}
+
+        {paso === "codigo" && (
+          <form className="login-form" onSubmit={handleVerificarCodigo}>
+            <div className="login-field">
+              <label>Código de 6 dígitos</label>
+              <input type="text" placeholder="123456" maxLength={6}
+                value={codigo} onChange={(e) => setCodigo(e.target.value.replace(/\D/g, ""))}
+                required autoFocus
+                style={{ letterSpacing: "0.3em", fontSize: 20, textAlign: "center" }} />
+            </div>
+            <button type="submit" className="login-submit">
+              Verificar código
+            </button>
+            <button type="button" className="login-forgot"
+              onClick={() => { reset(); setPaso("enviar"); }}>
+              ¿No recibiste el código? Reenviar
+            </button>
+          </form>
+        )}
+
+        {paso === "nueva" && (
+          <form className="login-form" onSubmit={handleNuevaContrasena}>
+            <div className="login-field">
+              <label>Nueva contraseña</label>
+              <input type="password" placeholder="Mínimo 8 caracteres"
+                value={nuevaContrasena} onChange={(e) => setNuevaContrasena(e.target.value)}
+                required autoFocus />
+            </div>
+            <div className="login-field">
+              <label>Confirmar contraseña</label>
+              <input type="password" placeholder="Repite la contraseña"
+                value={confirmar} onChange={(e) => setConfirmar(e.target.value)} required />
+            </div>
+            <button type="submit" className="login-submit" disabled={loading}>
+              {loading ? "Guardando…" : "Cambiar contraseña"}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
@@ -80,9 +189,7 @@ function UserDropdown({ user, onClose }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();
-    onClose();
-    navigate("/landing");
+    logout(); onClose(); navigate("/landing");
   };
 
   return (
@@ -93,10 +200,8 @@ function UserDropdown({ user, onClose }) {
       </div>
       <hr className="user-dropdown-divider" />
       {(user.is_staff || user.is_superuser) && (
-        <button
-          className="user-dropdown-admin"
-          onClick={() => { navigate("/admin"); onClose(); }}
-        >
+        <button className="user-dropdown-admin"
+          onClick={() => { navigate("/admin"); onClose(); }}>
           ⚙ Panel de administración
         </button>
       )}
@@ -122,11 +227,8 @@ export default function Header() {
 
   const handleLoginSuccess = () => {
     setLoginOpen(false);
-    // Redirige al admin si es staff/superuser
     const stored = JSON.parse(localStorage.getItem("auth_user") || "{}");
-    if (stored.is_staff || stored.is_superuser) {
-      navigate("/admin");
-    }
+    if (stored.is_staff || stored.is_superuser) navigate("/admin");
   };
 
   return (
@@ -134,29 +236,34 @@ export default function Header() {
       <header className="header">
         <nav className="nav-container">
 
+          {/*
+           * LOGO MOBILE — visible solo en mobile, izquierda
+           * En desktop está oculto (lo muestra el right-section)
+           */}
+          <div className="logo-mobile">
+            <img src={logo} alt="Mestizo Mob" />
+          </div>
+
+          {/* LINKS — izquierda en desktop, drawer en mobile */}
           <div className={`nav-links ${menuOpen ? "open" : ""}`}>
+            <Link to="/landing" onClick={() => setMenuOpen(false)}>INICIO</Link>
             <Link to="/productos" onClick={() => setMenuOpen(false)}>PRODUCTOS</Link>
             <Link to="/cita" onClick={() => setMenuOpen(false)}>AGENDA UNA CITA</Link>
             <Link to="/personaliza" onClick={() => setMenuOpen(false)}>PERSONALIZA</Link>
             <Link to="/visitanos" onClick={() => setMenuOpen(false)}>VISÍTANOS</Link>
           </div>
 
+          {/* RIGHT SECTION — iconos + logo desktop */}
           <div className="right-section">
 
             {/* USUARIO */}
             <div className="user-container">
-              <button
-                className="user-btn"
-                onClick={() => {
-                  if (isLoggedIn) setUserDropOpen((o) => !o);
-                  else setLoginOpen(true);
-                }}
-                title={isLoggedIn ? user.nombre : "Iniciar sesión"}
-              >
+              <button className="user-btn"
+                onClick={() => { if (isLoggedIn) setUserDropOpen((o) => !o); else setLoginOpen(true); }}
+                title={isLoggedIn ? user.nombre : "Iniciar sesión"}>
                 <FiUser className="user-icon" />
                 {isLoggedIn && <span className="user-dot" />}
               </button>
-
               {isLoggedIn && userDropOpen && (
                 <UserDropdown user={user} onClose={() => setUserDropOpen(false)} />
               )}
@@ -168,16 +275,14 @@ export default function Header() {
               {totalItems > 0 && <span className="cart-badge">{totalItems}</span>}
             </div>
 
-            {/* HAMBURGUESA */}
-            <div
-              className={`hamburger ${menuOpen ? "active" : ""}`}
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
-              <span></span><span></span><span></span>
+            {/* HAMBURGUESA — solo mobile */}
+            <div className={`hamburger ${menuOpen ? "active" : ""}`}
+              onClick={() => setMenuOpen(!menuOpen)}>
+              <span /><span /><span />
             </div>
 
-            {/* LOGO */}
-            <div className="logo-container">
+            {/* LOGO DESKTOP — visible solo en desktop, derecha */}
+            <div className="logo-desktop">
               <img src={logo} alt="Mestizo Mob" />
             </div>
 
@@ -187,10 +292,7 @@ export default function Header() {
 
       <CartDrawer isOpen={cartOpen} close={() => setCartOpen(false)} />
       {loginOpen && (
-        <LoginModal
-          onClose={() => setLoginOpen(false)}
-          onLoginSuccess={handleLoginSuccess}
-        />
+        <LoginModal onClose={() => setLoginOpen(false)} onLoginSuccess={handleLoginSuccess} />
       )}
     </>
   );

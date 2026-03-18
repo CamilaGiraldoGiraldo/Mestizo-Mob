@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from cloudinary.uploader import upload
+from cloudinary.utils import cloudinary_url
 from .models import ImagenProducto
 
 
 class ImagenProductoSerializer(serializers.ModelSerializer):
 
-    imagen = serializers.SerializerMethodField()   # para lectura (GET)
-    imagen_upload = serializers.ImageField(        # para escritura (POST)
+    imagen = serializers.SerializerMethodField()
+    imagen_upload = serializers.ImageField(
         write_only=True, required=False
     )
 
@@ -15,7 +16,16 @@ class ImagenProductoSerializer(serializers.ModelSerializer):
         fields = ["id", "color", "imagen", "imagen_upload", "orden"]
 
     def get_imagen(self, obj):
-        return obj.imagen.url if obj.imagen else None
+        if not obj.imagen:
+            return None
+        try:
+            return obj.imagen.url
+        except AttributeError:
+            raw = str(obj.imagen)
+            if raw.startswith("http"):
+                return raw
+            url, _ = cloudinary_url(raw)
+            return url
 
     def create(self, validated_data):
         imagen_file = validated_data.pop("imagen_upload", None)
