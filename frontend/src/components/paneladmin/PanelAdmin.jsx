@@ -53,7 +53,6 @@ const buildCloudinaryUrl = (raw) => {
   return `https://res.cloudinary.com/de8ra2czm/${raw}`;
 };
 
-/* ─── Cloudinary URL para raw (GLB/USDZ) ────────────────── */
 const buildCloudinaryRawUrl = (raw) => {
   if (!raw) return null;
   if (raw.startsWith("http")) return raw;
@@ -72,7 +71,7 @@ const Thumb = ({ src, size = 48, radius = 6 }) => {
   return <img src={url} onError={() => setErr(true)} style={{ width: size, height: size, borderRadius: radius, objectFit: "cover", border: "1px solid rgba(255,255,255,0.08)", flexShrink: 0, display: "block" }} alt="" />;
 };
 
-/* ─── Modelo3DStatus — muestra estado del modelo existente ── */
+/* ─── Modelo3DStatus ─────────────────────────────────────── */
 const Modelo3DStatus = ({ url, label, onClear }) => {
   if (!url) return null;
   const fullUrl = buildCloudinaryRawUrl(url);
@@ -84,22 +83,14 @@ const Modelo3DStatus = ({ url, label, onClear }) => {
         <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#4caf7d", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 2 }}>
           {label} guardado
         </div>
-        <a
-          href={fullUrl}
-          target="_blank"
-          rel="noreferrer"
+        <a href={fullUrl} target="_blank" rel="noreferrer"
           style={{ color: "#5b9cf6", fontSize: 11, fontFamily: "'DM Mono', monospace", textDecoration: "none", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-          title={fullUrl}
-        >
+          title={fullUrl}>
           {filename} ↗
         </a>
       </div>
-      <button
-        type="button"
-        onClick={onClear}
-        title="Quitar modelo (subir uno nuevo)"
-        style={{ background: "rgba(224,84,84,0.1)", border: "1px solid rgba(224,84,84,0.3)", color: "#e05454", borderRadius: 4, padding: "3px 8px", fontSize: 11, cursor: "pointer", fontFamily: "'DM Mono', monospace", whiteSpace: "nowrap", flexShrink: 0 }}
-      >
+      <button type="button" onClick={onClear} title="Quitar modelo (subir uno nuevo)"
+        style={{ background: "rgba(224,84,84,0.1)", border: "1px solid rgba(224,84,84,0.3)", color: "#e05454", borderRadius: 4, padding: "3px 8px", fontSize: 11, cursor: "pointer", fontFamily: "'DM Mono', monospace", whiteSpace: "nowrap", flexShrink: 0 }}>
         ✕ quitar
       </button>
     </div>
@@ -136,7 +127,14 @@ const useToast = () => {
 const Toasts = ({ toasts, remove }) => (
   <div style={{ position: "fixed", bottom: 24, right: 24, zIndex: 9999, display: "flex", flexDirection: "column", gap: 10 }}>
     {toasts.map((t) => (
-      <div key={t.id} onClick={() => remove(t.id)} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", borderRadius: 10, cursor: "pointer", background: t.type === "success" ? "#1a2e1f" : t.type === "error" ? "#2e1a1a" : "#1a1e25", border: `1px solid ${t.type === "success" ? "rgba(76,175,125,0.3)" : t.type === "error" ? "rgba(224,84,84,0.3)" : "rgba(255,255,255,0.07)"}`, color: t.type === "success" ? "#4caf7d" : t.type === "error" ? "#e05454" : "#e8eaf0", fontSize: 13.5, minWidth: 240, maxWidth: 360, fontFamily: "'DM Sans', sans-serif", boxShadow: "0 4px 16px rgba(0,0,0,0.5)" }}>
+      <div key={t.id} onClick={() => remove(t.id)}
+        style={{
+          display: "flex", alignItems: "center", gap: 12, padding: "12px 16px", borderRadius: 10, cursor: "pointer",
+          background: t.type === "success" ? "#1a2e1f" : t.type === "error" ? "#2e1a1a" : "#1a1e25",
+          border: `1px solid ${t.type === "success" ? "rgba(76,175,125,0.3)" : t.type === "error" ? "rgba(224,84,84,0.3)" : "rgba(255,255,255,0.07)"}`,
+          color: t.type === "success" ? "#4caf7d" : t.type === "error" ? "#e05454" : "#e8eaf0",
+          fontSize: 13.5, minWidth: 240, maxWidth: 360, fontFamily: "'DM Sans', sans-serif", boxShadow: "0 4px 16px rgba(0,0,0,0.5)"
+        }}>
         <span>{t.type === "success" ? "✓" : t.type === "error" ? "✕" : "·"}</span>
         <span>{t.message}</span>
       </div>
@@ -179,6 +177,17 @@ const emptyPlano = () => ({
   imagen_file: null, previewUrl: null,
   descripcion: "", orden: 1, DELETE: false,
 });
+
+/* ─── Obtener PK de un item según la sección ─────────────── */
+// Centraliza la lógica de PK para que Modal y SectionTable
+// siempre construyan la URL correcta sin importar el modelo.
+const getItemPk = (section, item) => {
+  if (!item) return null;
+  // Usuarios usan identificacion como PK (CharField)
+  if (section.key === "usuarios") return item.identificacion;
+  // El resto usan id numérico estándar
+  return item.id;
+};
 
 /* ═══════════════════════════════════════════════════════════
    GALERÍA DE IMÁGENES GUARDADAS
@@ -346,7 +355,8 @@ const LoginScreen = ({ onLogin }) => {
             />
           </div>
         ))}
-        <button type="submit" disabled={loading} style={{ width: "100%", marginTop: 8, padding: "12px 0", background: loading ? "#a08830" : "#e8c547", color: "#0d0f12", border: "none", borderRadius: 8, fontSize: 14, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: loading ? "not-allowed" : "pointer" }}>
+        <button type="submit" disabled={loading}
+          style={{ width: "100%", marginTop: 8, padding: "12px 0", background: loading ? "#a08830" : "#e8c547", color: "#0d0f12", border: "none", borderRadius: 8, fontSize: 14, fontWeight: 600, fontFamily: "'DM Sans', sans-serif", cursor: loading ? "not-allowed" : "pointer" }}>
           {loading ? "Conectando…" : "Entrar al panel"}
         </button>
       </form>
@@ -375,17 +385,13 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
     modelo_usdz: null,
   });
 
-  // Guardar URLs existentes de modelos por separado para mostrarlas
   const [glbExistente, setGlbExistente] = useState(item?.modelo_glb || null);
   const [usdzExistente, setUsdzExistente] = useState(item?.modelo_usdz || null);
-  // Nombre de archivo seleccionado para feedback visual
   const [glbNuevo, setGlbNuevo] = useState(null);
   const [usdzNuevo, setUsdzNuevo] = useState(null);
-
   const [categorias, setCategorias] = useState([]);
   const [saving, setSaving] = useState(false);
 
-  /* Colores */
   const [colores, setColores] = useState(() => {
     if (item?.colores?.length) {
       return item.colores.map((c) => ({
@@ -397,7 +403,6 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
     return [emptyColor()];
   });
 
-  /* Imágenes de producto */
   const [imagenes, setImagenes] = useState(() => {
     if (!item?.colores?.length) return [];
     const resultado = [];
@@ -414,7 +419,6 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
     return resultado;
   });
 
-  /* Planos técnicos */
   const [planos, setPlanos] = useState(() => {
     if (!item?.imagenes_dimensiones?.length) return [];
     return item.imagenes_dimensiones.map((p) => ({
@@ -452,17 +456,12 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
   const handleGlbChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setField("modelo_glb", file);
-    setGlbNuevo(file.name);
-    setGlbExistente(null); // al seleccionar nuevo, ocultamos el existente
+    setField("modelo_glb", file); setGlbNuevo(file.name); setGlbExistente(null);
   };
-
   const handleUsdzChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setField("modelo_usdz", file);
-    setUsdzNuevo(file.name);
-    setUsdzExistente(null);
+    setField("modelo_usdz", file); setUsdzNuevo(file.name); setUsdzExistente(null);
   };
 
   const safeJson = async (res) => {
@@ -480,7 +479,6 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
       fd.append("precio", form.precio);
       fd.append("stock", form.stock);
       if (form.categoria) fd.append("categoria", form.categoria);
-      // Solo adjuntar modelos si se seleccionó un archivo nuevo
       if (form.modelo_glb instanceof File) fd.append("modelo_glb", form.modelo_glb);
       if (form.modelo_usdz instanceof File) fd.append("modelo_usdz", form.modelo_usdz);
       if (form.alto !== "") fd.append("alto", form.alto);
@@ -498,12 +496,10 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
       }
       const productoId = productoData.id;
 
-      for (const img of imagenes.filter((i) => i.DELETE && i.id)) {
+      for (const img of imagenes.filter((i) => i.DELETE && i.id))
         await apiFetch(`${BASE}/imagenproducto/${img.id}/`, { method: "DELETE" }).catch(() => { });
-      }
-      for (const pl of planos.filter((p) => p.DELETE && p.id)) {
+      for (const pl of planos.filter((p) => p.DELETE && p.id))
         await apiFetch(`${BASE}/imagendimension/${pl.id}/`, { method: "DELETE" }).catch(() => { });
-      }
 
       for (const color of colores) {
         if (color.DELETE && color.id) {
@@ -531,7 +527,7 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
           ifd.append("imagen_upload", img.imagen_file);
           ifd.append("orden", img.orden);
           const imgRes = await apiFetch(`${BASE}/imagenproducto/`, { method: "POST", body: ifd });
-          if (!imgRes.ok) { toast("Error al subir una imagen.", "error"); }
+          if (!imgRes.ok) toast("Error al subir una imagen.", "error");
         }
       }
 
@@ -542,7 +538,7 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
         pfd.append("descripcion", pl.descripcion || "");
         pfd.append("orden", pl.orden);
         const plRes = await apiFetch(`${BASE}/imagendimension/`, { method: "POST", body: pfd });
-        if (!plRes.ok) { toast("Error al subir un plano.", "error"); }
+        if (!plRes.ok) toast("Error al subir un plano.", "error");
       }
 
       toast(isEdit ? "Producto actualizado." : "Producto creado.", "success");
@@ -570,7 +566,6 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
         {isEdit ? `Editar: ${item.nombre}` : "Añadir producto"}
       </h2>
 
-      {/* ── Campos básicos ── */}
       {[
         { label: "Nombre *", content: <input style={DJ.input} type="text" value={form.nombre} onChange={(e) => setField("nombre", e.target.value)} /> },
         { label: "Descripción", content: <textarea style={DJ.textarea} value={form.descripcion} onChange={(e) => setField("descripcion", e.target.value)} /> },
@@ -584,119 +579,65 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
           )
         },
         { label: "Stock", content: <input style={{ ...DJ.input, width: 100 }} type="number" value={form.stock} onChange={(e) => setField("stock", e.target.value)} /> },
-      ].map(({ label, content }, i) => (
+      ].map(({ label, content }) => (
         <div key={label} style={DJ.fieldRow}>
           <div style={DJ.fieldLabel}>{label}</div>
           <div style={DJ.fieldInput}>{content}</div>
         </div>
       ))}
 
-      {/* ── Modelos 3D — sección dedicada ── */}
       <div style={DJ.inlineHeaderGreen}>Modelos 3D / Realidad aumentada</div>
       <div style={{ border: "1px solid rgba(76,175,125,0.15)", borderRadius: 8, overflow: "hidden", marginBottom: 8 }}>
         <div style={{ padding: "16px 16px 8px" }}>
-
-          {/* GLB */}
           <div style={{ marginBottom: 20 }}>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#4a4f5e", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>
-              Modelo GLB (Android / Web AR)
-            </div>
-            <Modelo3DStatus
-              url={glbExistente}
-              label="GLB"
-              onClear={() => { setGlbExistente(null); setField("modelo_glb", null); }}
-            />
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#4a4f5e", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Modelo GLB (Android / Web AR)</div>
+            <Modelo3DStatus url={glbExistente} label="GLB" onClear={() => { setGlbExistente(null); setField("modelo_glb", null); }} />
             {!glbExistente && (
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <label style={{
-                  display: "inline-flex", alignItems: "center", gap: 8,
-                  background: "#1a1e25", border: "1px solid rgba(255,255,255,0.1)",
-                  borderRadius: 6, padding: "8px 14px", cursor: "pointer",
-                  fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#8a8f9e",
-                  transition: "border-color 0.2s",
-                }}>
-                  <span>📁</span>
-                  <span>Seleccionar .glb</span>
-                  <input
-                    type="file"
-                    accept=".glb"
-                    style={{ display: "none" }}
-                    onChange={handleGlbChange}
-                  />
+                <label style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#1a1e25", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "8px 14px", cursor: "pointer", fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#8a8f9e" }}>
+                  <span>📁</span><span>Seleccionar .glb</span>
+                  <input type="file" accept=".glb" style={{ display: "none" }} onChange={handleGlbChange} />
                 </label>
-                {glbNuevo && (
-                  <span style={{ color: "#4caf7d", fontSize: 11, fontFamily: "'DM Mono', monospace" }}>
-                    ✓ {glbNuevo}
-                  </span>
-                )}
+                {glbNuevo && <span style={{ color: "#4caf7d", fontSize: 11, fontFamily: "'DM Mono', monospace" }}>✓ {glbNuevo}</span>}
               </div>
             )}
           </div>
-
-          {/* USDZ */}
           <div style={{ marginBottom: 8 }}>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#4a4f5e", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>
-              Modelo USDZ (iOS AR)
-            </div>
-            <Modelo3DStatus
-              url={usdzExistente}
-              label="USDZ"
-              onClear={() => { setUsdzExistente(null); setField("modelo_usdz", null); }}
-            />
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#4a4f5e", letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>Modelo USDZ (iOS AR)</div>
+            <Modelo3DStatus url={usdzExistente} label="USDZ" onClear={() => { setUsdzExistente(null); setField("modelo_usdz", null); }} />
             {!usdzExistente && (
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <label style={{
-                  display: "inline-flex", alignItems: "center", gap: 8,
-                  background: "#1a1e25", border: "1px solid rgba(255,255,255,0.1)",
-                  borderRadius: 6, padding: "8px 14px", cursor: "pointer",
-                  fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#8a8f9e",
-                }}>
-                  <span>📁</span>
-                  <span>Seleccionar .usdz</span>
-                  <input
-                    type="file"
-                    accept=".usdz"
-                    style={{ display: "none" }}
-                    onChange={handleUsdzChange}
-                  />
+                <label style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#1a1e25", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 6, padding: "8px 14px", cursor: "pointer", fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#8a8f9e" }}>
+                  <span>📁</span><span>Seleccionar .usdz</span>
+                  <input type="file" accept=".usdz" style={{ display: "none" }} onChange={handleUsdzChange} />
                 </label>
-                {usdzNuevo && (
-                  <span style={{ color: "#4caf7d", fontSize: 11, fontFamily: "'DM Mono', monospace" }}>
-                    ✓ {usdzNuevo}
-                  </span>
-                )}
+                {usdzNuevo && <span style={{ color: "#4caf7d", fontSize: 11, fontFamily: "'DM Mono', monospace" }}>✓ {usdzNuevo}</span>}
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* ── Dimensiones ── */}
       <div style={DJ.inlineHeader}>Dimensiones del producto</div>
       <div style={{ border: "1px solid rgba(255,255,255,0.06)", borderRadius: 8, overflow: "hidden", marginBottom: 8 }}>
         <table style={DJ.inlineTable}>
-          <thead>
-            <tr>
-              <th style={DJ.inlineTh}>Alto (cm)</th>
-              <th style={DJ.inlineTh}>Ancho (cm)</th>
-              <th style={DJ.inlineTh}>Profundidad (cm)</th>
-              <th style={DJ.inlineTh}>Peso (kg)</th>
-              <th style={DJ.inlineTh}>Material</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style={DJ.inlineTd}><input style={{ ...DJ.inlineInput, width: 80 }} type="number" step="0.1" value={form.alto} placeholder="—" onChange={(e) => setField("alto", e.target.value)} /></td>
-              <td style={DJ.inlineTd}><input style={{ ...DJ.inlineInput, width: 80 }} type="number" step="0.1" value={form.ancho} placeholder="—" onChange={(e) => setField("ancho", e.target.value)} /></td>
-              <td style={DJ.inlineTd}><input style={{ ...DJ.inlineInput, width: 80 }} type="number" step="0.1" value={form.profundidad} placeholder="—" onChange={(e) => setField("profundidad", e.target.value)} /></td>
-              <td style={DJ.inlineTd}><input style={{ ...DJ.inlineInput, width: 80 }} type="number" step="0.1" value={form.peso} placeholder="—" onChange={(e) => setField("peso", e.target.value)} /></td>
-              <td style={DJ.inlineTd}><input style={DJ.inlineInput} type="text" value={form.material} placeholder="Ej: Madera de teca" onChange={(e) => setField("material", e.target.value)} /></td>
-            </tr>
-          </tbody>
+          <thead><tr>
+            <th style={DJ.inlineTh}>Alto (cm)</th>
+            <th style={DJ.inlineTh}>Ancho (cm)</th>
+            <th style={DJ.inlineTh}>Profundidad (cm)</th>
+            <th style={DJ.inlineTh}>Peso (kg)</th>
+            <th style={DJ.inlineTh}>Material</th>
+          </tr></thead>
+          <tbody><tr>
+            <td style={DJ.inlineTd}><input style={{ ...DJ.inlineInput, width: 80 }} type="number" step="0.1" value={form.alto} placeholder="—" onChange={(e) => setField("alto", e.target.value)} /></td>
+            <td style={DJ.inlineTd}><input style={{ ...DJ.inlineInput, width: 80 }} type="number" step="0.1" value={form.ancho} placeholder="—" onChange={(e) => setField("ancho", e.target.value)} /></td>
+            <td style={DJ.inlineTd}><input style={{ ...DJ.inlineInput, width: 80 }} type="number" step="0.1" value={form.profundidad} placeholder="—" onChange={(e) => setField("profundidad", e.target.value)} /></td>
+            <td style={DJ.inlineTd}><input style={{ ...DJ.inlineInput, width: 80 }} type="number" step="0.1" value={form.peso} placeholder="—" onChange={(e) => setField("peso", e.target.value)} /></td>
+            <td style={DJ.inlineTd}><input style={DJ.inlineInput} type="text" value={form.material} placeholder="Ej: Madera de teca" onChange={(e) => setField("material", e.target.value)} /></td>
+          </tr></tbody>
         </table>
       </div>
 
-      {/* ── Planos técnicos ── */}
       <div style={DJ.inlineHeaderBlue}>Planos técnicos / imágenes de dimensiones</div>
       <div style={{ border: "1px solid rgba(91,156,246,0.15)", borderRadius: 8, overflow: "hidden", marginBottom: 8 }}>
         {activePlanosGuardados.length > 0 && (
@@ -747,16 +688,13 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
           </>
         )}
         {activePlanosGuardados.length === 0 && activePlanosNuevos.length === 0 && (
-          <div style={{ padding: "12px", color: "#4a4f5e", fontSize: 11, fontFamily: "'DM Mono', monospace" }}>
-            Sin planos técnicos aún.
-          </div>
+          <div style={{ padding: "12px", color: "#4a4f5e", fontSize: 11, fontFamily: "'DM Mono', monospace" }}>Sin planos técnicos aún.</div>
         )}
         <div style={{ padding: "8px 12px" }}>
           <span style={DJ.addLink} onClick={() => setPlanos((p) => [...p, emptyPlano()])}>+ Agregar plano técnico</span>
         </div>
       </div>
 
-      {/* ── Colores ── */}
       <div style={DJ.inlineHeader}>Colores del producto</div>
       {activeColores.map((color) => {
         const imagenesGuardadas = imagenes.filter((i) => !i.DELETE && i.url_existente && (i._colorId === color.id || i._colorUid === color._uid));
@@ -795,16 +733,13 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
                 </td>
               </tr></tbody>
             </table>
-
             <div style={{ background: "rgba(76,175,125,0.08)", borderLeft: "3px solid #4caf7d", padding: "8px 14px", fontSize: 10, fontFamily: "'DM Mono', monospace", color: "#4caf7d", letterSpacing: "0.1em", textTransform: "uppercase", display: "flex", alignItems: "center", gap: 8 }}>
               <span>Imágenes — {color.nombre || "sin nombre"}</span>
               <span style={{ background: total > 0 ? "rgba(76,175,125,0.2)" : "rgba(74,79,94,0.3)", border: `1px solid ${total > 0 ? "rgba(76,175,125,0.4)" : "rgba(74,79,94,0.3)"}`, color: total > 0 ? "#4caf7d" : "#4a4f5e", borderRadius: 20, padding: "1px 8px", fontSize: 10, fontWeight: 600 }}>
                 {total} imagen{total !== 1 ? "es" : ""}
               </span>
             </div>
-
             <ImageGallery imagenes={imagenesGuardadas} onDelete={removeImagen} />
-
             {imagenesNuevas.length > 0 && (
               <>
                 <div style={{ padding: "8px 12px 2px", fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#5b9cf6", letterSpacing: "0.06em", textTransform: "uppercase" }}>Nuevas a subir</div>
@@ -845,6 +780,8 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
 
 /* ═══════════════════════════════════════════════════════════
    MODAL GENÉRICO
+   ── CORRECCIÓN PRINCIPAL: usa getItemPk(section, item)
+      en lugar de item.id para construir la URL de edición.
    ═══════════════════════════════════════════════════════════ */
 const Modal = ({ section, item, onClose, onSaved, toast }) => {
   const isEdit = !!item;
@@ -859,7 +796,10 @@ const Modal = ({ section, item, onClose, onSaved, toast }) => {
   const handleSubmit = async (e) => {
     e.preventDefault(); setSaving(true);
     try {
-      const url = isEdit ? `${section.endpoint}${item.id}/` : section.endpoint;
+      // ✅ CORRECCIÓN: usar getItemPk para obtener la PK correcta según el modelo
+      const pk = getItemPk(section, item);
+      const url = isEdit ? `${section.endpoint}${pk}/` : section.endpoint;
+
       let body, extraHeaders = {};
       if (section.isFileUpload) {
         const fd = new FormData();
@@ -867,11 +807,19 @@ const Modal = ({ section, item, onClose, onSaved, toast }) => {
         Object.entries(files).forEach(([k, v]) => { if (v) fd.append(k === "imagen" ? "imagen_file" : k, v); });
         body = fd;
       } else {
-        body = JSON.stringify(form); extraHeaders = { "Content-Type": "application/json" };
+        // Para usuarios: excluir campos vacíos opcionales para no pisar valores existentes
+        const payload = { ...form };
+        if (!payload.contrasena) delete payload.contrasena;
+        body = JSON.stringify(payload);
+        extraHeaders = { "Content-Type": "application/json" };
       }
+
       const res = await apiFetch(url, { method: isEdit ? "PATCH" : "POST", headers: extraHeaders, body });
       const data = await res.json();
-      if (!res.ok) { toast(typeof data === "object" ? Object.values(data).flat().join(" · ") : "Error al guardar.", "error"); return; }
+      if (!res.ok) {
+        toast(typeof data === "object" ? Object.values(data).flat().join(" · ") : "Error al guardar.", "error");
+        return;
+      }
       toast(isEdit ? "Registro actualizado." : "Registro creado.", "success");
       onSaved();
     } catch { toast("No se pudo conectar.", "error"); }
@@ -886,32 +834,49 @@ const Modal = ({ section, item, onClose, onSaved, toast }) => {
           <button className="pa-modal-close" onClick={onClose}>✕</button>
         </div>
         <form className="pa-modal-form" onSubmit={handleSubmit}>
-          {section.fields.map((f) => (
-            <label key={f.name} className="pa-field">
-              <span>{f.label}{f.required && " *"}</span>
-              {f.type === "textarea" ? (
-                <textarea name={f.name} value={form[f.name] || ""} onChange={handleChange} required={!!f.required} />
-              ) : f.type === "file" ? (
-                <div>
-                  {item?.[f.imgUrlField || f.name] && (
-                    <div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 10 }}>
-                      <Thumb src={buildCloudinaryUrl(item[f.imgUrlField || f.name])} size={64} radius={8} />
-                      <span style={{ fontSize: 11, color: "#4a4f5e", fontFamily: "'DM Mono', monospace" }}>Imagen actual</span>
-                    </div>
-                  )}
-                  <input name={f.name} type="file" accept="image/*" onChange={handleFile} style={{ color: "#8a8f9e", fontSize: 13 }} />
-                  {files[f.name] && (
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
-                      <Thumb src={URL.createObjectURL(files[f.name])} size={56} radius={8} />
-                      <span style={{ fontSize: 11, color: "#4caf7d", fontFamily: "'DM Mono', monospace" }}>✓ {files[f.name].name}</span>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <input name={f.name} type={f.type} value={form[f.name] || ""} onChange={handleChange} required={!!f.required} />
-              )}
-            </label>
-          ))}
+          {section.fields.map((f) => {
+            // Ocultar identificacion al editar (es la PK, no debe cambiar)
+            if (isEdit && f.readOnlyOnEdit) return (
+              <label key={f.name} className="pa-field">
+                <span>{f.label}</span>
+                <input name={f.name} type={f.type} value={form[f.name] || ""} disabled
+                  style={{ opacity: 0.5, cursor: "not-allowed" }} />
+              </label>
+            );
+            return (
+              <label key={f.name} className="pa-field">
+                <span>{f.label}{f.required && !isEdit ? " *" : f.required && isEdit && !f.optionalOnEdit ? " *" : ""}</span>
+                {f.type === "textarea" ? (
+                  <textarea name={f.name} value={form[f.name] || ""} onChange={handleChange} required={!!f.required && !(isEdit && f.optionalOnEdit)} />
+                ) : f.type === "file" ? (
+                  <div>
+                    {item?.[f.imgUrlField || f.name] && (
+                      <div style={{ marginBottom: 8, display: "flex", alignItems: "center", gap: 10 }}>
+                        <Thumb src={buildCloudinaryUrl(item[f.imgUrlField || f.name])} size={64} radius={8} />
+                        <span style={{ fontSize: 11, color: "#4a4f5e", fontFamily: "'DM Mono', monospace" }}>Imagen actual</span>
+                      </div>
+                    )}
+                    <input name={f.name} type="file" accept="image/*" onChange={handleFile} style={{ color: "#8a8f9e", fontSize: 13 }} />
+                    {files[f.name] && (
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
+                        <Thumb src={URL.createObjectURL(files[f.name])} size={56} radius={8} />
+                        <span style={{ fontSize: 11, color: "#4caf7d", fontFamily: "'DM Mono', monospace" }}>✓ {files[f.name].name}</span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <input
+                    name={f.name}
+                    type={f.type}
+                    value={form[f.name] || ""}
+                    onChange={handleChange}
+                    required={!!f.required && !(isEdit && f.optionalOnEdit)}
+                    placeholder={isEdit && f.optionalOnEdit ? "Dejar en blanco para no cambiar" : ""}
+                  />
+                )}
+              </label>
+            );
+          })}
           <div className="pa-modal-actions">
             <button type="button" className="pa-btn pa-btn--ghost" onClick={onClose}>Cancelar</button>
             <button type="submit" className="pa-btn pa-btn--primary" disabled={saving}>{saving ? "Guardando…" : "Guardar"}</button>
@@ -1140,6 +1105,7 @@ const ProductSection = ({ section, toast }) => {
 
 /* ═══════════════════════════════════════════════════════════
    SECTION TABLE GENÉRICA
+   ── CORRECCIÓN: usa getItemPk para eliminar usuarios
    ═══════════════════════════════════════════════════════════ */
 const SectionTable = ({ section, toast }) => {
   const [rows, setRows] = useState([]);
@@ -1160,9 +1126,11 @@ const SectionTable = ({ section, toast }) => {
   };
   useEffect(() => { load(); }, [section.key]); // eslint-disable-line
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (item) => {
+    // ✅ CORRECCIÓN: usar getItemPk en vez de item.id directamente
+    const pk = getItemPk(section, item);
     try {
-      const res = await apiFetch(`${section.endpoint}${id}/`, { method: "DELETE" });
+      const res = await apiFetch(`${section.endpoint}${pk}/`, { method: "DELETE" });
       if (res.status !== 204 && !res.ok) throw new Error();
       toast("Registro eliminado.", "success"); load();
     } catch { toast("No se pudo eliminar.", "error"); }
@@ -1213,14 +1181,15 @@ const SectionTable = ({ section, toast }) => {
             </tr></thead>
             <tbody>
               {filtered.map((row, i) => (
-                <tr key={row.id ?? i}>
+                <tr key={getItemPk(section, row) ?? i}>
                   {section.key === "colores" && (
                     <td style={{ padding: "8px 12px" }}><Thumb src={buildCloudinaryUrl(row.imagen_url)} size={44} radius={6} /></td>
                   )}
                   {section.columns.map((col) => <td key={col}>{formatCell(row, col)}</td>)}
                   <td className="pa-td-actions">
                     <button className="pa-action pa-action--edit" onClick={() => setModal(row)} title="Editar">✏</button>
-                    <button className="pa-action pa-action--del" onClick={() => setConfirmDelete(row.id)} title="Eliminar">🗑</button>
+                    {/* ✅ Pasamos el objeto completo para que handleDelete pueda extraer la PK correcta */}
+                    <button className="pa-action pa-action--del" onClick={() => setConfirmDelete(row)} title="Eliminar">🗑</button>
                   </td>
                 </tr>
               ))}
@@ -1229,6 +1198,7 @@ const SectionTable = ({ section, toast }) => {
         </div>
       )}
       {modal && <Modal section={section} item={modal === "create" ? null : modal} onClose={() => setModal(null)} onSaved={() => { setModal(null); load(); }} toast={toast} />}
+      {/* ✅ confirmDelete ahora guarda el objeto completo, no solo el id */}
       {confirmDelete !== null && <Confirm onConfirm={() => handleDelete(confirmDelete)} onCancel={() => setConfirmDelete(null)} />}
     </div>
   );
@@ -1236,6 +1206,9 @@ const SectionTable = ({ section, toast }) => {
 
 /* ═══════════════════════════════════════════════════════════
    SECCIONES
+   ── CORRECCIÓN en usuarios:
+      - identificacion tiene readOnlyOnEdit: true (no se puede cambiar la PK)
+      - contrasena tiene optionalOnEdit: true (vacío = no cambiar)
    ═══════════════════════════════════════════════════════════ */
 const SECTIONS = [
   { key: "citas", label: "Citas", endpoint: `${BASE}/citas/lista/`, isCita: true, fields: [], columns: [], columnLabels: [] },
@@ -1283,12 +1256,15 @@ const SECTIONS = [
   {
     key: "usuarios", label: "Usuarios", endpoint: `${BASE}/usuarios/`,
     fields: [
-      { name: "identificacion", label: "Identificación", type: "text", required: true },
+      // readOnlyOnEdit: true → se muestra deshabilitado al editar (es la PK, no debe cambiar)
+      { name: "identificacion", label: "Identificación", type: "text", required: true, readOnlyOnEdit: true },
       { name: "nombre", label: "Nombre", type: "text", required: true },
       { name: "primerApellido", label: "Primer apellido", type: "text", required: true },
       { name: "segundoApellido", label: "Segundo apellido", type: "text" },
       { name: "correo", label: "Correo", type: "email", required: true },
       { name: "telefono", label: "Teléfono", type: "text" },
+      // optionalOnEdit: true → si se deja vacío al editar, no se envía en el payload
+      { name: "contrasena", label: "Contraseña", type: "password", required: true, optionalOnEdit: true },
     ],
     columns: ["identificacion", "nombre", "primerApellido", "correo", "telefono"],
     columnLabels: ["Identificación", "Nombre", "Apellido", "Correo", "Teléfono"],

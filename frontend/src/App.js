@@ -15,6 +15,7 @@ import Intro from "./components/Intro/Intro";
 import CartToast from "./components/ui/CartToast";
 import AgendarCita from "./components/citas/AgendarCita";
 import PanelAdmin from "./components/paneladmin/PanelAdmin";
+import Checkout from "./components/checkout/Checkout";
 
 import { CartProvider, useCart } from "./context/CartContext";
 import { AuthProvider, useAuth } from "./context/AuthContext";
@@ -35,7 +36,9 @@ function AppContent() {
   const { toast } = useCart();
   const location = useLocation();
 
-  const hideHeader = location.pathname === "/" || location.pathname === "/admin";
+  const hideHeader =
+    location.pathname === "/" ||
+    location.pathname === "/admin";
 
   return (
     <>
@@ -68,6 +71,16 @@ function AppContent() {
           element={
             <main className="main-content">
               <AgendarCita />
+            </main>
+          }
+        />
+
+        {/* Checkout */}
+        <Route
+          path="/checkout"
+          element={
+            <main className="main-content">
+              <Checkout />
             </main>
           }
         />

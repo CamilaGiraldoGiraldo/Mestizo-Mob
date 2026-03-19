@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import "./CartDrawer.css";
 
@@ -10,6 +11,13 @@ function CartDrawer({ isOpen, close }) {
     decreaseQuantity,
     totalPrice,
   } = useCart();
+
+  const navigate = useNavigate();
+
+  const handleComprar = () => {
+    close();
+    navigate("/checkout");
+  };
 
   return (
     <>
@@ -71,7 +79,9 @@ function CartDrawer({ isOpen, close }) {
         {cart.length > 0 && (
           <div className="cart-footer">
             <h3>Total: ${totalPrice.toLocaleString()}</h3>
-            <button className="checkout-btn">Comprar</button>
+            <button className="checkout-btn" onClick={handleComprar}>
+              Comprar
+            </button>
           </div>
         )}
       </div>

@@ -75,7 +75,6 @@ def enviar_codigo_view(request):
     try:
         usuario = Usuario.objects.get(correo=correo)
     except Usuario.DoesNotExist:
-        # Respuesta genérica para no revelar si el correo existe
         return Response(
             {'mensaje': 'Si el correo está registrado, recibirás un código.'},
             status=status.HTTP_200_OK
@@ -143,13 +142,11 @@ def resetear_contrasena_view(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Cambiar contraseña e invalidar código
     usuario.set_password(nueva_contrasena)
     usuario.save()
     codigo_obj.usado = True
     codigo_obj.save()
 
-    # Invalidar todos los tokens activos del usuario
     Token.objects.filter(user=usuario).delete()
 
     return Response(
