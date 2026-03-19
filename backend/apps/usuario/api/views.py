@@ -18,6 +18,70 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
+# ── Registro público ──────────────────────────────────────────
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def registro_view(request):
+    campos_requeridos = [
+        'identificacion', 'nombre', 'primerApellido',
+        'segundoApellido', 'correo', 'telefono', 'contrasena'
+    ]
+    errores = {}
+
+    for campo in campos_requeridos:
+        if not request.data.get(campo, '').strip():
+            errores[campo] = 'Este campo es requerido.'
+
+    if errores:
+        return Response(errores, status=status.HTTP_400_BAD_REQUEST)
+
+    correo = request.data.get('correo', '').strip().lower()
+    if Usuario.objects.filter(correo=correo).exists():
+        return Response(
+            {'correo': 'Ya existe una cuenta con este correo.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    identificacion = request.data.get('identificacion', '').strip()
+    if Usuario.objects.filter(identificacion=identificacion).exists():
+        return Response(
+            {'identificacion': 'Ya existe una cuenta con esta identificación.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    contrasena = request.data.get('contrasena', '')
+    if len(contrasena) < 6:
+        return Response(
+            {'contrasena': 'La contraseña debe tener al menos 6 caracteres.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    try:
+        usuario = Usuario.objects.create_user(
+            identificacion  = identificacion,
+            nombre          = request.data.get('nombre', '').strip(),
+            primerApellido  = request.data.get('primerApellido', '').strip(),
+            segundoApellido = request.data.get('segundoApellido', '').strip(),
+            correo          = correo,
+            telefono        = request.data.get('telefono', '').strip(),
+            password        = contrasena,
+        )
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    token, _ = Token.objects.get_or_create(user=usuario)
+
+    return Response({
+        'token': token.key,
+        'user': {
+            'identificacion': usuario.identificacion,
+            'nombre':         usuario.nombre,
+            'primerApellido': usuario.primerApellido,
+            'correo':         usuario.correo,
+        }
+    }, status=status.HTTP_201_CREATED)
+
+
 # ── Login público ─────────────────────────────────────────────
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -101,7 +165,7 @@ def enviar_codigo_view(request):
     )
 
 
-# ── Verificar código y cambiar contraseña ────────────────────
+# ── Verificar código y cambiar contraseña ─────────────────────
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def resetear_contrasena_view(request):

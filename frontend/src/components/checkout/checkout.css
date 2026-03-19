@@ -335,4 +335,80 @@
   .ck-field--half {
     max-width: 100%;
   }
+
+  /* ── Añadir al checkout.css existente ─────────────────────────────────── */
+
+  /* Hint de cambio de modo (login ↔ registro) */
+  .ck-auth-hint {
+    font-size: 0.875rem;
+    color: var(--ck-muted, #6b7280);
+    margin-bottom: 1.5rem;
+  }
+
+  /* Botón de texto tipo enlace */
+  .ck-link {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: inherit;
+    color: var(--ck-accent, #111);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .ck-link:hover {
+    opacity: 0.7;
+  }
+
+  /* ── Indicador de pasos (solo visible sin sesión) ─────────────────────── */
+  .ck-steps {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--ck-border, #e5e7eb);
+  }
+
+  .ck-step {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    opacity: 0.35;
+    transition: opacity 0.2s;
+  }
+
+  .ck-step--active {
+    opacity: 1;
+  }
+
+  .ck-step--done {
+    opacity: 0.6;
+  }
+
+  .ck-step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: var(--ck-accent, #111);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .ck-step-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .ck-step-line {
+    flex: 1;
+    height: 1px;
+    background: var(--ck-border, #e5e7eb);
+  }
 }

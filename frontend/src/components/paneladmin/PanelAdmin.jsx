@@ -52,7 +52,6 @@ const buildCloudinaryUrl = (raw) => {
   if (raw.startsWith("http")) return raw;
   return `https://res.cloudinary.com/de8ra2czm/${raw}`;
 };
-
 const buildCloudinaryRawUrl = (raw) => {
   if (!raw) return null;
   if (raw.startsWith("http")) return raw;
@@ -89,7 +88,7 @@ const Modelo3DStatus = ({ url, label, onClear }) => {
           {filename} ↗
         </a>
       </div>
-      <button type="button" onClick={onClear} title="Quitar modelo (subir uno nuevo)"
+      <button type="button" onClick={onClear} title="Quitar modelo"
         style={{ background: "rgba(224,84,84,0.1)", border: "1px solid rgba(224,84,84,0.3)", color: "#e05454", borderRadius: 4, padding: "3px 8px", fontSize: 11, cursor: "pointer", fontFamily: "'DM Mono', monospace", whiteSpace: "nowrap", flexShrink: 0 }}>
         ✕ quitar
       </button>
@@ -109,6 +108,34 @@ const EstadoBadge = ({ estado }) => {
     <span style={{ display: "inline-flex", alignItems: "center", gap: 5, background: s.bg, border: `1px solid ${s.border}`, color: s.color, fontSize: 11, fontFamily: "'DM Mono', monospace", letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20 }}>
       <span style={{ width: 6, height: 6, borderRadius: "50%", background: s.color, flexShrink: 0 }} />
       {estado}
+    </span>
+  );
+};
+
+/* ─── Badge estado pedidos ───────────────────────────────── */
+const ESTADO_PEDIDO_META = {
+  pendiente: { bg: "rgba(232,197,71,0.15)", border: "rgba(232,197,71,0.4)", color: "#e8c547", icon: "🕐" },
+  confirmado: { bg: "rgba(91,156,246,0.15)", border: "rgba(91,156,246,0.4)", color: "#5b9cf6", icon: "✓" },
+  en_preparacion: { bg: "rgba(168,130,255,0.15)", border: "rgba(168,130,255,0.4)", color: "#a882ff", icon: "⚙" },
+  enviado: { bg: "rgba(255,170,68,0.15)", border: "rgba(255,170,68,0.4)", color: "#ffaa44", icon: "🚚" },
+  entregado: { bg: "rgba(76,175,125,0.15)", border: "rgba(76,175,125,0.4)", color: "#4caf7d", icon: "✅" },
+  cancelado: { bg: "rgba(224,84,84,0.15)", border: "rgba(224,84,84,0.4)", color: "#e05454", icon: "✕" },
+};
+const ESTADOS_PEDIDO = [
+  { value: "pendiente", label: "Pendiente" },
+  { value: "confirmado", label: "Confirmado" },
+  { value: "en_preparacion", label: "En preparación" },
+  { value: "enviado", label: "Enviado" },
+  { value: "entregado", label: "Entregado" },
+  { value: "cancelado", label: "Cancelado" },
+];
+const EstadoPedidoBadge = ({ estado }) => {
+  const s = ESTADO_PEDIDO_META[estado] || ESTADO_PEDIDO_META.pendiente;
+  const label = ESTADOS_PEDIDO.find((e) => e.value === estado)?.label || estado;
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 5, background: s.bg, border: `1px solid ${s.border}`, color: s.color, fontSize: 11, fontFamily: "'DM Mono', monospace", letterSpacing: "0.06em", textTransform: "uppercase", padding: "3px 10px", borderRadius: 20, whiteSpace: "nowrap" }}>
+      <span style={{ fontSize: 10 }}>{s.icon}</span>
+      {label}
     </span>
   );
 };
@@ -178,15 +205,389 @@ const emptyPlano = () => ({
   descripcion: "", orden: 1, DELETE: false,
 });
 
-/* ─── Obtener PK de un item según la sección ─────────────── */
-// Centraliza la lógica de PK para que Modal y SectionTable
-// siempre construyan la URL correcta sin importar el modelo.
 const getItemPk = (section, item) => {
   if (!item) return null;
-  // Usuarios usan identificacion como PK (CharField)
   if (section.key === "usuarios") return item.identificacion;
-  // El resto usan id numérico estándar
   return item.id;
+};
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL DETALLE PEDIDO
+   ═══════════════════════════════════════════════════════════ */
+const PedidoDetalleModal = ({ pedido, onClose }) => {
+  if (!pedido) return null;
+  const items = pedido.items || [];
+  const meta = [
+    ["Identificación", pedido.usuario_identificacion],
+    ["Nombre", `${pedido.usuario_nombre || ""} ${pedido.usuario_primer_apellido || ""}`.trim()],
+    ["Correo", pedido.usuario_correo],
+    ["Teléfono", pedido.usuario_telefono],
+  ].filter(([, v]) => v);
+  const envio = [
+    ["Dirección", pedido.direccion],
+    ["Ciudad", pedido.ciudad],
+    ["Departamento", pedido.departamento],
+    ["Código postal", pedido.codigo_postal],
+  ].filter(([, v]) => v);
+
+  return (
+    <div className="pa-overlay" onClick={onClose}>
+      <div className="pa-modal" style={{ maxWidth: 580, maxHeight: "90vh", overflowY: "auto" }} onClick={(e) => e.stopPropagation()}>
+        <div className="pa-modal-header">
+          <h3 style={{ fontFamily: "'DM Mono', monospace", fontSize: 14, display: "flex", alignItems: "center", gap: 10 }}>
+            Pedido
+            <span style={{ background: "rgba(232,197,71,0.15)", border: "1px solid rgba(232,197,71,0.3)", color: "#e8c547", padding: "2px 10px", borderRadius: 6, fontSize: 13 }}>
+              #{pedido.id}
+            </span>
+            <EstadoPedidoBadge estado={pedido.estado} />
+          </h3>
+          <button className="pa-modal-close" onClick={onClose}>✕</button>
+        </div>
+
+        <div style={{ padding: "16px 20px", display: "flex", flexDirection: "column", gap: 14 }}>
+
+          {/* Cliente */}
+          <div>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#4a4f5e", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8 }}>
+              Cliente
+            </div>
+            <div style={{ background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 8, padding: "12px 14px", display: "flex", flexDirection: "column", gap: 6 }}>
+              {meta.map(([label, val]) => (
+                <div key={label} style={{ display: "flex", gap: 12, fontSize: 13 }}>
+                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#4a4f5e", minWidth: 110 }}>{label}</span>
+                  <span style={{ color: "#e8eaf0" }}>{val}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Envío */}
+          {envio.length > 0 && (
+            <div>
+              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#4a4f5e", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8 }}>
+                Dirección de envío
+              </div>
+              <div style={{ background: "#1a1e25", border: "1px solid rgba(91,156,246,0.15)", borderRadius: 8, padding: "12px 14px", display: "flex", flexDirection: "column", gap: 6 }}>
+                {envio.map(([label, val]) => (
+                  <div key={label} style={{ display: "flex", gap: 12, fontSize: 13 }}>
+                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#4a4f5e", minWidth: 110 }}>{label}</span>
+                    <span style={{ color: "#e8eaf0" }}>{val}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Items */}
+          <div>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#4a4f5e", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 8 }}>
+              Productos ({items.length})
+            </div>
+            {items.length === 0 ? (
+              <div style={{ color: "#4a4f5e", fontSize: 12, fontFamily: "'DM Mono', monospace", padding: "10px 0" }}>Sin items registrados.</div>
+            ) : (
+              <div style={{ background: "#1a1e25", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 8, overflow: "hidden" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr>
+                      {["Producto", "Cant."].map((h) => (
+                        <th key={h} style={{ background: "#13161b", padding: "8px 12px", fontSize: 10, fontFamily: "'DM Mono', monospace", color: "#4a4f5e", textAlign: "left", letterSpacing: "0.06em", textTransform: "uppercase", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {items.map((item, i) => (
+                      <tr key={item.id ?? i}>
+                        <td style={{ padding: "9px 12px", fontSize: 13, borderBottom: "1px solid rgba(255,255,255,0.04)", color: "#e8eaf0" }}>
+                          {item.producto_nombre || `Producto #${item.producto}`}
+                        </td>
+                        <td style={{ padding: "9px 12px", fontSize: 13, borderBottom: "1px solid rgba(255,255,255,0.04)", color: "#e8eaf0", textAlign: "center", fontFamily: "'DM Mono', monospace", width: 70 }}>
+                          {item.cantidad}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* Total */}
+          <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 12, paddingTop: 4, borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, color: "#4a4f5e", textTransform: "uppercase", letterSpacing: "0.08em" }}>Total</span>
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 20, fontWeight: 600, color: "#e8c547" }}>
+              ${Number(pedido.total).toLocaleString("es-CO")}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ═══════════════════════════════════════════════════════════
+   PEDIDO SECTION
+   ═══════════════════════════════════════════════════════════ */
+const PedidoSection = ({ section, toast }) => {
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [busqueda, setBusqueda] = useState("");
+  const [filtroEstado, setFiltroEstado] = useState("");
+  const [detalle, setDetalle] = useState(null);
+  const [updatingEstado, setUpdatingEstado] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      const res = await apiFetch(section.endpoint);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setRows(Array.isArray(data) ? data : (data.results ?? []));
+    } catch { toast("Error al cargar Pedidos", "error"); }
+    finally { setLoading(false); }
+  };
+  useEffect(() => { load(); }, []); // eslint-disable-line
+
+  const handleEstado = async (id, nuevoEstado) => {
+    setUpdatingEstado(id);
+    try {
+      const res = await apiFetch(
+        `${section.endpoint}${id}/estado/`,
+        { method: "PATCH", body: JSON.stringify({ estado: nuevoEstado }) }
+      );
+      if (!res.ok) throw new Error();
+      toast(`Estado actualizado a "${ESTADOS_PEDIDO.find((e) => e.value === nuevoEstado)?.label || nuevoEstado}".`, "success");
+      setRows((prev) => prev.map((r) => r.id === id ? { ...r, estado: nuevoEstado } : r));
+      // Actualizar detalle si está abierto
+      setDetalle((prev) => prev?.id === id ? { ...prev, estado: nuevoEstado } : prev);
+    } catch { toast("No se pudo actualizar el estado.", "error"); }
+    finally { setUpdatingEstado(null); }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      // La lista está en /lista/ pero el CRUD base es /api/pedidos/<id>/
+      const deleteUrl = `${BASE}/pedidos/${id}/`;
+      const res = await apiFetch(deleteUrl, { method: "DELETE" });
+      if (res.status !== 204 && !res.ok) throw new Error();
+      toast("Pedido eliminado.", "success");
+      setRows((prev) => prev.filter((r) => r.id !== id));
+    } catch { toast("No se pudo eliminar el pedido.", "error"); }
+    setConfirmDelete(null);
+  };
+
+  const filtered = rows.filter((r) => {
+    const q = busqueda.toLowerCase();
+    const matchSearch = !busqueda || [
+      r.id, r.usuario_nombre, r.usuario_primer_apellido,
+      r.usuario_correo, r.usuario_identificacion, r.ciudad,
+    ].some((v) => String(v ?? "").toLowerCase().includes(q));
+    const matchEstado = !filtroEstado || r.estado === filtroEstado;
+    return matchSearch && matchEstado;
+  });
+
+  // Conteo por estado para el resumen
+  const conteoEstados = ESTADOS_PEDIDO.map(({ value, label }) => ({
+    value, label, count: rows.filter((r) => r.estado === value).length,
+  }));
+
+  const formatFecha = (raw) => {
+    if (!raw) return "—";
+    const d = new Date(raw);
+    return d.toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" });
+  };
+
+  return (
+    <div className="pa-section">
+
+      {/* ── Resumen de estados ── */}
+      {!loading && rows.length > 0 && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 }}>
+          {conteoEstados.map(({ value, label, count }) => {
+            const meta = ESTADO_PEDIDO_META[value] || ESTADO_PEDIDO_META.pendiente;
+            const active = filtroEstado === value;
+            return (
+              <button key={value} onClick={() => setFiltroEstado(active ? "" : value)}
+                style={{
+                  display: "flex", alignItems: "center", gap: 8,
+                  background: active ? meta.bg : "rgba(255,255,255,0.03)",
+                  border: `1px solid ${active ? meta.border : "rgba(255,255,255,0.08)"}`,
+                  color: active ? meta.color : "#4a4f5e",
+                  borderRadius: 8, padding: "7px 14px", cursor: "pointer",
+                  fontFamily: "'DM Mono', monospace", fontSize: 11,
+                  letterSpacing: "0.06em", transition: "all 0.15s",
+                }}>
+                <span style={{ fontSize: 13 }}>{meta.icon}</span>
+                <span style={{ textTransform: "uppercase" }}>{label}</span>
+                <span style={{
+                  background: active ? meta.color : "rgba(255,255,255,0.08)",
+                  color: active ? "#0d0f12" : "#4a4f5e",
+                  borderRadius: 20, padding: "1px 8px", fontSize: 11, fontWeight: 600,
+                }}>{count}</span>
+              </button>
+            );
+          })}
+          {filtroEstado && (
+            <button onClick={() => setFiltroEstado("")}
+              style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.07)", color: "#4a4f5e", borderRadius: 8, padding: "7px 12px", cursor: "pointer", fontFamily: "'DM Mono', monospace", fontSize: 11 }}>
+              ✕ limpiar filtro
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* ── Barra de búsqueda ── */}
+      <div className="pa-section-bar">
+        <input className="pa-search" placeholder="Buscar por nombre, correo, ID…"
+          value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
+      </div>
+
+      {!loading && (
+        <p className="pa-count">
+          {filtered.length} pedido{filtered.length !== 1 ? "s" : ""}
+          {filtroEstado && <span style={{ color: "#4a4f5e", fontWeight: 400 }}> · filtrado por estado</span>}
+        </p>
+      )}
+
+      {loading && <div className="pa-state"><div className="pa-spinner" /><span>Cargando…</span></div>}
+      {!loading && filtered.length === 0 && (
+        <div className="pa-state">
+          <span className="pa-state-icon">📭</span>
+          <span>{busqueda || filtroEstado ? "Sin resultados para ese filtro." : "Sin pedidos registrados."}</span>
+        </div>
+      )}
+
+      {/* ── Tabla ── */}
+      {!loading && filtered.length > 0 && (
+        <div className="pa-table-wrap">
+          <table className="pa-table">
+            <thead>
+              <tr>
+                <th style={{ width: 60 }}>ID</th>
+                <th>Cliente</th>
+                <th>Correo</th>
+                <th>Ciudad</th>
+                <th style={{ width: 100 }}>Fecha</th>
+                <th style={{ width: 90, textAlign: "right" }}>Total</th>
+                <th style={{ width: 220 }}>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((row) => (
+                <tr key={row.id}>
+                  {/* ID */}
+                  <td>
+                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 12, color: "#e8c547" }}>
+                      #{row.id}
+                    </span>
+                  </td>
+
+                  {/* Cliente */}
+                  <td>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                      <span style={{ fontSize: 13.5, color: "#e8eaf0" }}>
+                        {`${row.usuario_nombre || ""} ${row.usuario_primer_apellido || ""}`.trim() || <span className="pa-empty">—</span>}
+                      </span>
+                      {row.usuario_identificacion && (
+                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 10, color: "#4a4f5e" }}>
+                          {row.usuario_identificacion}
+                        </span>
+                      )}
+                    </div>
+                  </td>
+
+                  {/* Correo */}
+                  <td>
+                    <span style={{ fontSize: 12, color: "#8a8f9e" }}>
+                      {row.usuario_correo || <span className="pa-empty">—</span>}
+                    </span>
+                  </td>
+
+                  {/* Ciudad */}
+                  <td>
+                    <span style={{ fontSize: 12.5 }}>
+                      {row.ciudad || <span className="pa-empty">—</span>}
+                    </span>
+                  </td>
+
+                  {/* Fecha */}
+                  <td>
+                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 11.5, color: "#8a8f9e" }}>
+                      {formatFecha(row.fecha)}
+                    </span>
+                  </td>
+
+                  {/* Total */}
+                  <td style={{ textAlign: "right" }}>
+                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: 13, fontWeight: 600, color: "#e8c547" }}>
+                      ${Number(row.total).toLocaleString("es-CO")}
+                    </span>
+                  </td>
+
+                  {/* Estado — badge + selector */}
+                  <td>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                      <EstadoPedidoBadge estado={row.estado} />
+                      <select
+                        value={row.estado}
+                        disabled={updatingEstado === row.id}
+                        onChange={(e) => handleEstado(row.id, e.target.value)}
+                        style={{
+                          background: "#1a1e25",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          color: "#8a8f9e", fontSize: 11, borderRadius: 4,
+                          padding: "3px 6px", cursor: "pointer", outline: "none",
+                          fontFamily: "'DM Mono', monospace",
+                          opacity: updatingEstado === row.id ? 0.5 : 1,
+                        }}>
+                        {ESTADOS_PEDIDO.map(({ value, label }) => (
+                          <option key={value} value={value}>{label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </td>
+
+                  {/* Acciones */}
+                  <td className="pa-td-actions" style={{ gap: 6 }}>
+                    <button className="pa-action" title="Ver detalle"
+                      style={{ background: "rgba(91,156,246,0.1)", border: "1px solid rgba(91,156,246,0.3)", color: "#5b9cf6", fontSize: 14 }}
+                      onClick={() => setDetalle(row)}>
+                      👁
+                    </button>
+                    {row.usuario_telefono && (
+                      <button className="pa-action" title={`WhatsApp a ${row.usuario_nombre}`}
+                        style={{ background: "rgba(37,211,102,0.1)", border: "1px solid rgba(37,211,102,0.3)", color: "#25d366", fontSize: 14 }}
+                        onClick={() => {
+                          const tel = `57${row.usuario_telefono.replace(/\D/g, "")}`;
+                          const estadoLabel = ESTADOS_PEDIDO.find((e) => e.value === row.estado)?.label || row.estado;
+                          const msg = encodeURIComponent(
+                            `Hola ${row.usuario_nombre}, te contactamos de *Mestizo Mobiliario* para informarte que tu pedido *#${row.id}* se encuentra en estado *${estadoLabel}*. ¿Tienes alguna pregunta?`
+                          );
+                          window.open(`https://wa.me/${tel}?text=${msg}`, "_blank");
+                        }}>
+                        💬
+                      </button>
+                    )}
+                    <button className="pa-action pa-action--del" title="Eliminar pedido"
+                      onClick={() => setConfirmDelete(row.id)}>
+                      🗑
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {detalle && <PedidoDetalleModal pedido={detalle} onClose={() => setDetalle(null)} />}
+      {confirmDelete !== null && (
+        <Confirm onConfirm={() => handleDelete(confirmDelete)} onCancel={() => setConfirmDelete(null)} />
+      )}
+    </div>
+  );
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -225,7 +626,7 @@ const ImageGallery = ({ imagenes, onDelete }) => {
 };
 
 /* ═══════════════════════════════════════════════════════════
-   FILA IMAGEN NUEVA CON PREVIEW INMEDIATO
+   FILA IMAGEN NUEVA
    ═══════════════════════════════════════════════════════════ */
 const NewImageRow = ({ img, onChange, onRemove }) => {
   const [preview, setPreview] = useState(null);
@@ -780,8 +1181,6 @@ const ProductForm = ({ item, onBack, onSaved, toast }) => {
 
 /* ═══════════════════════════════════════════════════════════
    MODAL GENÉRICO
-   ── CORRECCIÓN PRINCIPAL: usa getItemPk(section, item)
-      en lugar de item.id para construir la URL de edición.
    ═══════════════════════════════════════════════════════════ */
 const Modal = ({ section, item, onClose, onSaved, toast }) => {
   const isEdit = !!item;
@@ -796,10 +1195,8 @@ const Modal = ({ section, item, onClose, onSaved, toast }) => {
   const handleSubmit = async (e) => {
     e.preventDefault(); setSaving(true);
     try {
-      // ✅ CORRECCIÓN: usar getItemPk para obtener la PK correcta según el modelo
       const pk = getItemPk(section, item);
       const url = isEdit ? `${section.endpoint}${pk}/` : section.endpoint;
-
       let body, extraHeaders = {};
       if (section.isFileUpload) {
         const fd = new FormData();
@@ -807,13 +1204,11 @@ const Modal = ({ section, item, onClose, onSaved, toast }) => {
         Object.entries(files).forEach(([k, v]) => { if (v) fd.append(k === "imagen" ? "imagen_file" : k, v); });
         body = fd;
       } else {
-        // Para usuarios: excluir campos vacíos opcionales para no pisar valores existentes
         const payload = { ...form };
         if (!payload.contrasena) delete payload.contrasena;
         body = JSON.stringify(payload);
         extraHeaders = { "Content-Type": "application/json" };
       }
-
       const res = await apiFetch(url, { method: isEdit ? "PATCH" : "POST", headers: extraHeaders, body });
       const data = await res.json();
       if (!res.ok) {
@@ -835,12 +1230,10 @@ const Modal = ({ section, item, onClose, onSaved, toast }) => {
         </div>
         <form className="pa-modal-form" onSubmit={handleSubmit}>
           {section.fields.map((f) => {
-            // Ocultar identificacion al editar (es la PK, no debe cambiar)
             if (isEdit && f.readOnlyOnEdit) return (
               <label key={f.name} className="pa-field">
                 <span>{f.label}</span>
-                <input name={f.name} type={f.type} value={form[f.name] || ""} disabled
-                  style={{ opacity: 0.5, cursor: "not-allowed" }} />
+                <input name={f.name} type={f.type} value={form[f.name] || ""} disabled style={{ opacity: 0.5, cursor: "not-allowed" }} />
               </label>
             );
             return (
@@ -866,9 +1259,7 @@ const Modal = ({ section, item, onClose, onSaved, toast }) => {
                   </div>
                 ) : (
                   <input
-                    name={f.name}
-                    type={f.type}
-                    value={form[f.name] || ""}
+                    name={f.name} type={f.type} value={form[f.name] || ""}
                     onChange={handleChange}
                     required={!!f.required && !(isEdit && f.optionalOnEdit)}
                     placeholder={isEdit && f.optionalOnEdit ? "Dejar en blanco para no cambiar" : ""}
@@ -1105,7 +1496,6 @@ const ProductSection = ({ section, toast }) => {
 
 /* ═══════════════════════════════════════════════════════════
    SECTION TABLE GENÉRICA
-   ── CORRECCIÓN: usa getItemPk para eliminar usuarios
    ═══════════════════════════════════════════════════════════ */
 const SectionTable = ({ section, toast }) => {
   const [rows, setRows] = useState([]);
@@ -1127,7 +1517,6 @@ const SectionTable = ({ section, toast }) => {
   useEffect(() => { load(); }, [section.key]); // eslint-disable-line
 
   const handleDelete = async (item) => {
-    // ✅ CORRECCIÓN: usar getItemPk en vez de item.id directamente
     const pk = getItemPk(section, item);
     try {
       const res = await apiFetch(`${section.endpoint}${pk}/`, { method: "DELETE" });
@@ -1188,7 +1577,6 @@ const SectionTable = ({ section, toast }) => {
                   {section.columns.map((col) => <td key={col}>{formatCell(row, col)}</td>)}
                   <td className="pa-td-actions">
                     <button className="pa-action pa-action--edit" onClick={() => setModal(row)} title="Editar">✏</button>
-                    {/* ✅ Pasamos el objeto completo para que handleDelete pueda extraer la PK correcta */}
                     <button className="pa-action pa-action--del" onClick={() => setConfirmDelete(row)} title="Eliminar">🗑</button>
                   </td>
                 </tr>
@@ -1198,7 +1586,6 @@ const SectionTable = ({ section, toast }) => {
         </div>
       )}
       {modal && <Modal section={section} item={modal === "create" ? null : modal} onClose={() => setModal(null)} onSaved={() => { setModal(null); load(); }} toast={toast} />}
-      {/* ✅ confirmDelete ahora guarda el objeto completo, no solo el id */}
       {confirmDelete !== null && <Confirm onConfirm={() => handleDelete(confirmDelete)} onCancel={() => setConfirmDelete(null)} />}
     </div>
   );
@@ -1206,11 +1593,15 @@ const SectionTable = ({ section, toast }) => {
 
 /* ═══════════════════════════════════════════════════════════
    SECCIONES
-   ── CORRECCIÓN en usuarios:
-      - identificacion tiene readOnlyOnEdit: true (no se puede cambiar la PK)
-      - contrasena tiene optionalOnEdit: true (vacío = no cambiar)
    ═══════════════════════════════════════════════════════════ */
 const SECTIONS = [
+  {
+    // ── NUEVO: Pedidos ──────────────────────────────────────
+    key: "pedidos", label: "Pedidos",
+    endpoint: `${BASE}/pedidos/lista/`,
+    estadoEndpoint: `${BASE}/pedidos/`,   // base para PATCH /<id>/estado/
+    isPedido: true, fields: [], columns: [], columnLabels: [],
+  },
   { key: "citas", label: "Citas", endpoint: `${BASE}/citas/lista/`, isCita: true, fields: [], columns: [], columnLabels: [] },
   {
     key: "categorias", label: "Categorías", endpoint: `${BASE}/categorias/`,
@@ -1256,14 +1647,12 @@ const SECTIONS = [
   {
     key: "usuarios", label: "Usuarios", endpoint: `${BASE}/usuarios/`,
     fields: [
-      // readOnlyOnEdit: true → se muestra deshabilitado al editar (es la PK, no debe cambiar)
       { name: "identificacion", label: "Identificación", type: "text", required: true, readOnlyOnEdit: true },
       { name: "nombre", label: "Nombre", type: "text", required: true },
       { name: "primerApellido", label: "Primer apellido", type: "text", required: true },
       { name: "segundoApellido", label: "Segundo apellido", type: "text" },
       { name: "correo", label: "Correo", type: "email", required: true },
       { name: "telefono", label: "Teléfono", type: "text" },
-      // optionalOnEdit: true → si se deja vacío al editar, no se envía en el payload
       { name: "contrasena", label: "Contraseña", type: "password", required: true, optionalOnEdit: true },
     ],
     columns: ["identificacion", "nombre", "primerApellido", "correo", "telefono"],
@@ -1308,11 +1697,13 @@ const PanelAdmin = ({ onLogout }) => {
         </aside>
         <main className="pa-main">
           <div className="pa-main-header"><h1>{current.label}</h1></div>
-          {current.isCita
-            ? <CitaSection key={active} section={current} toast={add} />
-            : current.isProducto
-              ? <ProductSection key={active} section={current} toast={add} />
-              : <SectionTable key={active} section={current} toast={add} />
+          {current.isPedido
+            ? <PedidoSection key={active} section={current} toast={add} />
+            : current.isCita
+              ? <CitaSection key={active} section={current} toast={add} />
+              : current.isProducto
+                ? <ProductSection key={active} section={current} toast={add} />
+                : <SectionTable key={active} section={current} toast={add} />
           }
         </main>
       </div>

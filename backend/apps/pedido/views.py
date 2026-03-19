@@ -26,13 +26,22 @@ class PedidoListView(generics.ListAPIView):
         return Pedido.objects.filter(usuario=user).order_by('-fecha').select_related('usuario', 'envio').prefetch_related('items__producto')
 
 
+class PedidoDetailView(generics.RetrieveDestroyAPIView):
+    serializer_class   = PedidoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Pedido.objects.all().select_related('usuario', 'envio').prefetch_related('items__producto')
+
+    def destroy(self, request, *args, **kwargs):
+        if not (request.user.is_staff or request.user.is_superuser):
+            return Response({'error': 'No tienes permiso.'}, status=status.HTTP_403_FORBIDDEN)
+        return super().destroy(request, *args, **kwargs)
+
+
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def actualizar_estado_pedido(request, pk):
-    """
-    Permite a un admin cambiar el estado de un pedido.
-    Body: { "estado": "confirmado" }
-    """
     if not (request.user.is_staff or request.user.is_superuser):
         return Response({'error': 'No tienes permiso para realizar esta acción.'}, status=status.HTTP_403_FORBIDDEN)
 
