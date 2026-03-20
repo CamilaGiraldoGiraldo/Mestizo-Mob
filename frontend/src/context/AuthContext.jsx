@@ -1,10 +1,9 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    // Persiste sesión en localStorage
     try {
       const stored = localStorage.getItem("auth_user");
       return stored ? JSON.parse(stored) : null;
@@ -13,8 +12,20 @@ export function AuthProvider({ children }) {
     }
   });
 
-  const [token, setToken] = useState(() => localStorage.getItem("auth_token") || null);
+  const [token, setToken] = useState(
+    () => localStorage.getItem("auth_token") || null
+  );
 
+  // ── Persiste sesión desde cualquier fetch externo ─────────────
+  // Recibe el objeto { token, user } que devuelve el backend
+  const setSession = ({ token: newToken, user: newUser }) => {
+    localStorage.setItem("auth_token", newToken);
+    localStorage.setItem("auth_user", JSON.stringify(newUser));
+    setToken(newToken);
+    setUser(newUser);
+  };
+
+  // ── Login completo — usado desde el Header ────────────────────
   const login = async (correo, contrasena) => {
     const res = await fetch("http://127.0.0.1:8000/usuario/auth/login/", {
       method: "POST",
@@ -32,11 +43,8 @@ export function AuthProvider({ children }) {
       throw new Error(msg);
     }
 
-    // Espera { token, user: { nombre, correo, ... } }
-    localStorage.setItem("auth_token", data.token);
-    localStorage.setItem("auth_user", JSON.stringify(data.user));
-    setToken(data.token);
-    setUser(data.user);
+    setSession({ token: data.token, user: data.user });
+    return data; // el caller puede leer debe_cambiar_contrasena
   };
 
   const logout = () => {
@@ -47,7 +55,9 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isLoggedIn: !!user }}>
+    <AuthContext.Provider
+      value={{ user, token, login, logout, setSession, isLoggedIn: !!user }}
+    >
       {children}
     </AuthContext.Provider>
   );

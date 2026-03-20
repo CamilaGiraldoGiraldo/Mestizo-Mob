@@ -1,3 +1,6 @@
+import random
+import string
+
 from django.contrib.auth import authenticate
 from django.core.mail import send_mail
 from django.conf import settings
@@ -9,6 +12,12 @@ from rest_framework.authtoken.models import Token
 
 from apps.usuario.models import Usuario, CodigoRecuperacion
 from apps.usuario.serializers import UsuarioSerializer
+
+
+def generar_contrasena_temporal(longitud=10):
+    """Genera una contraseña temporal con letras y números."""
+    caracteres = string.ascii_letters + string.digits
+    return ''.join(random.choices(caracteres, k=longitud))
 
 
 # ── ViewSet para el panel admin ───────────────────────────────
@@ -24,7 +33,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 def registro_view(request):
     campos_requeridos = [
         'identificacion', 'nombre', 'primerApellido',
-        'segundoApellido', 'correo', 'telefono', 'contrasena'
+        'segundoApellido', 'correo', 'telefono'
     ]
     errores = {}
 
@@ -49,30 +58,52 @@ def registro_view(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    contrasena = request.data.get('contrasena', '')
-    if len(contrasena) < 6:
-        return Response(
-            {'contrasena': 'La contraseña debe tener al menos 6 caracteres.'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+    # Generar contraseña temporal
+    contrasena_temporal = generar_contrasena_temporal()
 
     try:
         usuario = Usuario.objects.create_user(
-            identificacion  = identificacion,
-            nombre          = request.data.get('nombre', '').strip(),
-            primerApellido  = request.data.get('primerApellido', '').strip(),
-            segundoApellido = request.data.get('segundoApellido', '').strip(),
-            correo          = correo,
-            telefono        = request.data.get('telefono', '').strip(),
-            password        = contrasena,
+            identificacion          = identificacion,
+            nombre                  = request.data.get('nombre', '').strip(),
+            primerApellido          = request.data.get('primerApellido', '').strip(),
+            segundoApellido         = request.data.get('segundoApellido', '').strip(),
+            correo                  = correo,
+            telefono                = request.data.get('telefono', '').strip(),
+            password                = contrasena_temporal,
+            debe_cambiar_contrasena = True,
         )
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+    # Enviar contraseña temporal por correo
+    try:
+        send_mail(
+            subject='Bienvenido a Mestizo Mobiliario — Tu contraseña temporal',
+            message=(
+                f'Hola {usuario.nombre},\n\n'
+                f'Tu cuenta ha sido creada exitosamente.\n\n'
+                f'Tu contraseña temporal es: {contrasena_temporal}\n\n'
+                f'Por seguridad, te pediremos cambiarla la próxima vez que inicies sesión.\n\n'
+                f'Gracias por elegirnos.'
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[correo],
+            fail_silently=False,
+        )
+    except Exception:
+        # Si el correo falla, eliminamos el usuario para no dejar huérfanos
+        usuario.delete()
+        return Response(
+            {'error': 'No se pudo enviar el correo. Verifica la dirección e intenta de nuevo.'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    # Login automático tras registro
     token, _ = Token.objects.get_or_create(user=usuario)
 
     return Response({
         'token': token.key,
+        'debe_cambiar_contrasena': False,  # recién registrado va directo al envío
         'user': {
             'identificacion': usuario.identificacion,
             'nombre':         usuario.nombre,
@@ -113,6 +144,7 @@ def login_view(request):
 
     return Response({
         'token': token.key,
+        'debe_cambiar_contrasena': usuario.debe_cambiar_contrasena,
         'user': {
             'identificacion': usuario.identificacion,
             'nombre':         usuario.nombre,
@@ -121,6 +153,54 @@ def login_view(request):
             'is_staff':       usuario.is_staff,
             'is_superuser':   usuario.is_superuser,
         }
+    }, status=status.HTTP_200_OK)
+
+
+# ── Cambiar contraseña temporal ───────────────────────────────
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def cambiar_contrasena_view(request):
+    nueva = request.data.get('nueva_contrasena', '')
+    confirmar = request.data.get('confirmar_contrasena', '')
+
+    if not nueva or not confirmar:
+        return Response(
+            {'error': 'Ambos campos son requeridos.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if len(nueva) < 6:
+        return Response(
+            {'nueva_contrasena': 'La contraseña debe tener al menos 6 caracteres.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    if nueva != confirmar:
+        return Response(
+            {'confirmar_contrasena': 'Las contraseñas no coinciden.'},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    usuario = request.user
+    usuario.set_password(nueva)
+    usuario.debe_cambiar_contrasena = False
+    usuario.save()
+
+    # Regenerar token tras cambio de contraseña
+    Token.objects.filter(user=usuario).delete()
+    token, _ = Token.objects.get_or_create(user=usuario)
+
+    return Response({
+        'token': token.key,
+        'user': {
+            'identificacion': usuario.identificacion,
+            'nombre':         usuario.nombre,
+            'primerApellido': usuario.primerApellido,
+            'correo':         usuario.correo,
+            'is_staff':       usuario.is_staff,
+            'is_superuser':   usuario.is_superuser,
+        },
+        'mensaje': 'Contraseña actualizada correctamente.',
     }, status=status.HTTP_200_OK)
 
 

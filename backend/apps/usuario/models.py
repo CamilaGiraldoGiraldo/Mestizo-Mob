@@ -47,29 +47,31 @@ class ManageUsuario(BaseUserManager):
 
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
-    identificacion  = models.CharField(primary_key=True, max_length=12, unique=True)
-    nombre          = models.CharField(max_length=50)
-    primerApellido  = models.CharField(max_length=40)
-    segundoApellido = models.CharField(max_length=40)
-    correo          = models.EmailField(unique=True)
-    telefono        = models.CharField(max_length=10)
-    is_active       = models.BooleanField(default=True)
-    is_superuser    = models.BooleanField(default=False)
-    is_staff        = models.BooleanField(default=False)
-    date_joined     = models.DateTimeField(default=timezone.now)
+    identificacion          = models.CharField(primary_key=True, max_length=12, unique=True)
+    nombre                  = models.CharField(max_length=50)
+    primerApellido          = models.CharField(max_length=40)
+    segundoApellido         = models.CharField(max_length=40)
+    correo                  = models.EmailField(unique=True)
+    telefono                = models.CharField(max_length=10)
+    is_active               = models.BooleanField(default=True)
+    is_superuser            = models.BooleanField(default=False)
+    is_staff                = models.BooleanField(default=False)
+    date_joined             = models.DateTimeField(default=timezone.now)
+    # Marca que la contraseña es temporal y debe cambiarse al próximo login
+    debe_cambiar_contrasena = models.BooleanField(default=False)
 
     groups = models.ManyToManyField(
         Group,
-        related_name="usuario_users",
+        related_name='usuario_users',
         blank=True,
-        help_text="Los grupos a los que pertenece este usuario."
+        help_text='Los grupos a los que pertenece este usuario.'
     )
 
     user_permissions = models.ManyToManyField(
         Permission,
-        related_name="usuario_users_permissions",
+        related_name='usuario_users_permissions',
         blank=True,
-        help_text="Permisos específicos para este usuario."
+        help_text='Permisos específicos para este usuario.'
     )
 
     USERNAME_FIELD  = 'correo'
