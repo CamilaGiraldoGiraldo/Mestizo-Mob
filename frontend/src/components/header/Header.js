@@ -7,7 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import CartDrawer from "../cart/CartDrawer";
 import "./Header.css";
 
-const BASE = "https://mestizo-mob-3.onrender.com/usuario";
+const BASE = "http://127.0.0.1:8000/usuario";
 
 // ── Modal Login / Recuperación ───────────────────────────────
 function LoginModal({ onClose, onLoginSuccess }) {
