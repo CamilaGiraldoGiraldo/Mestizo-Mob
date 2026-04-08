@@ -4,7 +4,7 @@ import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import "./Checkout.css";
 
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = "https://mestizo-mob-3.onrender.com";
 
 export default function Checkout() {
   const { cart, totalPrice, removeFromCart } = useCart();
