@@ -12,22 +12,24 @@ export default function Checkout() {
   const navigate = useNavigate();
 
   const [mode, setMode] = useState("login");
-
   const [pedidoCreado, setPedidoCreado] = useState(null);
   const [firma, setFirma] = useState(null);
 
   const [shipForm, setShipForm] = useState({
-    direccion: "", ciudad: "", estado: "", codigo_postal: "",
+    direccion: "",
+    ciudad: "",
+    estado: "",
+    codigo_postal: "",
   });
 
   const [loginForm, setLoginForm] = useState({
-    correo: "", contrasena: ""
+    correo: "",
+    contrasena: "",
   });
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // 🔥 SOLUCIÓN TOKEN (evita 401)
   useEffect(() => {
     if (token) setMode("shipping");
   }, [token]);
@@ -37,7 +39,7 @@ export default function Checkout() {
     setter((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🧾 LOGIN CORRECTO
+  // LOGIN
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -47,17 +49,12 @@ export default function Checkout() {
       const res = await fetch(`${BASE_URL}/usuario/auth/login/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          correo: loginForm.correo,
-          contrasena: loginForm.contrasena,
-        }),
+        body: JSON.stringify(loginForm),
       });
 
       const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data?.error || "Correo o contraseña incorrectos");
-      }
+      if (!res.ok) throw new Error(data?.error || "Credenciales inválidas");
 
       setSession({ token: data.token, user: data.user });
 
@@ -68,7 +65,7 @@ export default function Checkout() {
     }
   };
 
-  // 🧾 PEDIDO + ENVÍO
+  // PEDIDO + ENVÍO
   const handleShippingSubmit = async (e) => {
     e.preventDefault();
 
@@ -111,7 +108,6 @@ export default function Checkout() {
       });
 
       setPedidoCreado(pedidoData);
-
       cart.forEach((item) => removeFromCart(item.id));
 
     } catch (err) {
@@ -121,7 +117,7 @@ export default function Checkout() {
     }
   };
 
-  // 🔐 FIRMA WOMPI
+  // FIRMA WOMPI
   useEffect(() => {
     if (!pedidoCreado) return;
 
@@ -129,12 +125,11 @@ export default function Checkout() {
     const amount = pedidoCreado.total * 100;
 
     fetch(`${BASE_URL}/api/pedidos/wompi/firma/?reference=${reference}&amount=${amount}&currency=COP`)
-      .then(res => res.json())
-      .then(data => setFirma(data.signature));
-
+      .then((res) => res.json())
+      .then((data) => setFirma(data.signature));
   }, [pedidoCreado]);
 
-  // 💳 BOTÓN WOMPI
+  // BOTÓN WOMPI
   useEffect(() => {
     if (!firma || !pedidoCreado) return;
 
@@ -144,7 +139,7 @@ export default function Checkout() {
     const script = document.createElement("script");
     script.src = "https://checkout.wompi.co/widget.js";
     script.setAttribute("data-render", "button");
-    script.setAttribute("data-public-key", "pub_test_xxxxx"); // 🔥 tu key
+    script.setAttribute("data-public-key", "pub_test_xxxxx");
     script.setAttribute("data-currency", "COP");
     script.setAttribute("data-amount-in-cents", amount);
     script.setAttribute("data-reference", reference);
@@ -155,71 +150,141 @@ export default function Checkout() {
       container.innerHTML = "";
       container.appendChild(script);
     }
+  }, [firma, pedidoCreado]);
 
-  }, [firma]);
-
-  // 💳 PANTALLA DE PAGO
+  // PAGO
   if (pedidoCreado && firma) {
     return (
       <div className="ck-wrapper">
-        <h2>Finaliza tu pago</h2>
-        <p>Tu pedido fue creado correctamente</p>
+        <div className="ck-success">
+          <div className="ck-success-icon">✓</div>
+          <h2 className="ck-success-title">Pedido creado</h2>
+          <p className="ck-success-sub">
+            Finaliza tu pago para completar la compra
+          </p>
 
-        <div id="wompi-button"></div>
+          <div id="wompi-button"></div>
 
-        <button onClick={() => navigate("/")}>
-          Volver
-        </button>
+          <button className="ck-btn-back" onClick={() => navigate("/")}>
+            Volver al inicio
+          </button>
+        </div>
       </div>
     );
   }
 
-  // 🛒 CARRITO VACÍO
   if (cart.length === 0) {
     return <p>Tu carrito está vacío</p>;
   }
 
   return (
     <div className="ck-wrapper">
-      <h2>Checkout</h2>
+      <div className="ck-inner">
+        <div className="ck-grid">
 
-      {errors.global && <p>{errors.global}</p>}
+          {/* IZQUIERDA */}
+          <div>
 
-      {/* LOGIN */}
-      {mode === "login" && (
-        <form onSubmit={handleLoginSubmit}>
-          <input
-            name="correo"
-            placeholder="Correo"
-            onChange={handleChange(setLoginForm)}
-          />
-          <input
-            name="contrasena"
-            type="password"
-            placeholder="Contraseña"
-            onChange={handleChange(setLoginForm)}
-          />
-          <button type="submit">
-            {loading ? "Cargando..." : "Iniciar sesión"}
-          </button>
-        </form>
-      )}
+            {errors.global && (
+              <div className="ck-error-global">{errors.global}</div>
+            )}
 
-      {/* ENVÍO */}
-      {mode === "shipping" && (
-        <form onSubmit={handleShippingSubmit}>
-          <input name="direccion" placeholder="Dirección" onChange={handleChange(setShipForm)} />
-          <input name="ciudad" placeholder="Ciudad" onChange={handleChange(setShipForm)} />
-          <input name="estado" placeholder="Departamento" onChange={handleChange(setShipForm)} />
-          <input name="codigo_postal" placeholder="Código postal" onChange={handleChange(setShipForm)} />
+            {/* LOGIN */}
+            {mode === "login" && (
+              <>
+                <h2 className="ck-section-title">Iniciar sesión</h2>
 
-          <button type="submit">
-            {loading ? "Procesando..." : "Confirmar pedido"}
-          </button>
-        </form>
-      )}
+                <form className="ck-form" onSubmit={handleLoginSubmit}>
 
-      <h3>Total: {totalPrice}</h3>
+                  <div className="ck-field">
+                    <label className="ck-label">Correo</label>
+                    <input
+                      className="ck-input"
+                      name="correo"
+                      onChange={handleChange(setLoginForm)}
+                    />
+                  </div>
+
+                  <div className="ck-field">
+                    <label className="ck-label">Contraseña</label>
+                    <input
+                      className="ck-input"
+                      type="password"
+                      name="contrasena"
+                      onChange={handleChange(setLoginForm)}
+                    />
+                  </div>
+
+                  <button className="ck-btn-submit">
+                    {loading ? "Cargando..." : "Iniciar sesión"}
+                  </button>
+                </form>
+              </>
+            )}
+
+            {/* ENVÍO */}
+            {mode === "shipping" && (
+              <>
+                <h2 className="ck-section-title">Datos de envío</h2>
+
+                <form className="ck-form" onSubmit={handleShippingSubmit}>
+
+                  <div className="ck-field">
+                    <label className="ck-label">Dirección</label>
+                    <input className="ck-input" name="direccion" onChange={handleChange(setShipForm)} />
+                  </div>
+
+                  <div className="ck-row">
+                    <div className="ck-field">
+                      <label className="ck-label">Ciudad</label>
+                      <input className="ck-input" name="ciudad" onChange={handleChange(setShipForm)} />
+                    </div>
+
+                    <div className="ck-field">
+                      <label className="ck-label">Departamento</label>
+                      <input className="ck-input" name="estado" onChange={handleChange(setShipForm)} />
+                    </div>
+                  </div>
+
+                  <div className="ck-field ck-field--half">
+                    <label className="ck-label">Código postal</label>
+                    <input className="ck-input" name="codigo_postal" onChange={handleChange(setShipForm)} />
+                  </div>
+
+                  <button className="ck-btn-submit">
+                    {loading ? "Procesando..." : "Confirmar pedido"}
+                  </button>
+                </form>
+              </>
+            )}
+
+          </div>
+
+          {/* DERECHA (RESUMEN) */}
+          <div className="ck-right">
+            <ul className="ck-items">
+              {cart.map((item) => (
+                <li key={item.id} className="ck-item">
+                  <img src={item.imagen} alt="" className="ck-item-img" />
+                  <div className="ck-item-info">
+                    <span className="ck-item-nombre">{item.nombre}</span>
+                    <span className="ck-item-cant">x{item.cantidad}</span>
+                  </div>
+                  <span className="ck-item-precio">${item.precio}</span>
+                </li>
+              ))}
+            </ul>
+
+            <hr className="ck-divider" />
+
+            <div className="ck-total-row">
+              <span className="ck-total-label">Total</span>
+              <span className="ck-total-val">${totalPrice}</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 }
