@@ -67,7 +67,7 @@ MIDDLEWARE = [
 # ==========================
 # CORS
 # ==========================
-CORS_ALLOW_ALL_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",")
+CORS_ALLOW_ALL_ORIGINS = True
 
 # ==========================
 # TEMPLATES
