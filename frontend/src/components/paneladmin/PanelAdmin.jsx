@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./PanelAdmin.css";
 
-const BASE = "hhttps://mestizo-mob-3.onrender.com/api";
+const BASE = "https://mestizo-mob-3.onrender.com/api";
 
 /* ─── Auth ───────────────────────────────────────────────── */
 const getAuthHeader = () => {
