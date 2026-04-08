@@ -27,7 +27,7 @@ export function AuthProvider({ children }) {
 
   // ── Login completo — usado desde el Header ────────────────────
   const login = async (correo, contrasena) => {
-    const res = await fetch("http://127.0.0.1:8000/usuario/auth/login/", {
+    const res = await fetch("https://mestizo-mob-3.onrender.com/usuario/auth/login/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ correo, contrasena }),

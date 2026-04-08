@@ -61,7 +61,7 @@ const AgendarCita = () => {
     if (!id) return;
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/api/citas/buscar-usuario/?identificacion=${id}`
+        `https://mestizo-mob-3.onrender.com/api/citas/buscar-usuario/?identificacion=${id}`
       );
       if (!res.ok) return;
       const data = await res.json();
