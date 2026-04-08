@@ -3,16 +3,31 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from django.http import JsonResponse
+import hashlib
+
 from .models import Pedido
 from .serializers import PedidoSerializer
 
+
+# 🔐 KEY DE PRUEBA WOMPI
+INTEGRITY_KEY = "test_integrity_key"
+
+
+# -------------------------
+# CRUD PEDIDOS (igual que tenías)
+# -------------------------
 
 class PedidoCreateView(generics.CreateAPIView):
     serializer_class   = PedidoSerializer
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(usuario=self.request.user)
+        pedido = serializer.save(usuario=self.request.user)
+
+        # 🔥 Generar referencia automáticamente
+        pedido.referencia_pago = f"pedido_{pedido.id}"
+        pedido.save()
 
 
 class PedidoListView(generics.ListAPIView):
@@ -63,3 +78,42 @@ def actualizar_estado_pedido(request, pk):
     pedido.save()
 
     return Response(PedidoSerializer(pedido).data, status=status.HTTP_200_OK)
+
+
+# -------------------------
+# 💳 WOMPI - GENERAR FIRMA
+# -------------------------
+
+@api_view(['GET'])
+def generar_firma_wompi(request):
+    reference = request.GET.get("reference")
+    amount = request.GET.get("amount")
+    currency = request.GET.get("currency")
+
+    if not reference or not amount or not currency:
+        return Response({"error": "Datos incompletos"}, status=400)
+
+    texto = f"{reference}{amount}{currency}{INTEGRITY_KEY}"
+    firma = hashlib.sha256(texto.encode()).hexdigest()
+
+    return Response({"signature": firma})
+
+
+# -------------------------
+# 🔥 (OPCIONAL) SIMULAR CONFIRMACIÓN DE PAGO
+# -------------------------
+
+@api_view(['POST'])
+def confirmar_pago(request):
+    reference = request.data.get("reference")
+
+    try:
+        pedido = Pedido.objects.get(referencia_pago=reference)
+    except Pedido.DoesNotExist:
+        return Response({"error": "Pedido no encontrado"}, status=404)
+
+    pedido.estado_pago = "pagado"
+    pedido.estado = "confirmado"
+    pedido.save()
+
+    return Response({"mensaje": "Pago confirmado"})
