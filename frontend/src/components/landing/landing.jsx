@@ -45,7 +45,7 @@ export default function Landing() {
         <h4>NUESTRAS CATEGORÍAS</h4>
         <div className="categories-grid">
           {[
-            { label: "Sillas", img: img1, cat: "sillas" },
+            { label: "Sillas", img: img1, cat: "silla" },
             { label: "Poltronas", img: img2, cat: "poltronas" },
             { label: "Sillas de barra", img: img3, cat: "sillas-barra" },
             { label: "Mesas de noche", img: img4, cat: "mesas-noche" },
