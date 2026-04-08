@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-=7a#28qi61-@!iunu5erza!isajr7enq7hvrddj_*87x!qc_j+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.156.17.132']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.156.17.132','https://mestizo-mob-6.onrender.com','https://mestizo-mob-3.onrender.com']
 
 AUTH_USER_MODEL = 'usuario.Usuario'
 
@@ -74,7 +74,7 @@ MIDDLEWARE = [
 # CORS CONFIG
 # ==========================
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = ['https://mestizo-mob-6.onrender.com']
 
 
 # ==========================
