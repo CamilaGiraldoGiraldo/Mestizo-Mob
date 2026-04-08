@@ -84,7 +84,7 @@ const AgendarCita = () => {
   const enviarCita = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/citas/crear/", {
+      const res = await fetch("https://mestizo-mob-3.onrender.com/api/citas/crear/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
