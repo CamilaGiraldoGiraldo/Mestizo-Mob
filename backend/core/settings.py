@@ -15,8 +15,10 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-default-key")
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 # TEMPORAL (para que no falle deploy)
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = [
+    "mestizo-mob-3.onrender.com",
+    "mestizo-mob-6.onrender.com",
+]
 # ==========================
 # APPLICATIONS
 # ==========================
@@ -73,7 +75,11 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "https://mestizo-mob-6.onrender.com",
 ]
+CORS_ALLOW_CREDENTIALS = True
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://mestizo-mob-6.onrender.com",
+]
 # ==========================
 # URLS / WSGI
 # ==========================
