@@ -96,9 +96,6 @@ TEMPLATES = [
     },
 ]
 
-# ==========================
-# DATABASE (Render PostgreSQL)
-# ==========================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',

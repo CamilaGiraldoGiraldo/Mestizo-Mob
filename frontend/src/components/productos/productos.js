@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://mestizo-mob-3.onrender.com/api/productos";
+const API_URL = "http://127.0.0.1:8000/api/productos";
 
 export const getProductos = async (params = {}) => {
   try {
@@ -14,7 +14,7 @@ export const getProductos = async (params = {}) => {
 
 export const getCategorias = async () => {
   try {
-    const response = await axios.get("https://mestizo-mob-3.onrender.com/api/categorias");
+    const response = await axios.get("http://127.0.0.1:8000/api/categorias");
     return response.data;
   } catch (error) {
     console.error("Error al traer categorías:", error);
