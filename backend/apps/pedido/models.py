@@ -19,10 +19,6 @@ class Pedido(models.Model):
     total   = models.DecimalField(max_digits=10, decimal_places=2)
     estado  = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
 
-    # 🔥 NUEVO (pagos)
-    estado_pago = models.CharField(max_length=20, default='pendiente')
-    referencia_pago = models.CharField(max_length=100, blank=True, null=True)
-
     def __str__(self):
         return f"Pedido {self.id} - {self.usuario}"
 

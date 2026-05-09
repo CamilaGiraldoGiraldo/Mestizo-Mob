@@ -11,19 +11,8 @@ from apps.colores.views import ColorProductoViewSet
 from apps.imagenProducto.views import ImagenProductoViewSet
 from apps.citas.views import CitaViewSet
 from apps.usuario.api.views import UsuarioViewSet
-
-# 🔥 IMPORTANTE: pedidos + wompi
-from apps.pedido.views import (
-    PedidoCreateView,
-    PedidoListView,
-    PedidoDetailView,
-    actualizar_estado_pedido,
-    generar_firma_wompi,
-    confirmar_pago
-)
-
+from apps.pedido.views import PedidoCreateView, PedidoListView, PedidoDetailView, actualizar_estado_pedido
 from apps.envio.views import EnvioCreateView
-
 
 router = DefaultRouter()
 router.register(r'productos',       ProductoViewSet,        basename='producto')
@@ -33,47 +22,24 @@ router.register(r'imagenproducto',  ImagenProductoViewSet,  basename='imagenprod
 router.register(r'imagendimension', ImagenDimensionViewSet, basename='imagendimension')
 router.register(r'usuarios',        UsuarioViewSet,         basename='usuario')
 
-
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/',                       admin.site.urls),
+    path('api/',                         include(router.urls)),
+    path('usuario/',                     include('apps.usuario.api.urls')),
+    path('api/citas/',                   include('apps.citas.urls')),
 
-    # API base
-    path('api/', include(router.urls)),
-
-    # Usuario
-    path('usuario/', include('apps.usuario.api.urls')),
-
-    # Citas
-    path('api/citas/', include('apps.citas.urls')),
-
-    # =========================
-    # 🧾 PEDIDOS
-    # =========================
+    # Pedidos — orden importante: más específico primero
     path('api/pedidos/lista/',           PedidoListView.as_view(),      name='pedido-list'),
     path('api/pedidos/<int:pk>/estado/', actualizar_estado_pedido,      name='pedido-estado'),
     path('api/pedidos/<int:pk>/',        PedidoDetailView.as_view(),    name='pedido-detail'),
     path('api/pedidos/',                 PedidoCreateView.as_view(),    name='pedido-create'),
 
-    # =========================
-    # 💳 WOMPI
-    # =========================
-    path('api/pedidos/wompi/firma/',     generar_firma_wompi,           name='wompi-firma'),
-    path('api/pedidos/wompi/confirmar/', confirmar_pago,                name='wompi-confirmar'),
+    path('api/envios/',                  EnvioCreateView.as_view(),     name='envio-create'),
 
-    # =========================
-    # 🚚 ENVÍOS
-    # =========================
-    path('api/envios/', EnvioCreateView.as_view(), name='envio-create'),
-
-    # =========================
-    # 📄 DOCUMENTACIÓN API
-    # =========================
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/docs/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('api/docs/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    path('api/schema/',                  SpectacularAPIView.as_view(),                      name='schema'),
+    path('api/docs/swagger/',            SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/docs/redoc/',              SpectacularRedocView.as_view(url_name='schema'),   name='redoc'),
 ]
 
-
-# MEDIA (solo desarrollo)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
