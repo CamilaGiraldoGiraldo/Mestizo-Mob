@@ -70,9 +70,7 @@ MIDDLEWARE = [
 # ==========================
 # CORS
 # ==========================
-CORS_ALLOWED_ORIGINS = [
-    "https://mestizo-mob-6.onrender.com",
-]
+CORS_ALLOW_ALL_ORIGINS = True
 
 # ==========================
 # URLS / WSGI
