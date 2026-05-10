@@ -1,25 +1,26 @@
+from pathlib import Path
 import os
 import ssl
-from pathlib import Path
 import cloudinary
+from pathlib import Path
 
-# ==========================
-# PATHS
-# ==========================
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ==========================
-# SECURITY
-# ==========================
-SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-default-key")
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = 'django-insecure-=7a#28qi61-@!iunu5erza!isajr7enq7hvrddj_*87x!qc_j+'
 
-# TEMPORAL (para que no falle deploy)
-ALLOWED_HOSTS = ['*']
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.156.17.132']
+
+AUTH_USER_MODEL = 'usuario.Usuario'
 
 # ==========================
 # APPLICATIONS
 # ==========================
+
 BASE_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,7 +43,7 @@ LOCAL_APPS = [
 
 THIRD_APPS = [
     'rest_framework',
-    'rest_framework.authtoken',
+    'rest_framework.authtoken',   # ← AGREGADO
     'django_filters',
     'corsheaders',
     'cloudinary',
@@ -52,13 +53,14 @@ THIRD_APPS = [
 
 INSTALLED_APPS = BASE_APPS + LOCAL_APPS + THIRD_APPS
 
+
 # ==========================
-# MIDDLEWARE
+# MIDDLEWARE (CORS ARRIBA)
 # ==========================
+
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -67,20 +69,20 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# ==========================
-# CORS
-# ==========================
-CORS_ALLOW_ALL_ORIGINS = True
 
 # ==========================
-# URLS / WSGI
+# CORS CONFIG
 # ==========================
-ROOT_URLCONF = 'core.urls'
-WSGI_APPLICATION = 'core.wsgi.application'
+
+CORS_ALLOW_ALL_ORIGINS = True
+
 
 # ==========================
 # TEMPLATES
 # ==========================
+
+ROOT_URLCONF = 'core.urls'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -96,6 +98,13 @@ TEMPLATES = [
     },
 ]
 
+WSGI_APPLICATION = 'core.wsgi.application'
+
+
+# ==========================
+# DATABASE
+# ==========================
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -106,64 +115,83 @@ DATABASES = {
         'PORT': '3306',
     }
 }
-
-# ==========================
-# CLOUDINARY
-# ==========================
+#Cloudinary Config
 cloudinary.config(
-    cloud_name=os.environ.get("CLOUDINARY_NAME"),
-    api_key=os.environ.get("CLOUDINARY_KEY"),
-    api_secret=os.environ.get("CLOUDINARY_SECRET"),
-    secure=True
+    cloud_name = "de8ra2czm",
+    api_key = "646127835215687",
+    api_secret = "KjjCNwirgYffba5-EAwAhjOB_GI",
+    secure = True
 )
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-# ==========================
-# AUTH
-# ==========================
-AUTH_USER_MODEL = 'usuario.Usuario'
-
+# Validar contraseña. 
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
 ]
+
 
 # ==========================
 # INTERNATIONALIZATION
 # ==========================
+
 LANGUAGE_CODE = 'es'
 TIME_ZONE = 'UTC'
+
 USE_I18N = True
 USE_TZ = True
+
 
 # ==========================
 # STATIC & MEDIA
 # ==========================
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATIC_URL = 'static/'
+
+MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 # ==========================
-# EMAIL
+# DEFAULT PRIMARY KEY
 # ==========================
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# ==========================
+# EMAIL CONFIG
+# ==========================
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 465))
-EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "False") == "True"
-EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "True") == "True"
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'mariacamilagiraldogiraldo1214@gmail.com'
+EMAIL_HOST_PASSWORD = 'vzhn qxxs qowd ylhm'
+DEFAULT_FROM_EMAIL = 'Mestizo Mobiliario <mariacamilagiraldogiraldo1214@gmail.com>'
 
 EMAIL_SSL_CONTEXT = ssl.create_default_context()
 EMAIL_SSL_CONTEXT.check_hostname = False
 EMAIL_SSL_CONTEXT.verify_mode = ssl.CERT_NONE
 
+
 # ==========================
-# DRF
+# DRF CONFIG
 # ==========================
+
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_FILTER_BACKENDS': [
@@ -175,12 +203,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    'DEFAULT_AUTHENTICATION_CLASSES': [  
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
-
-# ==========================
-# DEFAULT PRIMARY KEY
-# ==========================
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
