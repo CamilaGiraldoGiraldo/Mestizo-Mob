@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-=7a#28qi61-@!iunu5erza!isajr7enq7hvrddj_*87x!qc_j+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.156.17.132']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '10.156.17.132','192.168.1.8']
 
 AUTH_USER_MODEL = 'usuario.Usuario'
 
@@ -141,7 +141,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+WOMPI_INTEGRITY_SECRET = "test_integrity_oXXEBOomillions"
 # ==========================
 # INTERNATIONALIZATION
 # ==========================

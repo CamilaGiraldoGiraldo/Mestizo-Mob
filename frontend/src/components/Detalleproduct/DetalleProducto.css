@@ -2,13 +2,13 @@
 
 @font-face {
   font-family: 'Generica';
-  src: url('../../assets/fonts/Generica.otf') format('opentype');
+  src: url('../../assets/fonts/Montserrat-Regular.ttf') format('opentype');
   font-weight: 400;
 }
 
 @font-face {
   font-family: 'Generica';
-  src: url('../../assets/fonts/Generica Bold.otf') format('opentype');
+  src: url('../../assets/fonts/Montserrat-SemiBold.ttf') format('opentype');
   font-weight: 700;
 }
 

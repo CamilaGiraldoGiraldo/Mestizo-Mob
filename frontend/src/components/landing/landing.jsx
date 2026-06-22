@@ -42,10 +42,10 @@ export default function Landing() {
 
       {/* CATEGORÍAS */}
       <section className="categories">
-        <h4>NUESTRAS CATEGORÍAS</h4>
+        <h4>Nuestras categorías</h4>
         <div className="categories-grid">
           {[
-            { label: "Sillas", img: img1, cat: "silla" },
+            { label: "Sillas", img: img1, cat: "sillas" },
             { label: "Poltronas", img: img2, cat: "poltronas" },
             { label: "Sillas de barra", img: img3, cat: "sillas-barra" },
             { label: "Mesas de noche", img: img4, cat: "mesas-noche" },
@@ -94,7 +94,7 @@ export default function Landing() {
 
           <div className="footer-left">
             <p className="footer-title">Visita<br />nuestro<br />showroom</p>
-            <p className="footer-address">Cra 55a #35–227 Tercer Piso</p>
+            <p className="footer-address">Transversal 2 # 308 Tercer Piso</p>
             <p className="footer-address">Mall Punto de encuentro<br />Llanogrande, Antioquia</p>
           </div>
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./PanelAdmin.css";
 
-const BASE = "http://127.0.0.1:8000/api";
+const BASE = "http://192.168.1.8/api";
 
 /* ─── Auth ───────────────────────────────────────────────── */
 const getAuthHeader = () => {
@@ -29,7 +29,7 @@ const apiFetch = (url, opts = {}) => {
 };
 const tryLogin = async (correo, contrasena) => {
   try {
-    const res = await fetch("http://127.0.0.1:8000/usuario/auth/login/", {
+    const res = await fetch("http://192.168.1.8/usuario/auth/login/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ correo, contrasena }),

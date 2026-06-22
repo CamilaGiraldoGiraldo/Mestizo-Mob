@@ -1,7 +1,25 @@
 /* ================= GLOBAL ================= */
+/* ───────── FUENTES ───────── */
+
+@font-face {
+  font-family: 'Generica';
+  src: url('../../assets/fonts/Montserrat-Regular.ttf') format('opentype');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'Generica';
+  src: url('../../assets/fonts/Montserrat-SemiBold.ttf') format('opentype');
+  font-weight: 700;
+}
+
+* {
+  font-family: 'Generica', sans-serif;
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
   background: #ffffff;
 }
 
@@ -9,10 +27,9 @@ body {
   width: 100%;
 }
 
-/* ================= HERO ================= */
 .hero {
   width: 100%;
-  background: #878787;
+  background: #3a4151;
   min-height: 340px;
   display: flex;
   align-items: center;
@@ -122,7 +139,6 @@ body {
   color: #1a1a1a;
 }
 
-/* ✅ La imagen ocupa su tamaño natural, sin recorte */
 .category-img-wrap {
   width: 100%;
   overflow: hidden;

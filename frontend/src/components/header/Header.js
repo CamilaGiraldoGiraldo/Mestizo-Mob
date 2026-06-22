@@ -7,7 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import CartDrawer from "../cart/CartDrawer";
 import "./Header.css";
 
-const BASE = "http://127.0.0.1:8000/usuario";
+const BASE = "http://192.168.1.8/usuario";
 
 // ── Modal Login / Recuperación ───────────────────────────────
 function LoginModal({ onClose, onLoginSuccess }) {
@@ -250,7 +250,6 @@ export default function Header() {
             <Link to="/productos" onClick={() => setMenuOpen(false)}>PRODUCTOS</Link>
             <Link to="/cita" onClick={() => setMenuOpen(false)}>AGENDA UNA CITA</Link>
             <Link to="/personaliza" onClick={() => setMenuOpen(false)}>PERSONALIZA</Link>
-            <Link to="/visitanos" onClick={() => setMenuOpen(false)}>VISÍTANOS</Link>
           </div>
 
           {/* RIGHT SECTION — iconos + logo desktop */}

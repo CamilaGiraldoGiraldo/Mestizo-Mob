@@ -11,7 +11,13 @@ from apps.colores.views import ColorProductoViewSet
 from apps.imagenProducto.views import ImagenProductoViewSet
 from apps.citas.views import CitaViewSet
 from apps.usuario.api.views import UsuarioViewSet
-from apps.pedido.views import PedidoCreateView, PedidoListView, PedidoDetailView, actualizar_estado_pedido
+from apps.pedido.views import (
+    PedidoCreateView,
+    PedidoListView,
+    PedidoDetailView,
+    actualizar_estado_pedido,
+    wompi_firma,
+)
 from apps.envio.views import EnvioCreateView
 
 router = DefaultRouter()
@@ -28,8 +34,9 @@ urlpatterns = [
     path('usuario/',                     include('apps.usuario.api.urls')),
     path('api/citas/',                   include('apps.citas.urls')),
 
-    # Pedidos — orden importante: más específico primero
+    # Pedidos — orden importante: rutas específicas antes que las genéricas
     path('api/pedidos/lista/',           PedidoListView.as_view(),      name='pedido-list'),
+    path('api/pedidos/wompi/firma/',     wompi_firma,                   name='wompi-firma'),   # ← nueva
     path('api/pedidos/<int:pk>/estado/', actualizar_estado_pedido,      name='pedido-estado'),
     path('api/pedidos/<int:pk>/',        PedidoDetailView.as_view(),    name='pedido-detail'),
     path('api/pedidos/',                 PedidoCreateView.as_view(),    name='pedido-create'),
