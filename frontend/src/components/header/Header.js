@@ -7,7 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import CartDrawer from "../cart/CartDrawer";
 import "./Header.css";
 
-const BASE = "http://192.168.1.8/usuario";
+const BASE = "http://192.168.1.9/usuario";
 
 // ── Modal Login / Recuperación ───────────────────────────────
 function LoginModal({ onClose, onLoginSuccess }) {

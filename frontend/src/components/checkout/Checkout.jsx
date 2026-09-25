@@ -4,7 +4,7 @@ import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import "./checkout.css";
 
-const BASE_URL = "http://192.168.1.8:8000";
+const BASE_URL = "http://192.168.1.9:8000";
 
 export default function Checkout() {
   const { cart, totalPrice, clearCart } = useCart();
